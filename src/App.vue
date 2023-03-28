@@ -1,11 +1,7 @@
 /* eslint-disable */
 <template>
   <div id="app">
-    <h1>SleepySheep</h1>
-
-    <router-view>
-      
-    </router-view>
+    <router-view/>
   </div>
 </template>
 
@@ -16,5 +12,9 @@ export default {
 </script>
 
 <style lang="less">
-
+html,body,#app {
+  margin:0;
+  padding: 0;
+  height: 100%;
+}
 </style>
