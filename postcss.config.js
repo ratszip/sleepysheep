@@ -8,9 +8,9 @@ module.exports = {
           return file.indexOf('vant') !== -1 ? 37.5 : 75;
         },
         propList: ['*'],
-      },
-      'autoprefixer':{
-        browsers:['Android>=4.0','iOS >= 8']
       }
+      // 'autoprefixer':{
+      //   browsers:['Android>=4.0','iOS >= 8']
+      // }
     }
   };
