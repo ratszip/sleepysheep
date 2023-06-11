@@ -4,12 +4,12 @@
       <!-- <van-icon name="apps-o" /> -->
     </div>
     <div class="nav_center">
-      <van-tabs v-model:active="active" @click="clickTab">
+      <van-tabs v-model:active="active" sticky @click="clickTab">
         <van-tab title="关注">
-          <van-loading v-if="show" size="24px" vertical>加载中...</van-loading>
+          <router-link to="/home/gz"></router-link>
         </van-tab>
         <van-tab title="发现">
-          <van-loading v-if="show" size="24px" vertical>加载中...</van-loading>
+          <router-link to="/home"></router-link>
         </van-tab>
       </van-tabs>
     </div>
@@ -43,18 +43,15 @@ export default {
       }
     },
   },
-
-  mounted() {
-    this.clickTab(1);
-    console.log("组件：mounted");
-  },
 };
 </script>
 <style lang="less">
 .navbar {
+  // position: fixed;
   display: flex;
   flex-direction: row;
   .nav_left {
+    background-color: #fff;
     flex: 1;
     text-align: start;
   }
@@ -66,6 +63,7 @@ export default {
     }
   }
   .nav_right {
+    background-color: #fff;
     flex: 1;
     text-align: end;
   }
