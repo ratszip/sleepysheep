@@ -1,17 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import LoginView from '../views/login/LoginView.vue'
-import MainFind from '../views/MainFind.vue'
-import MainFollow from '../views/MainFollow.vue'
+import HomeSug from '../views/home/HomeSug.vue'
 
 Vue.use(VueRouter)
 
 // 路由表
 const routes = [
     {path:'/login',name:'loginview',component:LoginView},
-    {path:'/home',name:'mainfind',component:MainFind},
-    {path:'/home/gz',name:'maingz',component:MainFollow}
-    
+    {path:'/home',name:'homesug',component:HomeSug},
 ]
 
 const router = new VueRouter({
