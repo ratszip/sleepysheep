@@ -1,25 +1,95 @@
 <template>
   <div class="home_sug">
+    <navbar></navbar>
+
     <ul class="content">
       <li class="topic">
         <div class="image">
           <img src="../../assets/595860.png" alt="" />
         </div>
-        <span class="title">123</span>
+        <h3 class="title">123</h3>
         <div class="uinfo">
-          <van-image
-            round
-            width="20px"
-            height="20px"
-            src="https://img01.yzcdn.cn/vant/cat.jpeg"
-          />123
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
         </div>
       </li>
-      <!-- <li class="topic"><img src="../../assets/595860.png" alt="" /></li>
-      <li class="topic"><img src="../../assets/595860.png" alt="" /></li> -->
+      <li class="topic">
+        <div class="image">
+          <img src="../../assets/595860.png" alt="" />
+        </div>
+        <h3 class="title">123</h3>
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
+        </div>
+      </li>
+      <li class="topic">
+        <div class="image">
+          <img src="../../assets/595860.png" alt="" />
+        </div>
+        <h3 class="title">123</h3>
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
+        </div>
+      </li>
+      <li class="topic">
+        <div class="image">
+          <img src="../../assets/595860.png" alt="" />
+        </div>
+        <h3 class="title">123</h3>
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
+        </div>
+      </li>
+      <li class="topic">
+        <div class="image">
+          <img src="../../assets/595860.png" alt="" />
+        </div>
+        <h3 class="title">123456789012345678901321</h3>
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
+        </div>
+      </li>
+      <li class="topic">
+        <div class="image">
+          <img src="../../assets/595860.png" alt="" />
+        </div>
+        <h3 class="title">123</h3>
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>lucy</span>
+          <van-icon name="like" size="16" color="red" />
+          <van-icon name="checked" color="green" />
+        </div>
+      </li>
     </ul>
+    <bottombar></bottombar>
   </div>
 </template>
+<script>
+import navbar from "./HomeTag.vue";
+import bottombar from "../BottomBar.vue";
+export default {
+  components: {
+    navbar,
+    bottombar,
+  },
+};
+</script>
+
 <style lang="less">
 .home_sug {
   background-color: pink;
@@ -46,15 +116,23 @@
     .uinfo {
       height: 50px;
       margin-left: 8px;
-      font-size: 28px;
+      font-size: 26px;
       line-height: 50px;
+      img {
+        vertical-align: top;
+        width: 40px;
+        height: 40px;
+      }
     }
     .title {
-      display: block;
       font-size: 30px;
-      height: 50px;
+      height: 56px;
       font-weight: 550;
       line-height: 50px;
+      margin: 3px 7px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      // vertical-align: top;
     }
     .image {
       height: 400px;

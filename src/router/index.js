@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import LoginView from '../views/login/LoginView.vue'
 import HomeSug from '../views/home/HomeSug.vue'
+import Post from '@/views/post/Post.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,7 @@ Vue.use(VueRouter)
 const routes = [
     {path:'/login',name:'loginview',component:LoginView},
     {path:'/home',name:'homesug',component:HomeSug},
+    {path:'/post',name:'post',component:Post}
 ]
 
 const router = new VueRouter({

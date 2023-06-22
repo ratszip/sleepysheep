@@ -1,19 +1,17 @@
 /* eslint-disable */
 <template>
   <div id="app">
-    <navbar></navbar>
     <router-view />
-    <bottombar></bottombar>
+    <!-- <bottombar></bottombar> -->
   </div>
 </template>
 
 <script>
-import navbar from "./views/NavBar.vue";
 import bottombar from "./views/BottomBar.vue";
 export default {
   name: "App",
   components: {
-    navbar,
+    // navbar,
     bottombar,
   },
 };
