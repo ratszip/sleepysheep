@@ -4,7 +4,7 @@ import LoginView from '../views/login/LoginView.vue'
 import Home from '../views/home/Home.vue'
 import Post from '@/views/post/Post.vue'
 import User from '@/views/user/User.vue'
-import WaterFall from '@/views/home/WaterFall.vue'
+import Pop from '@/views/Pop.vue'
 
 Vue.use(VueRouter)
 
@@ -14,7 +14,7 @@ const routes = [
     {path:'/home',name:'home',component:Home},
     {path:'/user',name:'user',component:User},
     {path:'/post',name:'post',component:Post},
-    {path:'/wt',name:'water',component:WaterFall},
+    {path:'/wt',name:'pop',component:Pop},
 ]
 
 const router = new VueRouter({
@@ -27,18 +27,18 @@ VueRouter.prototype.push = function push (to) {
   return VueRouterPush.call(this, to).catch(err => err)
 }
 
-router.beforeEach((to, from, next) => {
-  if (to.path === '/login'|| to.path === '/home') {
-    next();
-  } else {
-    let token = localStorage.getItem('Authorization');
+// router.beforeEach((to, from, next) => {
+  // if (to.path === '/login'|| to.path === '/home') {
+  //   next();
+  // } else {
+  //   let token = localStorage.getItem('Authorization');
  
-    if (token === null || token === '') {
-      next('/login');
-    } else {
-      next();
-    }
-  }
-});
+  //   if (token === null || token === '') {
+  //     next('/login');
+  //   } else {
+  //     next();
+  //   }
+  // }
+// });
 
 export default router 
