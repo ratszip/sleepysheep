@@ -7,9 +7,9 @@
       active-color="#ee0a24"
       inactive-color="#000"
     >
-      <van-tabbar-item icon="home-o"></van-tabbar-item>
-      <van-tabbar-item icon="add-o"></van-tabbar-item>
-      <van-tabbar-item icon="user-o"></van-tabbar-item>
+      <van-tabbar-item icon="home-o" @click="homeInfo"></van-tabbar-item>
+      <van-tabbar-item icon="add-o" @click="addTopic"></van-tabbar-item>
+      <van-tabbar-item icon="user-o" @click="uInfo"></van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
@@ -20,6 +20,11 @@ export default {
     return {
       active: 0,
     };
+  },
+  methods: {
+    homeInfo() {},
+    addTopic() {},
+    uInfo() {},
   },
 };
 </script>
