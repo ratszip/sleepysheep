@@ -2,7 +2,7 @@
 <template>
   <div id="app">
     <router-view />
-    <!-- <bottombar></bottombar> -->
+    <bottombar v-show="footer_show"></bottombar>
   </div>
 </template>
 
@@ -13,6 +13,26 @@ export default {
   components: {
     // navbar,
     bottombar,
+  },
+  data() {
+    return {
+      footer_show: true,
+    };
+  },
+  watch: {
+    $route: {
+      handler(to, from) {
+        // console.log(to);
+        if (to.path == "/home") {
+          this.footer_show = true;
+        } else if (to.path == "/user") {
+          this.footer_show = true;
+        } else {
+          this.footer_show = false;
+        }
+      },
+      immediate: true,
+    },
   },
 };
 </script>

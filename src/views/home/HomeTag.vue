@@ -3,10 +3,10 @@
     <div class="content">
       <div class="nav_left ntab"></div>
       <div class="nav_center">
-        <van-tabs v-model="active">
+        <van-tabs v-model="active" @click="fclick">
           <van-tab title="关注"></van-tab>
           <van-tab title="推荐">
-            <router-link to="/home"></router-link>
+            <!-- <router-link to="/home"></router-link> -->
           </van-tab>
         </van-tabs>
       </div>
@@ -22,19 +22,9 @@ export default {
     };
   },
   methods: {
-    // async clickTab(index) {
-    // if (index == 1) {
-    //   await request({ url: "/index/sug" }).then(
-    //     (res) => {
-    //       this.show = false;
-    //       console.log(res.data);
-    //     },
-    //     (err) => {
-    //       console.log(err);
-    //     }
-    //   );
-    // }
-    // },
+    fclick() {
+      this.$emit("switchTags", this.active);
+    },
   },
 };
 </script>

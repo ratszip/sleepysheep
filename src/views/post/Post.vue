@@ -1,9 +1,14 @@
 <template>
   <div class="post_page">
-    <van-nav-bar left-text="返回" left-arrow />
+    <van-nav-bar @click-left="backClick" left-text="返回" left-arrow />
     <van-field name="uploader">
       <template #input>
-        <van-uploader v-model="uploader" />
+        <van-uploader
+          v-model="uploader"
+          multiple
+          :max-count="3"
+          :max-size="1024 * 1024 * 5"
+        />
       </template>
     </van-field>
     <van-field
@@ -24,12 +29,12 @@
       show-word-limit
     />
     <div class="pub">
-      <div class="save">
+      <!-- <div class="save">
         <div class="cg">
           <van-icon class="vcg" name="envelop-o" size="18px" />
         </div>
         <span>存草稿</span>
-      </div>
+      </div> -->
       <van-button class="publish" round color="#fd3748">发布内容</van-button>
     </div>
   </div>
@@ -79,8 +84,13 @@ export default {
     return {
       p_title: "",
       p_content: "",
-      uploader: [{ url: "https://img01.yzcdn.cn/vant/leaf.jpg" }],
+      uploader: [],
     };
+  },
+  methods: {
+    backClick() {
+      this.$router.back();
+    },
   },
 };
 </script>
