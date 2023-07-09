@@ -3,6 +3,7 @@
   <div id="app">
     <router-view />
     <bottombar v-show="footer_show"></bottombar>
+    <!-- <Pop></Pop> -->
   </div>
 </template>
 
@@ -19,6 +20,11 @@ export default {
       footer_show: true,
     };
   },
+  methods: {
+    loginpop() {
+      this.$pop.open();
+    },
+  },
   watch: {
     $route: {
       handler(to, from) {
@@ -33,6 +39,14 @@ export default {
       },
       immediate: true,
     },
+  },
+  mounted() {
+    localStorage.setItem("token", "12312");
+    if (localStorage.getItem("token") == null) {
+      setTimeout(() => {
+        this.$pop.open();
+      }, 1000);
+    }
   },
 };
 </script>

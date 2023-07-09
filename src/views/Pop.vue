@@ -1,37 +1,34 @@
 <template>
-  <div class="pos">
-    <van-dialog
-      ref="dialogref"
-      class="pops"
-      v-model="show"
-      closeOnClickOverlay
-      :showCancelButton="tx"
-      :showConfirmButton="tx"
-    >
-      <div class="header">
-        <h3>welcome to sswd</h3>
-      </div>
-      <van-field class="email" left-icon="contact" placeholder="Email" />
-      <div class="space"></div>
-      <van-field
-        class="pwd"
-        left-icon="shield-o"
-        placeholder="Password"
-        type="password"
-      />
-      <div class="space"></div>
-      <div class="readfor">
-        <van-checkbox class="check" shape="round" icon-size="15px"
-          >请勾选 <a href="#">用户协议</a>
-        </van-checkbox>
-        <a href="#">忘记密码?</a>
-      </div>
-      <van-button class="login" type="info" block round>登录</van-button>
-      <div class="new">没有账号？ <a href="#">注册新的账号</a></div>
-      <van-icon class="close" name="cross" @click="close()" />
-    </van-dialog>
-    <van-button type="primary" @click="po">主要按钮</van-button>
-  </div>
+  <van-dialog
+    ref="dialogref"
+    class="pops"
+    v-model="show"
+    closeOnClickOverlay
+    :showCancelButton="tx"
+    :showConfirmButton="tx"
+  >
+    <div class="header">
+      <h3>welcome to sswd</h3>
+    </div>
+    <van-field class="email" left-icon="contact" placeholder="Email" />
+    <div class="space"></div>
+    <van-field
+      class="pwd"
+      left-icon="shield-o"
+      placeholder="Password"
+      type="password"
+    />
+    <div class="space"></div>
+    <div class="readfor">
+      <van-checkbox class="check" shape="round" icon-size="15px"
+        >请勾选 <a href="#">用户协议</a>
+      </van-checkbox>
+      <a href="#">忘记密码?</a>
+    </div>
+    <van-button class="login" type="info" block round>登录</van-button>
+    <div class="new">没有账号？ <a href="#">注册新的账号</a></div>
+    <van-icon class="close" name="cross" @click="close()" />
+  </van-dialog>
 </template>
 <script>
 export default {
@@ -42,11 +39,14 @@ export default {
     };
   },
   methods: {
-    po() {
-      this.show = true;
-    },
+    // po() {
+    //   this.show = true;
+    // },
     close() {
       this.$refs.dialogref.close();
+    },
+    open() {
+      this.show = true;
     },
   },
 };

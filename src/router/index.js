@@ -27,18 +27,17 @@ VueRouter.prototype.push = function push (to) {
   return VueRouterPush.call(this, to).catch(err => err)
 }
 
+// const whiteList=['/','/home','user']
 // router.beforeEach((to, from, next) => {
-  // if (to.path === '/login'|| to.path === '/home') {
-  //   next();
-  // } else {
-  //   let token = localStorage.getItem('Authorization');
- 
-  //   if (token === null || token === '') {
-  //     next('/login');
-  //   } else {
-  //     next();
-  //   }
-  // }
+//   if (to.path === '/'|| to.path === '/home') {
+//     next();
+//   //   Pop.open();
+//   } else {
+//     let token = localStorage.getItem('token');
+//     if(token==null){
+//       next(false)
+//     }
+//   }
 // });
 
 export default router 

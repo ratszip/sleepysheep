@@ -7,7 +7,9 @@
       active-color="#ee0a24"
       inactive-color="#000"
       @change="onChange"
+      :before-change="beforeChange"
     >
+      <!-- :before-change="beforeChange" -->
       <van-tabbar-item icon="home-o"></van-tabbar-item>
       <van-tabbar-item icon="add-o"></van-tabbar-item>
       <van-tabbar-item icon="user-o"></van-tabbar-item>
@@ -23,15 +25,49 @@ export default {
     };
   },
   methods: {
+    hastoken() {
+      if (localStorage.getItem("token") == null) {
+        this.$root.$pop.open();
+        return false;
+      } else {
+        return true;
+      }
+    },
+    beforeChange(index) {
+      switch (index) {
+        case 0:
+          return true;
+
+          break;
+        case 1:
+          return this.hastoken();
+          break;
+        case 2:
+          return this.hastoken();
+          break;
+        default:
+          break;
+      }
+    },
     onChange() {
       switch (this.active) {
         case 0:
           this.$router.push("/home");
           break;
         case 1:
+          //   if (localStorage.getItem("token") == null) {
+          //     this.$root.$pop.open();
+          //     // this.active = 0;
+          //     break;
+          //   }
           this.$router.push("/post");
           break;
         case 2:
+          // if (localStorage.getItem("token") == null) {
+          //   this.$root.$pop.open();
+          // this.active = 0;
+          //   break;
+          // }
           this.$router.push("/user");
           break;
         default:
@@ -47,9 +83,10 @@ export default {
           this.active = 0;
         } else if (to.path == "/user") {
           this.active = 2;
-        } else {
-          this.active = 0;
         }
+        //  else {
+        //   this.active = 0;
+        // }
       },
       immediate: true,
     },

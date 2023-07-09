@@ -3,7 +3,11 @@
     <div class="content">
       <div class="nav_left ntab"></div>
       <div class="nav_center">
-        <van-tabs v-model="active" @click="fclick">
+        <van-tabs
+          v-model="active"
+          :before-change="beforeChange"
+          @click="fclick"
+        >
           <van-tab title="关注"></van-tab>
           <van-tab title="推荐">
             <!-- <router-link to="/home"></router-link> -->
@@ -22,6 +26,14 @@ export default {
     };
   },
   methods: {
+    beforeChange(index) {
+      if (index == 0 && localStorage.getItem("token") == null) {
+        this.$root.$pop.open();
+        return false;
+      } else {
+        return true;
+      }
+    },
     fclick() {
       this.$emit("switchTags", this.active);
     },
