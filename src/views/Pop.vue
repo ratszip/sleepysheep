@@ -26,7 +26,7 @@
       <a href="#">忘记密码?</a>
     </div>
     <van-button class="login" type="info" block round>登录</van-button>
-    <div class="new">没有账号？ <a href="#">注册新的账号</a></div>
+    <div class="new">没有账号？ <a href="/register">注册新的账号</a></div>
     <van-icon class="close" name="cross" @click="close()" />
   </van-dialog>
 </template>
