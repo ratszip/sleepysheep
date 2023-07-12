@@ -1,6 +1,6 @@
 <template>
-  <ul class="content">
-    <li class="topic" v-for="(item, index) in suglist.data">
+  <div class="content">
+    <div class="topic" v-for="(item, index) in suglist.data">
       <div class="image">
         <img :src="baseurl + `${item.images[0]}`" alt="" />
       </div>
@@ -22,8 +22,8 @@
           <span>{{ item.likeCount }}</span>
         </div>
       </div>
-    </li>
-  </ul>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -55,8 +55,8 @@ export default {
   box-sizing: border-box;
   display: inline-block;
   list-style: none;
-  background-color: lightblue;
-
+  background-color: rgb(247, 248, 250);
+  // column-count: 2;
   // padding: 10px 10px 10px 0;
 
   .topic {
@@ -68,7 +68,8 @@ export default {
     margin-right: 7px;
     border-radius: 3%;
     width: 360px;
-    height: 510px;
+    // max-height: 510px;
+    height: 500px;
     background-color: white;
     .info {
       display: flex;
@@ -105,13 +106,15 @@ export default {
       // vertical-align: top;
     }
     .image {
-      height: 400px;
+      // max-height: 300px;
+      height: 380px;
       // background-color: black;
       img {
         border-top-right-radius: 3%;
         border-top-left-radius: 3%;
         width: 100%;
         height: 100%;
+        // max-height: 300px;
         object-fit: cover;
         // position: relative;
         // left: 50%;
