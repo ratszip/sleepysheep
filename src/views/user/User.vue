@@ -29,7 +29,7 @@
         >
       </div>
     </div>
-    <van-tabs v-model="active">
+    <van-tabs class="coll" boder v-model="active">
       <van-tab title="评论">评论区</van-tab>
       <van-tab title="帖子">发帖区</van-tab>
       <van-tab title="点赞">点赞区</van-tab>
@@ -53,6 +53,9 @@ export default {
 </script>
 
 <style lang="less">
+.coll {
+  border-radius: 3%;
+}
 .bottom {
   padding-bottom: 30px;
   .fan {

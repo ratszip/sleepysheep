@@ -6,6 +6,7 @@ import Homewf from '../views/home/Homewf.vue'
 import Post from '@/views/post/Post.vue'
 import User from '@/views/user/User.vue'
 import Pop from '@/views/Pop.vue'
+import FoFans from '@/views/user/Fofan.vue'
 
 Vue.use(VueRouter)
 
@@ -18,6 +19,7 @@ const routes = [
     {path:'/user',name:'user',component:User},
     {path:'/post',name:'post',component:Post},
     {path:'/wt',name:'pop',component:Pop},
+    {path:'/fans',name:'fans',component:FoFans},
 ]
 
 const router = new VueRouter({
