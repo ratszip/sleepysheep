@@ -1,6 +1,10 @@
 <template>
   <div class="content">
-    <div class="topic" v-for="(item, index) in suglist.data">
+    <van-notice-bar
+      left-icon="volume-o"
+      text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"
+    />
+    <div class="topic" v-for="(item, index) in suglist.data" :key="index">
       <div class="image">
         <img :src="baseurl + `${item.images[0]}`" alt="" />
       </div>

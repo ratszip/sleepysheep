@@ -19,7 +19,32 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <van-cell v-for="item in list" :key="item" :title="item" />
+        <div class="fdet">
+          <van-image
+            class="imgs"
+            round
+            width="36px"
+            height="36px"
+            src="https://img01.yzcdn.cn/vant/cat.jpeg"
+          />
+          <div class="funame">user123u1290</div>
+          <van-button class="follow" size="small" round type="info" plain
+            >已关注</van-button
+          >
+        </div>
+        <div class="fdet">
+          <van-image
+            class="imgs"
+            round
+            width="36px"
+            height="36px"
+            src="https://img01.yzcdn.cn/vant/cat.jpeg"
+          />
+          <div class="funame">user123u1290</div>
+          <van-button class="follow" size="small" round type="info" plain
+            >已关注</van-button
+          >
+        </div>
       </van-list>
     </div>
   </div>
@@ -59,6 +84,36 @@ export default {
 };
 </script>
 <style lang="less">
+.fcontent {
+  margin-top: 10px;
+}
+.fdet {
+  background-color: white;
+  // display: flex;
+  height: 80px;
+  // margin: 0 auto;
+  margin-top: 10px;
+  padding: 0px 50px;
+
+  .funame {
+    // flex: 2;
+    text-overflow: ellipsis;
+    display: inline-block;
+    font-size: 30px;
+    height: 72px;
+    width: 210px;
+    vertical-align: middle;
+    margin-left: 30px;
+  }
+  .follow {
+    margin-left: 180px;
+    margin-top: -40px;
+    width: 120px;
+    height: 40px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
 .fhead {
   display: flex;
   display: -webkit-flex;

@@ -20,11 +20,17 @@
         </div>
       </div>
       <div class="bottom">
-        <span class="fan"> 关注: <a>12</a> </span>
-        <span class="fan"> 粉丝：<a>32</a> </span>
+        <span class="fan"> 关注: <a href="/fans">12</a> </span>
+        <span class="fan"> 粉丝：<a href="/fans">32</a> </span>
         <!-- <van-button class="follow" size="small" round type="danger"
           >关注</van-button> -->
-        <van-button class="follow" size="small" round type="info" plain
+        <van-button
+          class="follow"
+          size="small"
+          round
+          type="info"
+          plain
+          @click="edit"
           >编辑</van-button
         >
       </div>
@@ -48,6 +54,9 @@ export default {
     onClickBack() {
       this.$router.back();
     },
+    edit() {
+      this.$router.push("/edit");
+    },
   },
 };
 </script>
@@ -61,6 +70,10 @@ export default {
   .fan {
     font-size: 24px;
     margin-left: 30px;
+    a {
+      text-decoration: none;
+      color: lightblue;
+    }
   }
   .follow {
     font-size: 24px;
