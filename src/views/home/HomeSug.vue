@@ -60,6 +60,7 @@ export default {
   display: inline-block;
   list-style: none;
   background-color: rgb(247, 248, 250);
+  // background-color: rgb(222, 214, 217);
   // column-count: 2;
   // padding: 10px 10px 10px 0;
 

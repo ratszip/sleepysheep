@@ -59,6 +59,6 @@ body,
   padding: 0;
   height: 100%;
   box-sizing: border-box;
-  background-color: #fafafa;
+  background-color: rgb(240, 240, 240);
 }
 </style>
