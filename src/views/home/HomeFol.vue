@@ -36,7 +36,7 @@
     margin: 6px 0px;
     display: flex;
     // background-color: rgb(222, 214, 217);
-    background-color: lightblue;
+    background-color: rgb(247, 248, 250);
     .ftpic {
       height: 200px;
       flex: 3;

@@ -10,22 +10,42 @@
     <div class="header">
       <h3>welcome to sswd</h3>
     </div>
-    <van-field class="email" left-icon="contact" placeholder="Email" />
-    <div class="space"></div>
-    <van-field
-      class="pwd"
-      left-icon="shield-o"
-      placeholder="Password"
-      type="password"
-    />
-    <div class="space"></div>
-    <div class="readfor">
-      <van-checkbox class="check" shape="round" icon-size="15px"
-        >请勾选 <a href="#">用户协议</a>
-      </van-checkbox>
-      <a href="#">忘记密码?</a>
-    </div>
-    <van-button class="login" type="info" block round>登录</van-button>
+    <van-form @submit="onSubmit">
+      <van-field
+        class="email"
+        left-icon="contact"
+        placeholder="Email"
+        v-model="email"
+        :rules="[{ pattern, message: '输入正确的邮箱格式' }]"
+        required
+      />
+      <div class="space"></div>
+      <van-field
+        class="pwd"
+        left-icon="shield-o"
+        placeholder="Password"
+        type="password"
+        v-model="password"
+        maxlength="20"
+        required
+        :rules="[{ required: true, message: '请填写密码' }]"
+      />
+      <div class="space"></div>
+      <div class="readfor">
+        <van-checkbox
+          class="check"
+          shape="round"
+          v-model="checked"
+          icon-size="15px"
+          >请勾选 <a href="#">用户协议</a>
+        </van-checkbox>
+        <a href="#">忘记密码?</a>
+      </div>
+      <van-button class="login" type="info" block round native-type="submit"
+        >登录</van-button
+      >
+    </van-form>
+
     <div class="new">没有账号？ <a href="/register">注册新的账号</a></div>
     <van-icon class="close" name="cross" @click="close()" />
   </van-dialog>
@@ -34,14 +54,25 @@
 export default {
   data() {
     return {
+      checked: false,
       show: false,
       tx: false,
+      email: "",
+      password: "",
+      pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/,
     };
   },
   methods: {
     // po() {
     //   this.show = true;
     // },
+    onSubmit() {
+      if (!this.checked) {
+        this.$toast({
+          message: "请勾选用户协议",
+        });
+      }
+    },
     close() {
       this.$refs.dialogref.close();
     },
@@ -112,6 +143,7 @@ export default {
     display: flex;
     justify-content: space-between;
   }
+
   .new {
     padding: 0 40px;
     font-size: 20px;
