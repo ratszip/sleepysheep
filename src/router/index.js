@@ -8,6 +8,7 @@ import User from '@/views/user/User.vue'
 import Pop from '@/views/Pop.vue'
 import FoFans from '@/views/user/Fofan.vue'
 import EditUser from '@/views/user/EditUser.vue'
+import Topic from '@/views/post/Topic.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,7 @@ const routes = [
     {path:'/wt',name:'pop',component:Pop},
     {path:'/fans',name:'fans',component:FoFans},
     {path:'/edit',name:'edit',component:EditUser},
+    {path:'/topic/:id',name:'topic',component:Topic},
 ]
 
 const router = new VueRouter({

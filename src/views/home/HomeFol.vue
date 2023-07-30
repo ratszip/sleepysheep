@@ -16,7 +16,9 @@
             这是我的帖子麻辣，加打了ld懒得说了解奥。拉萨机电商
           </h1>
           <div class="ftpic">
-            <img src="http://114.55.88.242:8080/topic/images/5.jpg" />
+            <img
+              src="http://114.55.88.242:8080/topic/images/211690547110982.jpg"
+            />
           </div>
         </div>
       </div>
@@ -39,11 +41,11 @@
     background-color: rgb(247, 248, 250);
     .ftpic {
       height: 200px;
-      flex: 3;
-      display: flex;
+      flex: 2;
       img {
         width: 100%;
         height: 100%;
+        float: left;
         object-fit: contain;
       }
     }

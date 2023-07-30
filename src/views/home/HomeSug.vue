@@ -2,11 +2,11 @@
   <div class="content">
     <van-notice-bar
       left-icon="volume-o"
-      text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"
+      text="在阅读过程中人们叽里呱啦一顿瞎逼逼，那个啥，什么，啊哦唉？。"
     />
     <div class="topic" v-for="(item, index) in suglist.data" :key="index">
-      <div class="image">
-        <img :src="baseurl + `${item.images[0]}`" alt="" />
+      <div class="image" @click="t_click(item.id)">
+        <img :src="baseurl + `${item.images[0].path}`" alt="" />
       </div>
       <h3 class="title">{{ item.title }}</h3>
       <div class="info">
@@ -40,11 +40,17 @@ export default {
       baseurl: "http://114.55.88.242:8080/",
     };
   },
+  methods: {
+    t_click(id) {
+      this.$router.push(`/topic/${id}`);
+      // console.log(id);
+    },
+  },
   mounted() {
     request({ url: "/index/sug" }).then(
       (res) => {
         this.suglist = res.data;
-        // console.log(res.data.data[0].images[0]);
+        // console.log(this.suglist.data[0].images[0].path);
       },
       (err) => {
         console.log(err);
@@ -58,6 +64,7 @@ export default {
 .content {
   box-sizing: border-box;
   display: inline-block;
+  width: 100%;
   list-style: none;
   background-color: rgb(247, 248, 250);
   // background-color: rgb(222, 214, 217);
