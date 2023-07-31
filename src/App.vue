@@ -41,7 +41,7 @@ export default {
     },
   },
   mounted() {
-    localStorage.setItem("token", "12312");
+    // localStorage.setItem("token", "12312");
     if (localStorage.getItem("token") == null) {
       setTimeout(() => {
         this.$pop.open();

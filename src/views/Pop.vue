@@ -51,14 +51,19 @@
   </van-dialog>
 </template>
 <script>
+import JSEncrypt from "jsencrypt";
+import request from "@/util/request";
 export default {
   data() {
     return {
+      pubKey:
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZ6PSpdV0ORwjzDHRNlpGnkE63LVHmdR0FHwHSUHdVAsO7Gfd3LdAAUN8HzXgrhX+lk7wcR40+/BHkb1Be7mrS80TiadsPEIYRzRXB71btBfy2kLiZGgUK0NEqarAhtzcqeBoD2FHZ8mehbHGL6Fa+IafNjWajY8jQsa+wjzOdwQIDAQAB",
       checked: false,
       show: false,
       tx: false,
-      email: "",
-      password: "",
+      email: "a@t.test",
+      password: "ABC12356",
+      passwd: "",
       pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/,
     };
   },
@@ -66,12 +71,39 @@ export default {
     // po() {
     //   this.show = true;
     // },
-    onSubmit() {
+    getEncryPWD(pwd) {
+      var jsen = new JSEncrypt();
+      jsen.setPublicKey(this.pubKey);
+      return jsen.encrypt(pwd.toString());
+    },
+    onSubmit(values) {
+      this.passwd = this.getEncryPWD(this.password);
       if (!this.checked) {
         this.$toast({
           message: "请勾选用户协议",
         });
       }
+      request({
+        method: "post",
+        url: "/user/login",
+        data: { email: this.email, passwd: this.passwd },
+      }).then(
+        (res) => {
+          // res.data.token;
+          if (res.data.code === 2000) {
+            this.$toast({
+              message: "登录成功",
+            });
+            localStorage.setItem("token", res.data.data);
+            this.$refs.dialogref.close();
+          }
+          //
+          // console.log(this.suglist.data[0].images[0].path);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     close() {
       this.$refs.dialogref.close();
