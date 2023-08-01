@@ -2,7 +2,7 @@
   <div class="topic">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
 
-    <div class="imgs" v-if="tcontent.images[0].path">
+    <div class="imgs">
       <div class="author">
         <van-image
           class="toux"
@@ -13,7 +13,8 @@
         />
         <span class="auname">{{ tcontent.userName }}</span>
       </div>
-      <van-swipe class="loopic" :autoplay="3000">
+      <van-swipe class="loopic"
+        ><!--:autoplay="3000" -->
         <van-swipe-item v-for="(image, index) in tcontent.images" :key="index">
           <img v-lazy="`http://114.55.88.242:8080/${image.path}`" />
         </van-swipe-item>
@@ -34,7 +35,9 @@
       </p>
       <span class="topictime">{{ tcontent.createTime }}</span>
     </div>
-    <div class="comment">{{ tcontent.comments[0].content }}</div>
+    <div class="comment" v-if="tcontent.comments">
+      {{ tcontent.comments[0].content }}
+    </div>
   </div>
 </template>
 

@@ -1,42 +1,46 @@
 <template>
   <div class="post_page">
     <van-nav-bar @click-left="backClick" left-text="返回" left-arrow />
-    <van-field name="uploader">
-      <template #input>
-        <van-uploader
-          v-model="uploader"
-          multiple
-          :max-count="3"
-          :max-size="1024 * 1024 * 5"
-        />
-      </template>
-    </van-field>
-    <van-field
-      v-model="p_title"
-      rows="1"
-      maxlength="20"
-      placeholder="请输入标题"
-      show-word-limit
-    />
+    <van-form @submit="onSubmit">
+      <van-field name="uploader">
+        <template #input>
+          <van-uploader
+            v-model="uploader"
+            multiple
+            :max-count="3"
+            :max-size="1024 * 1024 * 5"
+          />
+        </template>
+      </van-field>
+      <van-field
+        v-model="p_title"
+        rows="1"
+        maxlength="20"
+        placeholder="请输入标题"
+        show-word-limit
+      />
 
-    <van-field
-      v-model="p_content"
-      autosize
-      rows="4"
-      type="textarea"
-      maxlength="50"
-      placeholder="添加正文"
-      show-word-limit
-    />
-    <div class="pub">
-      <!-- <div class="save">
+      <van-field
+        v-model="p_content"
+        autosize
+        rows="4"
+        type="textarea"
+        maxlength="100"
+        placeholder="添加正文"
+        show-word-limit
+      />
+      <div class="pub">
+        <!-- <div class="save">
         <div class="cg">
           <van-icon class="vcg" name="envelop-o" size="18px" />
         </div>
         <span>存草稿</span>
       </div> -->
-      <van-button class="publish" round color="#fd3748">发布内容</van-button>
-    </div>
+        <van-button native-type="submit" class="publish" round color="#fd3748"
+          >发布内容</van-button
+        >
+      </div>
+    </van-form>
   </div>
 </template>
 <style lang="less">
@@ -79,6 +83,7 @@
 }
 </style>
 <script>
+import request from "@/util/request";
 export default {
   data() {
     return {
@@ -88,8 +93,49 @@ export default {
     };
   },
   methods: {
+    // afterRead(fileObj) {
+    //   // 上传状态
+    //   fileObj.status = "uploading";
+    //   // 状态提示
+    //   fileObj.message = "上传中...";
+    //   // 声明form表单数据
+    //   const formData = new FormData();
+    //   // 添加文件信息
+    //   formData.append("file", fileObj.file);
+    // },
+
     backClick() {
       this.$router.back();
+    },
+    onSubmit() {
+      let formData = new FormData();
+      formData.append("title", this.p_title);
+      formData.append("content", this.p_content);
+      formData.append("files", this.uploader);
+      console.log(localStorage.token);
+      request({
+        method: "post",
+        url: "/index/create",
+        params: formData,
+        headers: {
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          // res.data.token;
+          if (res.data.code === 2000) {
+            this.$toast({
+              message: "发帖成功",
+            });
+            this.$router.push("/user");
+          }
+          //
+          // console.log(this.suglist.data[0].images[0].path);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
   },
 };

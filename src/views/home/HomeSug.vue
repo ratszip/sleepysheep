@@ -2,7 +2,7 @@
   <div class="content">
     <van-notice-bar
       left-icon="volume-o"
-      text="在阅读过程中人们叽里呱啦一顿瞎逼逼，那个啥，什么，啊哦唉？。"
+      text="吃葡萄不吐葡萄皮，不吃葡萄狂吐西瓜皮！呃呃呃。咕咚咕咚，喝口水，叽里呱啦吧唧嘴..呃呃呃"
     />
     <div class="topic" v-for="(item, index) in suglist.data" :key="index">
       <div class="image" @click="t_click(item.id)">

@@ -30,7 +30,11 @@
         >注册并登录</van-button
       >
       <div class="read">
-        <van-checkbox class="agree" shape="round" icon-size="15px"
+        <van-checkbox
+          class="agree"
+          shape="round"
+          icon-size="15px"
+          v-model="checked"
           >我已阅读并同意<a href="#">《用户协议》</a
           ><a href="#">《隐私政策》</a>
         </van-checkbox>
@@ -44,6 +48,7 @@ export default {
     return {
       show: false,
       tx: false,
+      checked: false,
     };
   },
   methods: {
