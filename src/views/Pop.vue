@@ -53,6 +53,7 @@
 <script>
 import JSEncrypt from "jsencrypt";
 import request from "@/util/request";
+import "vant/lib/button/style";
 export default {
   data() {
     return {
@@ -82,6 +83,7 @@ export default {
         this.$toast({
           message: "请勾选用户协议",
         });
+        return false;
       }
       request({
         method: "post",
@@ -167,6 +169,7 @@ export default {
     background-color: rgb(48, 93, 255);
     margin: 0 auto;
     width: 90%;
+    height: 86px;
   }
   .readfor {
     padding: 0 40px;

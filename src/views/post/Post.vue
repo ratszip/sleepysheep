@@ -9,6 +9,7 @@
             multiple
             :max-count="3"
             :max-size="1024 * 1024 * 5"
+            :after-read="afterRead"
           />
         </template>
       </van-field>
@@ -18,6 +19,7 @@
         maxlength="20"
         placeholder="请输入标题"
         show-word-limit
+        required
       />
 
       <van-field
@@ -28,6 +30,7 @@
         maxlength="100"
         placeholder="添加正文"
         show-word-limit
+        required
       />
       <div class="pub">
         <!-- <div class="save">
@@ -93,31 +96,36 @@ export default {
     };
   },
   methods: {
-    // afterRead(fileObj) {
-    //   // 上传状态
-    //   fileObj.status = "uploading";
-    //   // 状态提示
-    //   fileObj.message = "上传中...";
-    //   // 声明form表单数据
-    //   const formData = new FormData();
-    //   // 添加文件信息
-    //   formData.append("file", fileObj.file);
-    // },
+    afterRead() {
+      //这次真是要吐槽一下vant组件 真心没有element好用
+      //element 上传地址可以直接写到组件里 vant还要在方法里写上传的接口地址
+      // this.uploader.forEach((item, index) => {
+      //   console.log(item.file);
+      // });
+      // console.log(this.uploader);
+    },
 
     backClick() {
       this.$router.back();
     },
     onSubmit() {
+      this.afterRead();
       let formData = new FormData();
+      this.uploader.forEach((item, index) => {
+        formData.append("files", item.file);
+        console.log(item.file);
+      });
+      // formData.append("files", this.uploader[0].file);
       formData.append("title", this.p_title);
       formData.append("content", this.p_content);
-      formData.append("files", this.uploader);
-      console.log(localStorage.token);
+      console.log(formData);
+      // console.log(localStorage.token);
       request({
         method: "post",
         url: "/index/create",
-        params: formData,
+        data: formData,
         headers: {
+          "content-type": "multipart/form-data",
           token: localStorage.token,
         },
       }).then(
