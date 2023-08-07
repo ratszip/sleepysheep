@@ -13,38 +13,65 @@
         />
         <span class="auname">{{ tcontent.userName }}</span>
       </div>
-      <van-swipe class="loopic"
-        ><!--:autoplay="3000" -->
-        <van-swipe-item v-for="(image, index) in tcontent.images" :key="index">
-          <img v-lazy="`http://114.55.88.242:8080/${image.path}`" />
+      <van-swipe class="imbg">
+        <van-swipe-item
+          :style="imgclass"
+          ref="pics"
+          v-for="(image, index) in tcontent.images"
+          :key="index"
+        >
+          <img
+            class="mainpic"
+            v-lazy="`http://114.55.88.242:8080/${image.path}`"
+          />
         </van-swipe-item>
       </van-swipe>
-      <div class="solve">
-        <van-icon
-          v-if="tcontent.isSolved == true"
-          class="solve"
-          name="checked"
-          color="green"
-        />
-        <van-icon v-else-if="tcontent.isSolved == false" name="question-o" />
-      </div>
+
       <span class="title">{{ tcontent.title }}</span>
 
       <p class="content">
         {{ tcontent.content }}
       </p>
-      <span class="topictime">{{ tcontent.createTime }}</span>
+      <div class="tbotom">
+        <span class="solve" v-if="tcontent.isSolved == true">
+          <van-icon size="14" name="checked" color="green" /> 已解决</span
+        >
+
+        <span class="solve" v-else-if="tcontent.isSolved == false">
+          <van-icon size="14" name="question-o" /> 未解决
+        </span>
+
+        <span class="topictime">发布于{{ tcontent.createTime }}</span>
+      </div>
     </div>
     <div class="comment" v-if="tcontent.comments">
-      {{ tcontent.comments[0].content }}
+      <div>
+        <van-image
+          class="toux"
+          round
+          width="20px"
+          height="20px"
+          src="http://114.55.88.242:8080/images/avatar_m_c.png"
+        />
+        <span>用户123</span>
+        <p>我的评论是，楼主牛逼</p>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="less">
+// .loopicx {
+//   margin: 0 auto;
+//   height: 400px;
+//   // width: 100%;
+//   text-align: center;
+//   vertical-align: middle;
+// }
+
 .imgs {
   background-color: white;
-  padding: 0 20px;
+  // padding: 0 20px;
   .author {
     .toux {
       vertical-align: middle;
@@ -53,19 +80,22 @@
       font-size: 24px;
     }
   }
-  .loopic {
-    margin: 0 auto;
-    max-height: 900px;
-    width: 100%;
-    img {
-      width: 100%;
-      object-fit: contain;
+    .mainpic {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      vertical-align: middle,
+      // object-fit: contain;
     }
-  }
+  
   .solve {
-    display: inline-block;
-    vertical-align: middle;
-    height: 40px;
+    font-size: 20px;
+    color: gray;
+  }
+  .tbotom {
+    display: flex;
+    justify-content: space-between;
   }
   .title {
     font-size: 40px;
@@ -85,6 +115,7 @@
     background-color: white;
   }
   .topictime {
+    margin-left: 30px;
     font-size: 20px;
     color: lightgray;
   }
@@ -100,8 +131,16 @@ export default {
       topicId: null,
       tcontent: "",
       baseurl: "http://114.55.88.242:8080/",
+      imgclass: {
+        margin: "0 auto",
+        height: "",
+        lineHeight: "",
+        textAlign: "center",
+        verticalAlign: "middle",
+      },
     };
   },
+  computed: {},
   methods: {
     onClickLeft() {
       this.$router.back();
@@ -116,13 +155,34 @@ export default {
     }).then(
       (res) => {
         this.tcontent = res.data.data;
-        console.log(this.tcontent);
+        if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {
+          let realh =
+            (document.body.clientWidth * this.tcontent.images[0].height) /
+            this.tcontent.images[0].width;
+          if (realh < 200) {
+            this.imgclass.height = "200px";
+          } else {
+            this.imgclass.height = realh + "px";
+          }
+        } else {
+          this.imgclass.height = "400px";
+          this.imgclass.lineHeight = "400px";
+        }
+        // this.$refs.pics.$el.style.width = 200;
+        // this.$refs.pics.$el.style.height = this.tcontent.images[0].height;
+        // console.log(document.body.clientWidth);
+        // console.log();
       },
       (err) => {
         console.log(err);
       }
     );
   },
-  test() {},
+  // created() {
+  //   this.$nextTick(() => {
+  //     // 在这里获取 this.$refs.dom
+  //     console.log(this.$refs.pics);
+  //   });
+  // },
 };
 </script>

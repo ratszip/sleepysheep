@@ -136,6 +136,10 @@ export default {
               message: "发帖成功",
             });
             this.$router.push("/user");
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
           }
           //
           // console.log(this.suglist.data[0].images[0].path);
