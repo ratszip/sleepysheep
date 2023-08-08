@@ -1,28 +1,34 @@
 <template>
   <div class="content">
-    <van-notice-bar
-      left-icon="volume-o"
-      text="吃葡萄不吐葡萄皮，不吃葡萄狂吐西瓜皮！呃呃呃。咕咚咕咚，喝口水，叽里呱啦吧唧嘴..呃呃呃"
-    />
     <div class="topic" v-for="(item, index) in suglist.data" :key="index">
       <div class="image" @click="t_click(item.id)">
         <img :src="baseurl + `${item.images[0].path}`" alt="" />
       </div>
-      <h3 class="title">{{ item.title }}</h3>
-      <div class="info">
-        <div class="uinfo">
-          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
-          <span>{{ item.userName }}</span>
-        </div>
-        <div class="tinfo">
+      <div class="titleall">
+        <h3 class="title">{{ item.title }}</h3>
+        <div class="solv">
           <van-icon
             v-if="item.isSolved == true"
             class="solve"
             name="checked"
             color="green"
+            size="18"
           />
-          <van-icon v-else-if="item.isSolved == false" name="question-o" />
-          <van-icon name="like-o" size="16" />
+          <van-icon
+            size="18"
+            v-else-if="item.isSolved == false"
+            name="question-o"
+          />
+        </div>
+      </div>
+
+      <div class="info">
+        <div class="uinfo">
+          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <span>&nbsp;{{ item.userName }}</span>
+        </div>
+        <div class="tinfo">
+          <van-icon name="eye-o" size="16" />
           <span>{{ item.likeCount }}</span>
         </div>
       </div>
@@ -70,11 +76,11 @@ export default {
   // background-color: rgb(222, 214, 217);
   // column-count: 2;
   // padding: 10px 10px 10px 0;
-
+  // padding-bottom: 100px;
   .topic {
     float: left;
     box-sizing: border-box;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
     margin-top: 10px;
     margin-left: 8px;
     margin-right: 7px;
@@ -83,6 +89,11 @@ export default {
     // max-height: 510px;
     height: 500px;
     background-color: white;
+    .titleall {
+      display: flex;
+      justify-content: space-between;
+      margin-right: 8px;
+    }
     .info {
       display: flex;
       height: 50px;
@@ -92,30 +103,33 @@ export default {
       line-height: 50px;
       justify-content: space-between;
 
-      img {
-        vertical-align: top;
-        width: 40px;
-        height: 40px;
-      }
       .uinfo {
+        img {
+          width: 30px;
+          height: 30px;
+        }
         span {
+          font-size: 20px;
           text-overflow: ellipsis;
           overflow: hidden;
-          width: 140px;
+          width: 160px;
+          line-height: 28px;
           display: inline-block;
           white-space: nowrap;
         }
       }
+      .tinfo {
+        vertical-align: middle;
+        text-align: center;
+      }
     }
     .title {
-      font-size: 30px;
-      height: 56px;
-      font-weight: 550;
+      font-size: small;
+      height: 50px;
       line-height: 50px;
       margin: 3px 7px;
       overflow: hidden;
       text-overflow: ellipsis;
-      // vertical-align: top;
     }
     .image {
       // max-height: 300px;

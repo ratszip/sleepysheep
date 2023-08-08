@@ -3,15 +3,20 @@
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
 
     <div class="imgs">
-      <div class="author">
-        <van-image
-          class="toux"
-          round
-          width="20px"
-          height="20px"
-          src="http://114.55.88.242:8080/images/avatar_m_c.png"
-        />
-        <span class="auname">{{ tcontent.userName }}</span>
+      <div class="topau">
+        <div class="author">
+          <van-image
+            class="toux"
+            round
+            width="28px"
+            height="28px"
+            src="http://114.55.88.242:8080/images/avatar_m_c.png"
+          />
+          <span class="auname"> {{ tcontent.userName }}</span>
+        </div>
+        <van-button class="follow" size="small" round type="info" plain
+          >关注</van-button
+        >
       </div>
       <van-swipe class="imbg">
         <van-swipe-item
@@ -29,9 +34,7 @@
 
       <span class="title">{{ tcontent.title }}</span>
 
-      <p class="content">
-        {{ tcontent.content }}
-      </p>
+      <p class="content">&nbsp{{ tcontent.content }}</p>
       <div class="tbotom">
         <span class="solve" v-if="tcontent.isSolved == true">
           <van-icon size="14" name="checked" color="green" /> 已解决</span
@@ -45,16 +48,18 @@
       </div>
     </div>
     <div class="comment" v-if="tcontent.comments">
-      <div>
+      <div class="citem" v-for="(item, index) in tcontent.comments">
         <van-image
-          class="toux"
+          class="ctoux"
           round
-          width="20px"
-          height="20px"
+          width="28px"
+          height="28px"
           src="http://114.55.88.242:8080/images/avatar_m_c.png"
         />
-        <span>用户123</span>
-        <p>我的评论是，楼主牛逼</p>
+        <span class="cuname">{{ item.uname }} </span>
+        <van-icon name="like-o" size="18" />
+        <p class="ccontent">{{ item.content }}</p>
+        <span class="topictime ctime">{{ item.createTime }}</span>
       </div>
     </div>
   </div>
@@ -72,13 +77,25 @@
 .imgs {
   background-color: white;
   // padding: 0 20px;
-  .author {
-    .toux {
+  .topau {
+   display: flex;
+   justify-content: space-between;
+    .author{
+      .toux {
       vertical-align: middle;
+      margin: 5px 5px 5px 10px;
     }
     .auname {
-      font-size: 24px;
+      font-size: 28px;
     }
+    }
+    .follow {
+    font-size: 24px;
+    margin: 13px;
+    vertical-align: middle;
+    width: 120px;
+    height: 40px;
+  }
   }
     .mainpic {
       width: auto;
@@ -114,12 +131,38 @@
     margin: 0;
     background-color: white;
   }
-  .topictime {
-    margin-left: 30px;
+ 
+}
+.topictime {
+    margin-left: 20px;
+    margin-right: 10px;
     font-size: 20px;
     color: lightgray;
   }
-}
+  .citem{
+    // display: flex;
+    padding: 8px 10px 8px 18px;
+    margin: 2px 0;
+    background-color: white;
+  .ctoux {
+      vertical-align: middle;
+    }
+  
+    .cuname {
+      font-size: 28px;
+      color: gray;
+    }
+    .ccontent{
+      font-size: 28px;
+    line-height: 28px;
+    word-wrap: break-word;
+    margin: 16px 8px 8px 60px;
+    }
+    .ctime{
+      display: block;
+      margin: 16px 8px 8px 60px;
+    }
+  }
 
 // "`http://114.55.88.242:8080/${tcontent.images[0].path}`
 </style>
@@ -171,7 +214,7 @@ export default {
         // this.$refs.pics.$el.style.width = 200;
         // this.$refs.pics.$el.style.height = this.tcontent.images[0].height;
         // console.log(document.body.clientWidth);
-        // console.log();
+        console.log(this.tcontent.comments);
       },
       (err) => {
         console.log(err);
