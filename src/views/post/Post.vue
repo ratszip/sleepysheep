@@ -136,7 +136,7 @@ export default {
               message: "发帖成功",
             });
             this.$router.push("/user");
-          } else {
+          } else if (res.data.code === 3000) {
             this.$toast({
               message: res.data.msg,
             });
