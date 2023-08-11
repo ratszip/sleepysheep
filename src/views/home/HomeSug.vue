@@ -6,7 +6,7 @@
       </div>
       <div class="titleall">
         <h3 class="title">{{ item.title }}</h3>
-        <div class="solv">
+        <!-- <div class="solv">
           <van-icon
             v-if="item.isSolved == true"
             class="solve"
@@ -19,7 +19,7 @@
             v-else-if="item.isSolved == false"
             name="question-o"
           />
-        </div>
+        </div> -->
       </div>
 
       <div class="info">
@@ -28,11 +28,17 @@
           <span>&nbsp;{{ item.userName }}</span>
         </div>
         <div class="tinfo">
-          <van-icon name="eye-o" size="16" />
-          <span>{{ item.likeCount }}</span>
+          <van-icon
+            style="vertical-align: -10%"
+            name="flag-o"
+            size="18"
+            color="red"
+          />
+          {{ item.likeCount }}
         </div>
       </div>
     </div>
+    <div class="nomore">暂无更多</div>
   </div>
 </template>
 
@@ -73,10 +79,17 @@ export default {
   width: 100%;
   list-style: none;
   background-color: rgb(247, 248, 250);
+  // margin-bottom: 100px;
   // background-color: rgb(222, 214, 217);
   // column-count: 2;
   // padding: 10px 10px 10px 0;
   // padding-bottom: 100px;
+  .nomore {
+    text-align: center;
+    font-size: 26px;
+    color: lightgray;
+    padding-bottom: 16%;
+  }
   .topic {
     float: left;
     box-sizing: border-box;
@@ -87,12 +100,15 @@ export default {
     border-radius: 3%;
     width: 360px;
     // max-height: 510px;
-    height: 500px;
+    height: 540px;
     background-color: white;
-    .titleall {
-      display: flex;
-      justify-content: space-between;
-      margin-right: 8px;
+    // .titleall {
+    //   display: flex;
+    //   justify-content: space-between;
+    //   margin-right: 8px;
+    // }
+    .solv {
+      margin-top: 6px;
     }
     .info {
       display: flex;
@@ -104,6 +120,7 @@ export default {
       justify-content: space-between;
 
       .uinfo {
+        vertical-align: middle;
         img {
           width: 30px;
           height: 30px;
@@ -119,8 +136,7 @@ export default {
         }
       }
       .tinfo {
-        vertical-align: middle;
-        text-align: center;
+        vertical-align: auto;
       }
     }
     .title {
@@ -129,11 +145,14 @@ export default {
       line-height: 50px;
       margin: 3px 7px;
       overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
       text-overflow: ellipsis;
+      -webkit-line-clamp: 2;
     }
     .image {
       // max-height: 300px;
-      height: 380px;
+      height: 420px;
       // background-color: black;
       img {
         border-top-right-radius: 3%;

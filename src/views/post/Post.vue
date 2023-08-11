@@ -79,6 +79,9 @@
 .post_page {
   background-color: #ffff;
   height: 100%;
+  .van-field__control {
+    width: 600px;
+  }
 }
 .van-cell__value {
   display: flex;

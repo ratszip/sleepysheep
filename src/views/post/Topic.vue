@@ -8,6 +8,7 @@
           <van-image
             class="toux"
             round
+            style="vertical-align: -20%"
             width="28px"
             height="28px"
             src="http://114.55.88.242:8080/images/avatar_m_c.png"
@@ -37,17 +38,27 @@
       <p class="content">&nbsp{{ tcontent.content }}</p>
       <div class="tbotom">
         <span class="solve" v-if="tcontent.isSolved == true">
-          <van-icon size="14" name="checked" color="green" /> 已解决</span
+          <van-icon
+            style="vertical-align: -10%"
+            size="15"
+            name="checked"
+            color="green"
+          />
+          已解决</span
         >
 
         <span class="solve" v-else-if="tcontent.isSolved == false">
-          <van-icon size="14" name="question-o" /> 未解决
+          <van-icon style="vertical-align: -10%" size="15" name="question-o" />
+          未解决
         </span>
 
         <span class="topictime">发布于{{ tcontent.createTime }}</span>
       </div>
     </div>
-    <div class="comment" v-if="tcontent.comments">
+    <div class="comment">
+      <div class="ttc">
+        共 {{ tcontent.comments ? tcontent.comments.length : 0 }} 条评论
+      </div>
       <div class="citem" v-for="(item, index) in tcontent.comments">
         <van-image
           class="ctoux"
@@ -57,10 +68,30 @@
           src="http://114.55.88.242:8080/images/avatar_m_c.png"
         />
         <span class="cuname">{{ item.uname }} </span>
-        <van-icon name="like-o" size="18" />
+        <!-- <van-icon name="like-o" size="18" /> -->
         <p class="ccontent">{{ item.content }}</p>
-        <span class="topictime ctime">{{ item.createTime }}</span>
+        <span class="topictime ctime">{{ item.createTime }} </span>
+        <div class="handl">
+          <van-icon size="18" name="comment-o" />
+          <span><van-icon name="good-job-o" size="18" /> 123</span>
+          <span>copy</span>
+        </div>
       </div>
+      <div class="nomore">~暂无更多回复~</div>
+    </div>
+
+    <div class="huifu">
+      <van-field
+        class="rep"
+        type="text"
+        placeholder="发表一下观点吧"
+        extra="发表"
+        v-model="pubopinion"
+      >
+        <template #button>
+          <van-button size="small" round type="primary">发表</van-button>
+        </template>
+      </van-field>
     </div>
   </div>
 </template>
@@ -73,29 +104,46 @@
 //   text-align: center;
 //   vertical-align: middle;
 // }
-
+.huifu{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  .rep{
+    .van-field__body{
+      width: 100%;
+      .van-field__control{
+        width:90%;
+        height: 60px;
+        padding-left: 20px;
+        background-color: #F0F0F0;
+        border-radius: 60px;
+      }
+    }
+  }
+}
 .imgs {
   background-color: white;
   // padding: 0 20px;
+  padding-bottom: 10px;
   .topau {
    display: flex;
    justify-content: space-between;
     .author{
       .toux {
-      vertical-align: middle;
-      margin: 5px 5px 5px 10px;
-    }
-    .auname {
-      font-size: 28px;
-    }
+        vertical-align: middle;
+        margin: 0px 5px 5px 10px;
+      }
+      .auname {
+        font-size: 28px;
+      }
     }
     .follow {
-    font-size: 24px;
-    margin: 13px;
-    vertical-align: middle;
-    width: 120px;
-    height: 40px;
-  }
+      font-size: 24px;
+      vertical-align: middle;
+      width: 120px;
+      margin-top: 30px;
+      height: 40px;
+    }
   }
     .mainpic {
       width: auto;
@@ -107,19 +155,20 @@
     }
   
   .solve {
-    font-size: 20px;
+    font-size: 26px;
     color: gray;
   }
   .tbotom {
     display: flex;
     justify-content: space-between;
+    padding-left: 16px;
   }
   .title {
     font-size: 40px;
-    height: 56px;
+    height: 50px;
     font-weight: 550;
     line-height: 50px;
-    margin: 3px 7px;
+    margin: 10px 16px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -129,25 +178,47 @@
     line-height: 50px;
     word-wrap: break-word;
     margin: 0;
+    padding-left: 12px;
     background-color: white;
   }
  
 }
+
 .topictime {
     margin-left: 20px;
     margin-right: 10px;
     font-size: 20px;
     color: lightgray;
   }
+  .ttc{
+    margin-top: 2px;
+    color: rgb(107, 106, 106);
+    font-size: 26px;
+    padding: 10px;
+    background-color: white;
+  }
+  .nomore{
+    text-align: center;
+    font-size: 26px;
+    color: lightgray;
+    margin-top: 10px;
+  }
   .citem{
     // display: flex;
     padding: 8px 10px 8px 18px;
-    margin: 2px 0;
+    // margin: 2px 0;
+    margin-bottom: 2px;
     background-color: white;
-  .ctoux {
+    .ctoux {
       vertical-align: middle;
     }
-  
+    .handl{
+      font-size: 28px;
+      display: flex;
+      justify-content: space-between;
+      color: gray;
+      margin:0 60px;
+    }
     .cuname {
       font-size: 28px;
       color: gray;
@@ -171,6 +242,7 @@ import request from "@/util/request";
 export default {
   data() {
     return {
+      pubopinion: "",
       topicId: null,
       tcontent: "",
       baseurl: "http://114.55.88.242:8080/",
@@ -214,7 +286,7 @@ export default {
         // this.$refs.pics.$el.style.width = 200;
         // this.$refs.pics.$el.style.height = this.tcontent.images[0].height;
         // console.log(document.body.clientWidth);
-        console.log(this.tcontent.comments);
+        console.log(this.tcontent.comments.length);
       },
       (err) => {
         console.log(err);
