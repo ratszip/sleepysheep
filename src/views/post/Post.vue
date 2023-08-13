@@ -144,7 +144,6 @@ export default {
               message: res.data.msg,
             });
           }
-          //
           // console.log(this.suglist.data[0].images[0].path);
         },
         (err) => {

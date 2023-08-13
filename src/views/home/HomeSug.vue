@@ -2,7 +2,7 @@
   <div class="content">
     <div class="topic" v-for="(item, index) in suglist.data" :key="index">
       <div class="image" @click="t_click(item.id)">
-        <img :src="baseurl + `${item.images[0].path}`" alt="" />
+        <img v-lazy="baseurl + `${item.images[0].path}`" alt="" />
       </div>
       <div class="titleall">
         <h3 class="title">{{ item.title }}</h3>
@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="nomore">暂无更多</div>
+    <!-- <div class="nomore">暂无更多</div> -->
   </div>
 </template>
 
@@ -79,11 +79,7 @@ export default {
   width: 100%;
   list-style: none;
   background-color: rgb(247, 248, 250);
-  // margin-bottom: 100px;
-  // background-color: rgb(222, 214, 217);
-  // column-count: 2;
-  // padding: 10px 10px 10px 0;
-  // padding-bottom: 100px;
+
   .nomore {
     text-align: center;
     font-size: 26px;
@@ -159,14 +155,7 @@ export default {
         border-top-left-radius: 3%;
         width: 100%;
         height: 100%;
-        // max-height: 300px;
         object-fit: cover;
-        // position: relative;
-        // left: 50%;
-        // top: 50%;
-        // transform: translate(-50%, -50%);
-        // max-width: 100%;
-        // max-height: 100%;
       }
     }
   }

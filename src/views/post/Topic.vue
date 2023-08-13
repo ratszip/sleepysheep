@@ -1,6 +1,6 @@
 <template>
   <div class="topic">
-    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
+    <van-nav-bar left-text="返回" fixed left-arrow @click-left="onClickLeft" />
 
     <div class="imgs">
       <div class="topau">
@@ -46,20 +46,16 @@
           />
           已解决</span
         >
-
         <span class="solve" v-else-if="tcontent.isSolved == false">
           <van-icon style="vertical-align: -10%" size="15" name="question-o" />
           未解决
         </span>
-
         <span class="topictime">发布于{{ tcontent.createTime }}</span>
       </div>
     </div>
     <div class="comment">
-      <div class="ttc">
-        共 {{ tcontent.comments ? tcontent.comments.length : 0 }} 条评论
-      </div>
-      <div class="citem" v-for="(item, index) in tcontent.comments">
+      <div class="ttc">共 {{ comments ? comments.length : 0 }} 条评论</div>
+      <div class="citem" v-for="(item, index) in comments">
         <van-image
           class="ctoux"
           round
@@ -68,7 +64,6 @@
           src="http://114.55.88.242:8080/images/avatar_m_c.png"
         />
         <span class="cuname">{{ item.uname }} </span>
-        <!-- <van-icon name="like-o" size="18" /> -->
         <p class="ccontent">{{ item.content }}</p>
         <span class="topictime ctime">{{ item.createTime }} </span>
         <div class="handl">
@@ -79,17 +74,23 @@
       </div>
       <div class="nomore">~暂无更多回复~</div>
     </div>
-
+    <div class="empty"></div>
     <div class="huifu">
       <van-field
         class="rep"
-        type="text"
+        type="textarea"
         placeholder="发表一下观点吧"
         extra="发表"
         v-model="pubopinion"
+        @focus="focus"
+        @blur="blur"
+        ref="input"
+        :autosize="inputSize"
       >
         <template #button>
-          <van-button size="small" round type="primary">发表</van-button>
+          <van-button @click="publish" size="small" round type="primary"
+            >发表</van-button
+          >
         </template>
       </van-field>
     </div>
@@ -97,13 +98,10 @@
 </template>
 
 <style lang="less">
-// .loopicx {
-//   margin: 0 auto;
-//   height: 400px;
-//   // width: 100%;
-//   text-align: center;
-//   vertical-align: middle;
-// }
+.empty{
+  width: 100%;
+  height: 60px;
+}
 .huifu{
   position: fixed;
   bottom: 0;
@@ -113,10 +111,10 @@
       width: 100%;
       .van-field__control{
         width:90%;
-        height: 60px;
+        // height: 60px;
         padding-left: 20px;
         background-color: #F0F0F0;
-        border-radius: 60px;
+        border-radius: 20px;
       }
     }
   }
@@ -201,7 +199,7 @@
     text-align: center;
     font-size: 26px;
     color: lightgray;
-    margin-top: 10px;
+    margin-bottom: 60px;
   }
   .citem{
     // display: flex;
@@ -245,7 +243,12 @@ export default {
       pubopinion: "",
       topicId: null,
       tcontent: "",
+      comments: [],
       baseurl: "http://114.55.88.242:8080/",
+      inputSize: {
+        maxHeight: 28,
+        minHeight: 28,
+      },
       imgclass: {
         margin: "0 auto",
         height: "",
@@ -255,10 +258,43 @@ export default {
       },
     };
   },
-  computed: {},
+  inject: ["reload"],
   methods: {
     onClickLeft() {
       this.$router.back();
+    },
+    focus() {
+      this.inputSize.maxHeight = 120;
+    },
+    blur() {
+      this.inputSize.maxHeight = 30;
+    },
+
+    publish() {
+      request({
+        method: "post",
+        baseURL: "http://localhost:8080",
+        url: "/topic/insertComment",
+        data: { topicId: this.topicId, content: this.pubopinion },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 2000) {
+            this.comments.push(this.pubopinion);
+            this.$router.go(0);
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
   },
   mounted() {
@@ -270,6 +306,7 @@ export default {
     }).then(
       (res) => {
         this.tcontent = res.data.data;
+        this.comments = res.data.data.comments;
         if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {
           let realh =
             (document.body.clientWidth * this.tcontent.images[0].height) /
@@ -283,21 +320,11 @@ export default {
           this.imgclass.height = "400px";
           this.imgclass.lineHeight = "400px";
         }
-        // this.$refs.pics.$el.style.width = 200;
-        // this.$refs.pics.$el.style.height = this.tcontent.images[0].height;
-        // console.log(document.body.clientWidth);
-        console.log(this.tcontent.comments.length);
       },
       (err) => {
         console.log(err);
       }
     );
   },
-  // created() {
-  //   this.$nextTick(() => {
-  //     // 在这里获取 this.$refs.dom
-  //     console.log(this.$refs.pics);
-  //   });
-  // },
 };
 </script>
