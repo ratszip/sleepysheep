@@ -1,7 +1,6 @@
 <template>
   <div class="topic">
     <van-nav-bar left-text="返回" fixed left-arrow @click-left="onClickLeft" />
-
     <div class="imgs">
       <div class="topau">
         <div class="author">
@@ -13,7 +12,7 @@
             height="28px"
             src="http://114.55.88.242:8080/images/avatar_m_c.png"
           />
-          <span class="auname"> {{ tcontent.userName }}</span>
+          <span class="auname"> {{ tcontent.nickName }}</span>
         </div>
         <van-button class="follow" size="small" round type="info" plain
           >关注</van-button
@@ -53,7 +52,7 @@
         <span class="topictime">发布于{{ tcontent.createTime }}</span>
       </div>
     </div>
-    <div class="comment">
+    <div class="comment" ref="refresh">
       <div class="ttc">共 {{ comments ? comments.length : 0 }} 条评论</div>
       <div class="citem" v-for="(item, index) in comments">
         <van-image
@@ -63,12 +62,12 @@
           height="28px"
           src="http://114.55.88.242:8080/images/avatar_m_c.png"
         />
-        <span class="cuname">{{ item.uname }} </span>
+        <span class="cuname">{{ item.nickName }} </span>
         <p class="ccontent">{{ item.content }}</p>
         <span class="topictime ctime">{{ item.createTime }} </span>
         <div class="handl">
           <van-icon size="18" name="comment-o" />
-          <span><van-icon name="good-job-o" size="18" /> 123</span>
+          <span><van-icon name="flag-o" size="18" /> {{ item.likeCount }}</span>
           <span>copy</span>
         </div>
       </div>
@@ -122,6 +121,7 @@
 .imgs {
   background-color: white;
   // padding: 0 20px;
+  margin-top: 90px;
   padding-bottom: 10px;
   .topau {
    display: flex;
@@ -223,7 +223,7 @@
     }
     .ccontent{
       font-size: 28px;
-    line-height: 28px;
+    line-height: 40px;
     word-wrap: break-word;
     margin: 16px 8px 8px 60px;
     }
@@ -258,7 +258,7 @@ export default {
       },
     };
   },
-  inject: ["reload"],
+
   methods: {
     onClickLeft() {
       this.$router.back();
@@ -273,8 +273,7 @@ export default {
     publish() {
       request({
         method: "post",
-        baseURL: "http://localhost:8080",
-        url: "/topic/insertComment",
+        url: "/comment/insertComment",
         data: { topicId: this.topicId, content: this.pubopinion },
         headers: {
           "content-type": "multipart/form-data",
@@ -283,8 +282,9 @@ export default {
       }).then(
         (res) => {
           if (res.data.code === 2000) {
-            this.comments.push(this.pubopinion);
-            this.$router.go(0);
+            this.comments.push(data.data);
+            // this.$router.go(0);
+            // console.log(this.comments);
           } else {
             this.$toast({
               message: res.data.msg,
@@ -302,9 +302,18 @@ export default {
     request({
       method: "post",
       url: "/topic/detail",
-      data: { id: this.topicId },
+      data: { topicId: this.topicId },
+      headers: {
+        "content-type": "multipart/form-data",
+        token: localStorage.token,
+      },
     }).then(
       (res) => {
+        if (res.data.code === 9000) {
+          this.$toast({
+            message: "请先登录",
+          });
+        }
         this.tcontent = res.data.data;
         this.comments = res.data.data.comments;
         if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {

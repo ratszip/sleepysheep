@@ -25,14 +25,23 @@
       <div class="info">
         <div class="uinfo">
           <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
-          <span>&nbsp;{{ item.userName }}</span>
+          <span>&nbsp;{{ item.nickName }}</span>
         </div>
         <div class="tinfo">
           <van-icon
             style="vertical-align: -10%"
-            name="flag-o"
+            v-if="!item.like"
+            name="like-o"
             size="18"
+            @click="like(item)"
+          />
+          <van-icon
+            style="vertical-align: -10%"
+            v-if="item.like"
+            name="like"
             color="red"
+            @click="unlike(item)"
+            size="18"
           />
           {{ item.likeCount }}
         </div>
@@ -53,15 +62,97 @@ export default {
     };
   },
   methods: {
+    like(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/like",
+          data: { topicId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              item.like = true;
+              item.likeCount++;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unlike(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/unlike",
+          data: { topicId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              item.like = false;
+              item.likeCount--;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
     t_click(id) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      }
       this.$router.push(`/topic/${id}`);
       // console.log(id);
     },
   },
   mounted() {
-    request({ url: "/index/sug" }).then(
+    request({
+      method: "post",
+      url: "/index/sug",
+      data: { token: localStorage.token },
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    }).then(
       (res) => {
         this.suglist = res.data;
+        if (res.msg.includes("请登录")) {
+          this.$pop.open();
+        }
+
         // console.log(this.suglist.data[0].images[0].path);
       },
       (err) => {

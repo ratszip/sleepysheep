@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const request = axios.create({
-    baseURL: 'http://114.55.88.242:8080'
+    // baseURL: 'http://114.55.88.242:8080'
+    baseURL: "http://localhost:8080/",
 })
 
 // 请求拦截器

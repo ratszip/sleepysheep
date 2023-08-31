@@ -125,7 +125,7 @@ export default {
       // console.log(localStorage.token);
       request({
         method: "post",
-        url: "/index/create",
+        url: "/topic/create",
         data: formData,
         headers: {
           "content-type": "multipart/form-data",
@@ -143,6 +143,8 @@ export default {
             this.$toast({
               message: res.data.msg,
             });
+          } else if (res.data.code === 9000) {
+            this.$pop.open();
           }
           // console.log(this.suglist.data[0].images[0].path);
         },
