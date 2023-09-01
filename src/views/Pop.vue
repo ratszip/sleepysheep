@@ -98,6 +98,7 @@ export default {
             });
             localStorage.setItem("token", res.data.data);
             this.$refs.dialogref.close();
+            location.reload();
           }
           //
           // console.log(this.suglist.data[0].images[0].path);

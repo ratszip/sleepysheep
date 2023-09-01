@@ -66,9 +66,26 @@
         <p class="ccontent">{{ item.content }}</p>
         <span class="topictime ctime">{{ item.createTime }} </span>
         <div class="handl">
-          <van-icon size="18" name="comment-o" />
-          <span><van-icon name="flag-o" size="18" /> {{ item.likeCount }}</span>
           <span>copy</span>
+          <van-icon size="18" name="comment-o" />
+          <div class="zan">
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="!item.likeCom"
+              name="bookmark-o"
+              size="18"
+              @click="like(item)"
+            />
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="item.likeCom"
+              name="bookmark"
+              color="red"
+              @click="unlike(item)"
+              size="18"
+            />
+            {{ item.likeCount }}
+          </div>
         </div>
       </div>
       <div class="nomore">~暂无更多回复~</div>
@@ -269,7 +286,76 @@ export default {
     blur() {
       this.inputSize.maxHeight = 30;
     },
-
+    like(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+        this.$toast({
+          message: "登录过期，请重新登录",
+        });
+      } else {
+        request({
+          method: "post",
+          url: "/comment/like",
+          data: { commentId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              item.likeCom = true;
+              item.likeCount++;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unlike(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/comment/unlike",
+          data: { commentId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              item.likeCom = false;
+              item.likeCount--;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    // 发布评论
     publish() {
       request({
         method: "post",
@@ -282,9 +368,13 @@ export default {
       }).then(
         (res) => {
           if (res.data.code === 2000) {
-            this.comments.push(data.data);
+            this.comments.push(res.data.data);
             // this.$router.go(0);
-            // console.log(this.comments);
+            console.log(this.comments);
+          } else if (res.data.code === 9000) {
+            setTimeout(() => {
+              this.$pop.open();
+            }, 1000);
           } else {
             this.$toast({
               message: res.data.msg,
