@@ -1,7 +1,7 @@
 <template>
   <div class="home_follow">
     <div class="f_cell">
-      <img class="tx" src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+      <img class="tx" src="http://116.204.65.79:8080/images/m_a.png" />
       <div class="finfo">
         <span>用户123123</span>
         评论道：
@@ -16,15 +16,22 @@
             这是我的帖子麻辣，加打了ld懒得说了解奥。拉萨机电商
           </h1>
           <div class="ftpic">
-            <img
-              src="http://114.55.88.242:8080/topic/images/211690547110982.jpg"
-            />
+            <img :src="`${baseurl}/topic/images/71696922985526.jpg`" />
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      baseurl: this.$store.state.sBaseUrl,
+    };
+  },
+};
+</script>
 <style lang="less">
 .f_cell {
   display: flex;

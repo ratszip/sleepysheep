@@ -3,19 +3,37 @@
     <van-nav-bar left-text="返回" fixed left-arrow @click-left="onClickLeft" />
     <div class="imgs">
       <div class="topau">
-        <div class="author">
+        <div class="author" @click="goInfo">
           <van-image
             class="toux"
             round
             style="vertical-align: -20%"
             width="28px"
             height="28px"
-            src="http://114.55.88.242:8080/images/avatar_m_c.png"
+            :src="`${baseurl}/images/${tcontent.avatar}.png`"
           />
-          <span class="auname"> {{ tcontent.nickName }}</span>
+          <span class="auname">{{ tcontent.nickName }}</span>
         </div>
-        <van-button class="follow" size="small" round type="info" plain
+
+        <van-button
+          v-show="this.guest && !this.tcontent.fans"
+          class="follow"
+          size="small"
+          round
+          type="info"
+          plain
+          @click="follow"
           >关注</van-button
+        >
+        <van-button
+          v-show="this.guest && this.tcontent.fans"
+          class="follow"
+          size="small"
+          round
+          type="default"
+          plain
+          @click="unfollow"
+          >已关注</van-button
         >
       </div>
       <van-swipe class="imbg">
@@ -25,10 +43,7 @@
           v-for="(image, index) in tcontent.images"
           :key="index"
         >
-          <img
-            class="mainpic"
-            v-lazy="`http://114.55.88.242:8080/${image.path}`"
-          />
+          <img class="mainpic" v-lazy="`${baseurl}/${image.path}`" />
         </van-swipe-item>
       </van-swipe>
 
@@ -60,9 +75,9 @@
           round
           width="28px"
           height="28px"
-          src="http://114.55.88.242:8080/images/avatar_m_c.png"
+          :src="`${baseurl}/images/${item.avatar}.png`"
         />
-        <span class="cuname">{{ item.nickName }} </span>
+        <span class="cuname"> {{ item.nickName }} </span>
         <p class="ccontent">{{ item.content }}</p>
         <span class="topictime ctime">{{ item.createTime }} </span>
         <div class="handl">
@@ -143,21 +158,26 @@
   .topau {
    display: flex;
    justify-content: space-between;
+   align-items:center;
     .author{
+      display: flex;
+      align-items:center;
+      justify-content:center;
       .toux {
         vertical-align: middle;
-        margin: 0px 5px 5px 10px;
+        margin: 5px 5px 5px 10px;
+        display: inline-block;
       }
       .auname {
-        font-size: 28px;
+        font-size: 30px;
       }
     }
     .follow {
       font-size: 24px;
       vertical-align: middle;
       width: 120px;
-      margin-top: 30px;
       height: 40px;
+      margin-right: 20px;
     }
   }
     .mainpic {
@@ -250,7 +270,6 @@
     }
   }
 
-// "`http://114.55.88.242:8080/${tcontent.images[0].path}`
 </style>
 <script>
 import request from "@/util/request";
@@ -261,7 +280,8 @@ export default {
       topicId: null,
       tcontent: "",
       comments: [],
-      baseurl: "http://114.55.88.242:8080/",
+      guest: false,
+      baseurl: this.$store.state.sBaseUrl,
       inputSize: {
         maxHeight: 28,
         minHeight: 28,
@@ -277,6 +297,79 @@ export default {
   },
 
   methods: {
+    goInfo() {
+      console.log("ttttclick");
+    },
+    follow() {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+        this.$toast({
+          message: "登录过期，请重新登录",
+        });
+      } else {
+        request({
+          method: "post",
+          url: "/common/follow",
+          data: { userId: this.tcontent.userId },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.tcontent.fans = true;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unfollow() {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+        this.$toast({
+          message: "登录过期，请重新登录",
+        });
+      } else {
+        request({
+          method: "post",
+          url: "/common/unfollow",
+          data: { userId: this.tcontent.userId },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.tcontent.fans = false;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
     onClickLeft() {
       this.$router.back();
     },
@@ -368,6 +461,9 @@ export default {
       }).then(
         (res) => {
           if (res.data.code === 2000) {
+            if (this.commnets === undefined) {
+              this.commnets = [];
+            }
             this.comments.push(res.data.data);
             // this.$router.go(0);
             console.log(this.comments);
@@ -392,10 +488,9 @@ export default {
     request({
       method: "post",
       url: "/topic/detail",
-      data: { topicId: this.topicId },
+      data: { token: localStorage.token, topicId: this.topicId },
       headers: {
         "content-type": "multipart/form-data",
-        token: localStorage.token,
       },
     }).then(
       (res) => {
@@ -406,6 +501,11 @@ export default {
         }
         this.tcontent = res.data.data;
         this.comments = res.data.data.comments;
+        if (this.tcontent.userId === this.tcontent.guestId) {
+          this.guest = false;
+        } else {
+          this.guest = true;
+        }
         if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {
           let realh =
             (document.body.clientWidth * this.tcontent.images[0].height) /

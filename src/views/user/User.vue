@@ -10,13 +10,13 @@
           round
           width="50px"
           height="50px"
-          src="https://img01.yzcdn.cn/vant/cat.jpeg"
+          :src="`${this.$store.state.sBaseUrl}/images/${userInfo.avatar}.png`"
         />
         <!-- <span>namesla</span> -->
         <div class="ptext">
           <div class="pin sp"></div>
-          <div class="pin name">用户12343214</div>
-          <div class="pin intro">favor</div>
+          <div class="pin name">{{ userInfo.nickName }}</div>
+          <div class="pin intro">{{ userInfo.intro }}</div>
         </div>
       </div>
       <div class="bottom">
@@ -44,10 +44,12 @@
 </template>
 
 <script>
+import request from "@/util/request";
 export default {
   data() {
     return {
       active: 0,
+      userInfo: "",
     };
   },
   methods: {
@@ -57,6 +59,32 @@ export default {
     edit() {
       this.$router.push("/edit");
     },
+  },
+  mounted() {
+    console.log(localStorage.token);
+    request({
+      method: "post",
+      url: "/user/info",
+      headers: {
+        "content-type": "multipart/form-data",
+        token: localStorage.token,
+      },
+    }).then(
+      (res) => {
+        if (res.data.code === 2000) {
+          this.userInfo = res.data.data;
+        } else if (res.data.code === 9000) {
+          this.$pop.open();
+        } else {
+          this.$toast({
+            message: res.data.msg,
+          });
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   },
 };
 </script>
@@ -118,6 +146,7 @@ export default {
     .sp,
     .intro {
       flex: 1;
+      height: fit-content;
     }
     .name {
       flex: 2;

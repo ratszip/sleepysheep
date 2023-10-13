@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       data: [],
-      baseurl: "http://114.55.88.242:8080/",
+      baseurl: this.$store.state.sBaseUrl,
     };
   },
   mounted() {

@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       suglist: "",
-      baseurl: "http://114.55.88.242:8080/",
+      baseurl: "http://116.204.65.79:8080/",
     };
   },
   mounted() {

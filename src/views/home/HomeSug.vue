@@ -2,7 +2,7 @@
   <div class="content">
     <div class="topic" v-for="(item, index) in suglist.data" :key="index">
       <div class="image" @click="t_click(item.id)">
-        <img v-lazy="baseurl + `${item.images[0].path}`" alt="" />
+        <img v-lazy="`${baseurl}/${item.images[0].path}`" alt="" />
       </div>
       <div class="titleall">
         <h3 class="title">{{ item.title }}</h3>
@@ -24,7 +24,7 @@
 
       <div class="info">
         <div class="uinfo">
-          <img src="http://114.55.88.242:8080/images/avatar_m_c.png" />
+          <img :src="`${baseurl}/images/${item.avatar}.png`" />
           <span>&nbsp;{{ item.nickName }}</span>
         </div>
         <div class="tinfo">
@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       suglist: "",
-      baseurl: "http://114.55.88.242:8080/",
+      baseurl: this.$store.state.sBaseUrl,
     };
   },
   methods: {
@@ -149,7 +149,7 @@ export default {
     }).then(
       (res) => {
         this.suglist = res.data;
-        if (res.msg.includes("请登录")) {
+        if (res.data.msg.includes("登录")) {
           this.$pop.open();
         }
 
