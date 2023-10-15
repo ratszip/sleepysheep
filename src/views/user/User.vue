@@ -16,12 +16,24 @@
         <div class="ptext">
           <div class="pin sp"></div>
           <div class="pin name">{{ userInfo.nickName }}</div>
-          <div class="pin intro">{{ userInfo.intro }}</div>
+          <div class="pin intro">
+            {{ userInfo.intro }}
+          </div>
         </div>
       </div>
       <div class="bottom">
-        <span class="fan"> 关注: <a href="/fans">12</a> </span>
-        <span class="fan"> 粉丝：<a href="/fans">32</a> </span>
+        <span class="fan">
+          关注:
+          <a href="javaScript:void(0); " @click="fanslist">{{
+            userInfo.followCount
+          }}</a>
+        </span>
+
+        <span class="fan">
+          粉丝：<a href="javaScript:void(0); " @click="fanslist">{{
+            userInfo.fansCount
+          }}</a>
+        </span>
         <!-- <van-button class="follow" size="small" round type="danger"
           >关注</van-button> -->
         <van-button
@@ -36,9 +48,10 @@
       </div>
     </div>
     <van-tabs class="coll" boder v-model="active">
-      <van-tab title="评论">评论区</van-tab>
-      <van-tab title="帖子">发帖区</van-tab>
+      <van-tab title="帖子">评论区</van-tab>
+      <van-tab title="评论">发帖区</van-tab>
       <van-tab title="点赞">点赞区</van-tab>
+      <van-tab title="收藏">点赞区</van-tab>
     </van-tabs>
   </div>
 </template>
@@ -59,15 +72,21 @@ export default {
     edit() {
       this.$router.push("/edit");
     },
+    fanslist() {
+      this.$router.push("/fans");
+      console.log("sss");
+    },
   },
   mounted() {
     console.log(localStorage.token);
     request({
       method: "post",
       url: "/user/info",
+      data: {
+        token: localStorage.token,
+      },
       headers: {
         "content-type": "multipart/form-data",
-        token: localStorage.token,
       },
     }).then(
       (res) => {
@@ -105,7 +124,7 @@ export default {
   }
   .follow {
     font-size: 24px;
-    margin-left: 280px;
+    margin-left: 360px;
     vertical-align: middle;
     width: 120px;
     height: 40px;
@@ -124,8 +143,8 @@ export default {
 }
 
 .pdinfo {
-  padding: 10px 20px 30px 30px;
-  height: 100px;
+  padding: 10px 60px 0px 30px;
+  height: 130px;
   display: flex;
   flex-direction: row;
 
@@ -140,23 +159,21 @@ export default {
     display: flex;
     flex-flow: column;
     margin-left: 20px;
-    .pin {
-      overflow: auto;
-    }
-    .sp,
-    .intro {
+    .sp {
+      overflow: hidden;
       flex: 1;
-      height: fit-content;
     }
+
     .name {
-      flex: 2;
-      font-size: 30px;
+      flex: 1;
+      font-size: 28px;
       font-weight: bold;
       text-overflow: ellipsis;
     }
     .intro {
-      font-size: 24px;
-      text-overflow: ellipsis;
+      flex: 2;
+      font-size: 22px;
+      padding-right: 90px;
     }
     //   flex-direction: column;
     //   height: 50px;

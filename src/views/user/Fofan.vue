@@ -19,7 +19,7 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <div class="fdet">
+        <!-- <div class="fdet">
           <van-image
             class="imgs"
             round
@@ -30,21 +30,8 @@
           <div class="funame">user123u1290</div>
           <van-button class="follow" size="small" round type="info" plain
             >已关注</van-button
-          >
-        </div>
-        <div class="fdet">
-          <van-image
-            class="imgs"
-            round
-            width="36px"
-            height="36px"
-            src="https://img01.yzcdn.cn/vant/cat.jpeg"
-          />
-          <div class="funame">user123u1290</div>
-          <van-button class="follow" size="small" round type="info" plain
-            >已关注</van-button
-          >
-        </div>
+          > -->
+        <!-- </div> -->
       </van-list>
     </div>
   </div>
