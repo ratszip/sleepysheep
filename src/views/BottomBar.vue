@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       active: 0,
+      uid: 0,
     };
   },
   methods: {
@@ -68,7 +69,7 @@ export default {
           // this.active = 0;
           //   break;
           // }
-          this.$router.push("/user");
+          this.$router.push(`/user/${this.uid}`);
           break;
         default:
           break;
@@ -81,7 +82,7 @@ export default {
         // console.log(to);
         if (to.path == "/home") {
           this.active = 0;
-        } else if (to.path == "/user") {
+        } else if (to.path == "/user/0") {
           this.active = 2;
         }
         //  else {

@@ -18,7 +18,7 @@ const routes = [
     {path:'/home',name:'home',component:Home},
     {path:'/home1',name:'homewf',component:Homewf},
     {path: '/', redirect: '/home'},
-    {path:'/user',name:'user',component:User},
+    {path:'/user/:uid',name:'user',component:User},
     {path:'/post',name:'post',component:Post},
     {path:'/wt',name:'pop',component:Pop},
     {path:'/fans',name:'fans',component:FoFans},

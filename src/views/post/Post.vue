@@ -97,7 +97,6 @@ export default {
       p_title: "",
       p_content: "",
       uploader: [],
-      fileList: [],
     };
   },
   methods: {
@@ -215,10 +214,6 @@ export default {
                   beforeKB: Number((file.size / 1024).toFixed(2)),
                   afterKB: Number((miniFile.size / 1024).toFixed(2)),
                 });
-                // this.fileList.push(miniFile);
-                // file = miniFile;
-                // this.uploader.pop();
-                // this.fileList.push(miniFile);
                 this.uploader.at(-1).file = miniFile;
               };
               image.src = src;
@@ -240,7 +235,7 @@ export default {
     afterRead(file) {
       file = file.file;
       this.compressImg(file, 0.2);
-      console.log(this.uploader);
+      // console.log(this.uploader);
     },
 
     backClick() {
@@ -256,7 +251,7 @@ export default {
       // formData.append("files", this.uploader[0].file);
       formData.append("title", this.p_title);
       formData.append("content", this.p_content);
-      console.log(formData);
+      // console.log(formData);
       // console.log(localStorage.token);
       request({
         method: "post",

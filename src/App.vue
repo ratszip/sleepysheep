@@ -31,7 +31,7 @@ export default {
         // console.log(to);
         if (to.path == "/home") {
           this.footer_show = true;
-        } else if (to.path == "/user") {
+        } else if (to.path == "/user/0") {
           this.footer_show = true;
         } else {
           this.footer_show = false;

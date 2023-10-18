@@ -1,11 +1,29 @@
 <template>
   <div class="pcenter">
     <div class="pinfo">
+      <van-loading
+        class="load"
+        type="spinner"
+        size="24px"
+        v-show="pageLoading"
+      />
+
       <div class="top">
-        <van-icon class="settings" size="20px" name="setting-o" />
+        <van-icon
+          class="self"
+          v-show="haveInfo && uid == 0"
+          size="20px"
+          name="setting-o"
+          @click="settings"
+        />
+        <div class="other" v-show="haveInfo && uid != 0">
+          <van-icon size="20px" name="arrow-left" @click="back" />
+          <van-icon class="more" size="20px" name="ellipsis" @click="more" />
+        </div>
       </div>
       <div class="pdinfo">
         <van-image
+          v-if="userInfo"
           class="toux"
           round
           width="50px"
@@ -34,24 +52,78 @@
             userInfo.fansCount
           }}</a>
         </span>
-        <!-- <van-button class="follow" size="small" round type="danger"
-          >关注</van-button> -->
+
         <van-button
+          v-show="haveInfo && uid == 0"
           class="follow"
           size="small"
           round
           type="info"
           plain
           @click="edit"
-          >编辑</van-button
+          >编辑
+        </van-button>
+        <van-button
+          v-show="haveInfo && uid != 0 && !userInfo.isFans"
+          class="follow"
+          size="small"
+          round
+          type="danger"
+          @click="follow"
+          >关注</van-button
+        >
+        <van-button
+          v-show="haveInfo && uid != 0 && userInfo.isFans"
+          class="follow"
+          size="small"
+          round
+          type="default"
+          @click="unfollow"
+          >已关注</van-button
         >
       </div>
     </div>
     <van-tabs class="coll" boder v-model="active">
-      <van-tab title="帖子">评论区</van-tab>
-      <van-tab title="评论">发帖区</van-tab>
-      <van-tab title="点赞">点赞区</van-tab>
-      <van-tab title="收藏">点赞区</van-tab>
+      <van-tab>
+        <template #title>
+          帖子<img
+            src="../../assets/lock.png"
+            class="lock"
+            v-show="userInfo.topicPri"
+          />
+        </template>
+        评论区
+      </van-tab>
+      <van-tab>
+        <template #title>
+          评论<img
+            src="../../assets/lock.png"
+            class="lock"
+            v-show="userInfo.commentPri"
+          />
+        </template>
+        评论区
+      </van-tab>
+      <van-tab>
+        <template #title>
+          收藏<img
+            src="../../assets/lock.png"
+            class="lock"
+            v-show="userInfo.collectPri"
+          />
+        </template>
+        评论区
+      </van-tab>
+      <van-tab>
+        <template #title>
+          点赞<img
+            src="../../assets/lock.png"
+            class="lock"
+            v-show="userInfo.likePri"
+          />
+        </template>
+        评论区
+      </van-tab>
     </van-tabs>
   </div>
 </template>
@@ -63,47 +135,128 @@ export default {
     return {
       active: 0,
       userInfo: "",
+      pageLoading: false,
+      uid: 0,
+      haveInfo: false,
     };
   },
   methods: {
-    onClickBack() {
-      this.$router.back();
-    },
     edit() {
       this.$router.push("/edit");
     },
     fanslist() {
       this.$router.push("/fans");
-      console.log("sss");
     },
+    getUserInfo() {
+      this.uid = this.$route.params.uid;
+      this.pageLoading = true;
+      request({
+        method: "post",
+        url: "/user/info",
+        data: { userId: this.uid },
+        headers: {
+          token: localStorage.token,
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          this.pageLoading = false;
+          if (res.data.code === 2000) {
+            this.userInfo = res.data.data;
+            this.haveInfo = true;
+          } else if (res.data.code === 9000) {
+            this.haveInfo = false;
+            this.$pop.open();
+          } else {
+            this.haveInfo = false;
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    follow() {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+        this.$toast({
+          message: "登录过期，请重新登录",
+        });
+      } else {
+        request({
+          method: "post",
+          url: "/common/follow",
+          data: { userId: this.uid },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.userInfo.isFans = true;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unfollow() {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+        this.$toast({
+          message: "登录过期，请重新登录",
+        });
+      } else {
+        request({
+          method: "post",
+          url: "/common/unfollow",
+          data: { userId: this.uid },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.userInfo.isFans = false;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    back() {
+      this.$router.back();
+    },
+    more() {},
+    settings() {},
   },
   mounted() {
-    console.log(localStorage.token);
-    request({
-      method: "post",
-      url: "/user/info",
-      data: {
-        token: localStorage.token,
-      },
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    }).then(
-      (res) => {
-        if (res.data.code === 2000) {
-          this.userInfo = res.data.data;
-        } else if (res.data.code === 9000) {
-          this.$pop.open();
-        } else {
-          this.$toast({
-            message: res.data.msg,
-          });
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    this.getUserInfo();
   },
 };
 </script>
@@ -131,15 +284,35 @@ export default {
   }
 }
 
+.lock {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
 .top {
   display: flex;
-  justify-content: end;
   margin-right: 20px;
   padding-top: 15px;
+  .self {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  .other {
+    padding-bottom: 10px;
+    .more {
+      margin-left: 640px;
+    }
+  }
 }
 .pinfo {
   background-color: rgb(131, 158, 199);
   color: white;
+  .load {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translate(-32px, -32px);
+  }
 }
 
 .pdinfo {
@@ -147,13 +320,6 @@ export default {
   height: 130px;
   display: flex;
   flex-direction: row;
-
-  // span {
-  //   flex: 1;
-  //   font-size: 35px;
-  //   vertical-align: middle;
-  // }
-
   .ptext {
     flex: 1;
     display: flex;
@@ -175,18 +341,6 @@ export default {
       font-size: 22px;
       padding-right: 90px;
     }
-    //   flex-direction: column;
-    //   height: 50px;
-    //   .sp {
-    //     flex: 1;
-    //   }
-    //   .name {
-    //     flex: 2;
-    //     font-size: 30px;
-    //   }
-    //   .intro {
-    //     flex: 1;
-    //   }
   }
 }
 </style>
