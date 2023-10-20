@@ -54,6 +54,7 @@
 import JSEncrypt from "jsencrypt";
 import request from "@/util/request";
 import "vant/lib/button/style";
+import { Toast } from "vant";
 export default {
   data() {
     return {
@@ -85,6 +86,11 @@ export default {
         });
         return false;
       }
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
         url: "/user/login",
@@ -92,18 +98,20 @@ export default {
       }).then(
         (res) => {
           // res.data.token;
+          Toast.clear();
           if (res.data.code === 2000) {
             this.$toast({
               message: "登录成功",
             });
+
             localStorage.setItem("token", res.data.data);
             this.$refs.dialogref.close();
             location.reload();
           }
-          //
           // console.log(this.suglist.data[0].images[0].path);
         },
         (err) => {
+          Toast.clear();
           console.log(err);
         }
       );

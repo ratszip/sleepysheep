@@ -242,7 +242,7 @@ export default {
       this.$router.back();
     },
     onSubmit() {
-      this.afterRead();
+      // this.afterRead(file);
       let formData = new FormData();
       this.uploader.forEach((item, index) => {
         formData.append("files", item.file);

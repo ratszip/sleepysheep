@@ -18,6 +18,7 @@ export default {
   data() {
     return {
       footer_show: true,
+      online: navigator.onLine,
     };
   },
   methods: {
@@ -42,11 +43,18 @@ export default {
   },
   mounted() {
     // localStorage.setItem("token", "12312");
+    window.addEventListener("online", this.updateOnlineStatus); // 网络由异常到正常时触发
+    window.addEventListener("offline", this.updateOnlineStatus); // 网络由正常常到异常时触发
+
     if (localStorage.getItem("token") == null) {
       setTimeout(() => {
         this.$pop.open();
       }, 1000);
     }
+  },
+  beforeDestroy() {
+    window.removeEventListener("online", this.updateOnlineStatus);
+    window.removeEventListener("offline", this.updateOnlineStatus);
   },
 };
 </script>
