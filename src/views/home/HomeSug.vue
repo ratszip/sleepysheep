@@ -6,20 +6,6 @@
       </div>
       <div class="titleall">
         <h3 class="title">{{ item.title }}</h3>
-        <!-- <div class="solv">
-          <van-icon
-            v-if="item.isSolved == true"
-            class="solve"
-            name="checked"
-            color="green"
-            size="18"
-          />
-          <van-icon
-            size="18"
-            v-else-if="item.isSolved == false"
-            name="question-o"
-          />
-        </div> -->
       </div>
 
       <div class="info">
