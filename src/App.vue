@@ -9,10 +9,11 @@
 
 <script>
 import bottombar from "./views/BottomBar.vue";
+import navbar from "./views/home/HomeTag.vue";
 export default {
   name: "App",
   components: {
-    // navbar,
+    navbar,
     bottombar,
   },
   data() {
@@ -32,7 +33,7 @@ export default {
         // console.log(to);
         if (to.path == "/home") {
           this.footer_show = true;
-        } else if (to.path == "/user/0") {
+        } else if (to.path.includes("/user")) {
           this.footer_show = true;
         } else {
           this.footer_show = false;

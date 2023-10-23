@@ -10,7 +10,7 @@
         >
           <van-tab title="关注"></van-tab>
           <van-tab title="推荐">
-            <!-- <router-link to="/home"></router-link> -->
+            <router-link to="/home"></router-link>
           </van-tab>
         </van-tabs>
       </div>

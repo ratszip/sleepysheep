@@ -11,12 +11,12 @@
       <div class="top">
         <van-icon
           class="self"
-          v-show="haveInfo && uid == 0"
+          v-show="haveInfo && userInfo.self"
           size="20px"
           name="setting-o"
           @click="settings"
         />
-        <div class="other" v-show="haveInfo && uid != 0">
+        <div class="other" v-show="haveInfo && !userInfo.self">
           <van-icon size="20px" name="arrow-left" @click="back" />
           <van-icon class="more" size="20px" name="ellipsis" @click="more" />
         </div>
@@ -54,7 +54,7 @@
         </span>
 
         <van-button
-          v-show="haveInfo && uid == 0"
+          v-show="haveInfo && userInfo.self"
           class="follow"
           size="small"
           round
@@ -64,7 +64,7 @@
           >编辑
         </van-button>
         <van-button
-          v-show="haveInfo && uid != 0 && !userInfo.isFans"
+          v-show="haveInfo && !userInfo.self && !userInfo.isFans"
           class="follow"
           size="small"
           round
@@ -73,7 +73,7 @@
           >关注</van-button
         >
         <van-button
-          v-show="haveInfo && uid != 0 && userInfo.isFans"
+          v-show="haveInfo && !userInfo.self && userInfo.isFans"
           class="follow"
           size="small"
           round

@@ -82,7 +82,7 @@ export default {
         // console.log(to);
         if (to.path == "/home") {
           this.active = 0;
-        } else if (to.path == "/user/0") {
+        } else if (to.path.includes("/user/")) {
           this.active = 2;
         }
         //  else {

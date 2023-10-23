@@ -1,11 +1,20 @@
 <template>
-  <div class="content">
-    <div class="box" ref="box" v-for="(item, index) in suglist.data">
-      <img class="image" v-lazy="`${baseurl}/${item.images[0].path}`" alt="" />
-      <h1 class="title">
-        {{
-          item.title
-        }}jajdjjaljldlsjfldsajflllllljl这是用来测试的是的呀汉字中午睡觉啦
+  <div class="contentsug">
+    <div
+      class="box"
+      ref="box"
+      v-for="(item, index) in suglist.data"
+      @click="t_click(item.id)"
+      :key="index"
+    >
+      <img
+        @click="t_click(item.id)"
+        class="image"
+        v-lazy="`${baseurl}/${item.images[0].path}`"
+        alt=""
+      />
+      <h1 @click="t_click(item.id)" class="title">
+        {{ item.title }}
       </h1>
       <div class="info">
         <div class="uinfo" @click="gouser(item.userId)">
@@ -47,9 +56,15 @@ export default {
   },
   methods: {
     water() {
+      // console.log(this.suglist);
       var columnHeightArr = [];
       columnHeightArr.length = 2;
       var boxArr = $(".box");
+
+      // let realh =
+      //   (document.body.clientWidth * this.suglist.data[0].images[0].height) /
+      //   this.suglist.data[0].images[0].width;
+      // console.log(realh);
       boxArr.each(function (index, item) {
         if (index < 2) {
           columnHeightArr[index] =
@@ -67,9 +82,15 @@ export default {
           columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
         }
       });
+      $("body").css("minHeight", Math.max.apply(null, columnHeightArr));
     },
     gouser(id) {
-      console.log(id);
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      }
+      this.$router.push(`/user/${id}`);
     },
     like(item) {
       if (localStorage.getItem("token") == null) {
@@ -146,50 +167,58 @@ export default {
       this.$router.push(`/topic/${id}`);
       // console.log(id);
     },
-  },
-  mounted() {
-    request({
-      method: "post",
-      url: "/index/sug",
-      data: { token: localStorage.token },
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    }).then(
-      (res) => {
-        this.suglist = res.data;
-        if (res.data.msg.includes("登录")) {
-          this.$pop.open();
-        }
+    getData() {
+      request({
+        method: "post",
+        url: "/index/sug",
+        data: { token: localStorage.token },
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          this.suglist = res.data;
+          setTimeout(() => {
+            this.water();
+          }, 1000);
+          if (res.data.msg.includes("登录")) {
+            this.$pop.open();
+          }
 
-        // console.log(this.suglist.data[0].images[0].path);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-    setTimeout(() => {
-      this.water();
-    }, 4000);
+          // console.log(this.suglist.data[0].images[0].path);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+  },
+
+  mounted() {
+    this.getData();
   },
 };
 </script>
 
 <style lang="less">
-.content {
+.contentsug {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+}
+.space {
+  height: 200px;
 }
 .box {
   float: left;
-  width: 360px;
-  margin-left: 10px;
+  // width: 50%;
+  width: 364px;
+  margin: 3px 0px 3px 6px;
+  background-color: white;
 }
 .image {
-  width: 360px;
-  max-height: 460px;
+  width: 100%;
+  max-height: 480px;
   min-height: 200px;
+  overflow: hidden;
   object-fit: cover;
 }
 
@@ -237,6 +266,7 @@ export default {
     }
     .tinfo {
       vertical-align: top;
+      padding-right: 20px;
     }
   }
 }

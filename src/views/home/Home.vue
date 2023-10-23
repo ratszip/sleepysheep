@@ -8,8 +8,8 @@
 <script>
 import navbar from "./HomeTag.vue";
 import bottombar from "../BottomBar.vue";
-import homesug from "@/views/home/HomeSug.vue";
-import homefol from "@/views/home/HomeFol.vue";
+import homesug from "./Homewf.vue";
+import homefol from "./HomeFol.vue";
 // import request from "@/util/request";
 export default {
   components: {
