@@ -1,31 +1,27 @@
 <template>
-  <div class="contentsug">
-    <!-- <div class="sugad">banner</div> -->
+  <div class="contentsug2">
+    <!-- <div class="sugad">广告位</div> -->
     <div
-      class="box"
-      ref="box"
-      v-for="(item, index) in suglist.data"
+      class="box2"
+      ref="box2"
+      v-for="(item, index) in mylist2.data"
       :key="index"
     >
       <img
         @click="t_click(item.id)"
-        class="image"
+        class="image2"
         v-lazy="`${baseurl}/${item.images[0].path}`"
         alt=""
       />
-      <h1 @click="t_click(item.id)" class="title">
+      <h1 @click="t_click(item.id)" class="title2">
         {{ item.title }}
       </h1>
-      <div class="info">
-        <div class="uinfo">
-          <img
-            class="tx"
-            @click="gouser(item.userId)"
-            :src="`${baseurl}/images/${item.avatar}.png`"
-          />
-          <span @click="gouser(item.userId)">&nbsp;{{ item.nickName }}</span>
+      <div class="info2">
+        <div class="uinfo2" @click="t_click(item.id)">
+          <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
+          <span>&nbsp;{{ item.nickName }}</span>
         </div>
-        <div class="tinfo">
+        <div class="tinfo2">
           <van-icon
             style="vertical-align: -10%"
             v-if="!item.like"
@@ -38,7 +34,7 @@
             v-if="item.like"
             name="like"
             color="red"
-            @click="unlike(item)"
+            @click="unlike(item, index)"
             size="16"
           />
           {{ item.likeCount }}
@@ -51,51 +47,15 @@
 <script>
 import request from "@/util/request";
 import $ from "jquery";
+import { Toast } from "vant";
 export default {
   data() {
     return {
-      suglist: "",
+      mylist2: "",
       baseurl: this.$store.state.sBaseUrl,
     };
   },
   methods: {
-    water() {
-      // console.log(this.suglist);
-      var columnHeightArr = [];
-      columnHeightArr.length = 2;
-      var boxArr = $(".box");
-
-      // let realh =
-      //   (document.body.clientWidth * this.suglist.data[0].images[0].height) /
-      //   this.suglist.data[0].images[0].width;
-      // console.log(realh);
-      boxArr.each(function (index, item) {
-        if (index < 2) {
-          columnHeightArr[index] =
-            $(item).position().top + $(item).outerHeight(true);
-        } else {
-          var minHeight = Math.min.apply(null, columnHeightArr),
-            minHeightIndex = $.inArray(minHeight, columnHeightArr);
-
-          $(item).css({
-            position: "absolute",
-            top: minHeight,
-            left: boxArr.eq(minHeightIndex).position().left,
-          });
-
-          columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
-        }
-      });
-      $(".contentsug").css("minHeight", Math.max.apply(null, columnHeightArr));
-    },
-    gouser(id) {
-      if (localStorage.getItem("token") == null) {
-        setTimeout(() => {
-          this.$pop.open();
-        }, 1000);
-      }
-      this.$router.push(`/user/${id}`);
-    },
     like(item) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -112,7 +72,7 @@ export default {
           },
         }).then(
           (res) => {
-            if (res.data.code === 2000) {
+            if (res.data.code === 2000 || res.data.code === 3100) {
               item.like = true;
               item.likeCount++;
             } else if (res.data.code === 9000) {
@@ -129,7 +89,7 @@ export default {
         );
       }
     },
-    unlike(item) {
+    unlike(item, index) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
           this.$pop.open();
@@ -145,9 +105,11 @@ export default {
           },
         }).then(
           (res) => {
-            if (res.data.code === 2000) {
+            if (res.data.code === 2000 || res.data.code === 3100) {
               item.like = false;
               item.likeCount--;
+              this.mylist2.data.splice(index, 1);
+              // console.log(index);
             } else if (res.data.code === 9000) {
               this.$pop.open();
             } else {
@@ -162,6 +124,32 @@ export default {
         );
       }
     },
+    water() {
+      var columnHeightArr = [];
+      columnHeightArr.length = 2;
+      var box2Arr = $(".box2");
+      box2Arr.each(function (index, item) {
+        if (index < 2) {
+          columnHeightArr[index] =
+            $(item).position().top + $(item).outerHeight(true);
+        } else {
+          var minHeight = Math.min.apply(null, columnHeightArr),
+            minHeightIndex = $.inArray(minHeight, columnHeightArr);
+
+          $(item).css({
+            position: "absolute",
+            top: minHeight,
+            left: box2Arr.eq(minHeightIndex).position().left,
+          });
+
+          columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
+        }
+      });
+      $(".contentsug2")
+        .parent()
+        .css("minHeight", Math.max.apply(null, columnHeightArr));
+    },
+
     t_click(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -171,17 +159,23 @@ export default {
       this.$router.push(`/topic/${id}`);
       // console.log(id);
     },
-    getData() {
+    getTopic() {
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
-        url: "/index/sug",
-        data: { token: localStorage.token },
+        url: "/user/like",
         headers: {
           "content-type": "multipart/form-data",
+          token: localStorage.token,
         },
       }).then(
         (res) => {
-          this.suglist = res.data;
+          Toast.clear();
+          this.mylist2 = res.data;
           setTimeout(() => {
             this.water();
           }, 1000);
@@ -189,7 +183,7 @@ export default {
             this.$pop.open();
           }
 
-          // console.log(this.suglist.data[0].images[0].path);
+          // console.log(this.mylist2);
         },
         (err) => {
           console.log(err);
@@ -199,31 +193,31 @@ export default {
   },
 
   mounted() {
-    this.getData();
+    this.getTopic();
   },
 };
 </script>
 
 <style lang="less">
-.contentsug {
-  box-sizing: border-box;
+.contentsug2 {
+  box-sizing: border-box2;
 }
-.sugad {
-  width: 100%;
-  height: 100px;
-  background-color: bisque;
-}
-.space {
-  height: 200px;
-}
-.box {
+// .sugad {
+//   width: 100%;
+//   height: 100px;
+//   background-color: bisque;
+// }
+// .space2 {
+//   height: 200px;
+// }
+.box2 {
   float: left;
   // width: 50%;
   width: 364px;
   margin: 3px 0px 3px 6px;
   background-color: white;
 }
-.image {
+.image2 {
   width: 100%;
   max-height: 480px;
   min-height: 200px;
@@ -231,15 +225,15 @@ export default {
   object-fit: cover;
 }
 
-.title {
+.title2 {
   font-size: small;
   width: 350px;
   // height: 70px;
   line-height: 36px;
   margin: 3px 7px 5px 7px;
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
+  display: -webkit-box2;
+  -webkit-box2-orient: vertical;
   text-overflow: ellipsis;
   -webkit-line-clamp: 2;
 }
@@ -247,7 +241,7 @@ export default {
 .solv {
   margin-top: 6px;
 }
-.info {
+.info2 {
   display: flex;
   height: 50px;
   margin-left: 10px;
@@ -256,7 +250,7 @@ export default {
   line-height: 50px;
   justify-content: space-between;
 
-  .uinfo {
+  .uinfo2 {
     vertical-align: baseline;
     .tx {
       width: 32px;
@@ -273,7 +267,7 @@ export default {
       display: inline-block;
       white-space: nowrap;
     }
-    .tinfo {
+    .tinfo2 {
       vertical-align: top;
       padding-right: 20px;
     }

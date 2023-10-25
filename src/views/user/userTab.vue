@@ -8,9 +8,8 @@
           v-show="userProp.topicPri"
         />
       </template>
-      <!-- <mytopic></mytopic> -->
       <div ref="aa" class="test" v-if="this.$store.state.userInfoH">
-        <h1 v-for="index in 9">{{ index }}</h1>
+        <mytopic></mytopic>
       </div>
     </van-tab>
     <van-tab>
@@ -30,7 +29,9 @@
           v-show="userProp.collectPri"
         />
       </template>
-      收藏
+      <div ref="aa" class="test">
+        <coltopic></coltopic>
+      </div>
     </van-tab>
     <van-tab>
       <template #title>
@@ -47,8 +48,13 @@
 
 <script>
 import request from "@/util/request";
-// import mytopic from "./Mytopic.vue";
+import mytopic from "./Mytopic.vue";
+import coltopic from "./CollectTopic.vue";
 export default {
+  components: {
+    mytopic,
+    coltopic,
+  },
   data() {
     return {
       active: 0,
@@ -75,9 +81,6 @@ export default {
       }).then(
         (res) => {
           this.topic = res.data;
-          if (res.data.msg.includes("登录")) {
-            this.$pop.open();
-          }
         },
         (err) => {
           console.log(err);
@@ -111,13 +114,14 @@ export default {
 </script>
 
 <style lang="less">
-.nr {
-  overflow: auto;
-}
 .test {
   width: 100%;
   height: 18rem;
-  background-color: yellow;
+  overflow: scroll;
+}
+.test1 {
+  width: 100%;
+  height: 18rem;
   overflow: scroll;
 }
 .lock {
@@ -127,6 +131,5 @@ export default {
 }
 .coll {
   border-radius: 3%;
-  position: sticky;
 }
 </style>

@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style lang="less">
-.pcenter {
-  position: fixed;
-}
+// .pcenter {
+// position: fixed;
+// }
 </style>

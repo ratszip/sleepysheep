@@ -1,11 +1,10 @@
 <template>
   <div class="contentsug">
-    <div class="sugad">广告位</div>
+    <!-- <div class="sugad">广告位</div> -->
     <div
       class="box"
       ref="box"
-      v-for="(item, index) in suglist.data"
-      @click="t_click(item.id)"
+      v-for="(item, index) in mylist.data"
       :key="index"
     >
       <img
@@ -18,7 +17,7 @@
         {{ item.title }}
       </h1>
       <div class="info">
-        <div class="uinfo" @click="gouser(item.userId)">
+        <div class="uinfo" @click="t_click(item.id)">
           <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
           <span>&nbsp;{{ item.nickName }}</span>
         </div>
@@ -48,14 +47,81 @@
 <script>
 import request from "@/util/request";
 import $ from "jquery";
+import { Toast } from "vant";
 export default {
   data() {
     return {
-      suglist: "",
+      mylist: "",
       baseurl: this.$store.state.sBaseUrl,
     };
   },
   methods: {
+    like(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/like",
+          data: { topicId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000 || res.data.code === 3100) {
+              item.like = true;
+              item.likeCount++;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unlike(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/unlike",
+          data: { topicId: item.id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000 || res.data.code === 3100) {
+              item.like = false;
+              item.likeCount--;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
     water() {
       var columnHeightArr = [];
       columnHeightArr.length = 2;
@@ -77,7 +143,9 @@ export default {
           columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
         }
       });
-      $("body").css("minHeight", Math.max.apply(null, columnHeightArr));
+      $(".contentsug")
+        .parent()
+        .css("minHeight", Math.max.apply(null, columnHeightArr));
     },
 
     t_click(id) {
@@ -90,16 +158,22 @@ export default {
       // console.log(id);
     },
     getTopic() {
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
         url: "/user/topic",
-        data: { token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
+          token: localStorage.token,
         },
       }).then(
         (res) => {
-          this.suglist = res.data;
+          Toast.clear();
+          this.mylist = res.data;
           setTimeout(() => {
             this.water();
           }, 1000);
@@ -107,7 +181,7 @@ export default {
             this.$pop.open();
           }
 
-          // console.log(this.suglist.data[0].images[0].path);
+          // console.log(this.mylist);
         },
         (err) => {
           console.log(err);
@@ -126,11 +200,11 @@ export default {
 .contentsug {
   box-sizing: border-box;
 }
-.sugad {
-  width: 100%;
-  height: 100px;
-  background-color: bisque;
-}
+// .sugad {
+//   width: 100%;
+//   height: 100px;
+//   background-color: bisque;
+// }
 .space {
   height: 200px;
 }
