@@ -11,6 +11,7 @@
     "amfe-flexible": "^2.2.1",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "element-resize-detector": "^1.2.4",
     "jquery": "^3.7.1",
     "masonry-layout": "^4.2.2",
     "postcss-pxtorem": "^5.1.1",

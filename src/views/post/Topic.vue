@@ -466,7 +466,7 @@ export default {
             }
             this.comments.push(res.data.data);
             // this.$router.go(0);
-            console.log(this.comments);
+            // console.log(this.comments);
           } else if (res.data.code === 9000) {
             setTimeout(() => {
               this.$pop.open();

@@ -1,6 +1,7 @@
 <template>
   <div class="bt_bar">
     <van-tabbar
+      ref="btheight"
       v-model="active"
       fixed
       placeholder
@@ -25,7 +26,16 @@ export default {
       uid: 0,
     };
   },
+  mounted() {
+    this.calcu();
+  },
   methods: {
+    calcu() {
+      this.$store.commit("setBotHeight", this.$refs.btheight.height);
+      // console.log(this.$refs.btheight.height);
+      // console.log(this.$store.getters.getBotH + "bb");
+      // console.log(this.$store.getters.getBotH + "bb");
+    },
     hastoken() {
       if (localStorage.getItem("token") == null) {
         this.$root.$pop.open();

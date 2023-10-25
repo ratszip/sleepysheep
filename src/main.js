@@ -16,6 +16,7 @@ Vue.use(pop)
 Vue.use(Toast)
 Vue.use(Lazyload)
 Vue.config.productionTip = false
+Vue.prototype.bus = new Vue()
 new Vue({
   router,
   store,

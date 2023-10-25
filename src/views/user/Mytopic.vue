@@ -1,6 +1,6 @@
 <template>
   <div class="contentsug">
-    <div class="sugad">banner</div>
+    <div class="sugad">广告位</div>
     <div
       class="box"
       ref="box"
@@ -57,15 +57,9 @@ export default {
   },
   methods: {
     water() {
-      // console.log(this.suglist);
       var columnHeightArr = [];
       columnHeightArr.length = 2;
       var boxArr = $(".box");
-
-      // let realh =
-      //   (document.body.clientWidth * this.suglist.data[0].images[0].height) /
-      //   this.suglist.data[0].images[0].width;
-      // console.log(realh);
       boxArr.each(function (index, item) {
         if (index < 2) {
           columnHeightArr[index] =
@@ -85,80 +79,7 @@ export default {
       });
       $("body").css("minHeight", Math.max.apply(null, columnHeightArr));
     },
-    gouser(id) {
-      if (localStorage.getItem("token") == null) {
-        setTimeout(() => {
-          this.$pop.open();
-        }, 1000);
-      }
-      this.$router.push(`/user/${id}`);
-    },
-    like(item) {
-      if (localStorage.getItem("token") == null) {
-        setTimeout(() => {
-          this.$pop.open();
-        }, 1000);
-      } else {
-        request({
-          method: "post",
-          url: "/topic/like",
-          data: { topicId: item.id },
-          headers: {
-            "content-type": "multipart/form-data",
-            token: localStorage.token,
-          },
-        }).then(
-          (res) => {
-            if (res.data.code === 2000) {
-              item.like = true;
-              item.likeCount++;
-            } else if (res.data.code === 9000) {
-              this.$pop.open();
-            } else {
-              this.$toast({
-                message: res.data.msg,
-              });
-            }
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-      }
-    },
-    unlike(item) {
-      if (localStorage.getItem("token") == null) {
-        setTimeout(() => {
-          this.$pop.open();
-        }, 1000);
-      } else {
-        request({
-          method: "post",
-          url: "/topic/unlike",
-          data: { topicId: item.id },
-          headers: {
-            "content-type": "multipart/form-data",
-            token: localStorage.token,
-          },
-        }).then(
-          (res) => {
-            if (res.data.code === 2000) {
-              item.like = false;
-              item.likeCount--;
-            } else if (res.data.code === 9000) {
-              this.$pop.open();
-            } else {
-              this.$toast({
-                message: res.data.msg,
-              });
-            }
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-      }
-    },
+
     t_click(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -168,10 +89,10 @@ export default {
       this.$router.push(`/topic/${id}`);
       // console.log(id);
     },
-    getData() {
+    getTopic() {
       request({
         method: "post",
-        url: "/index/sug",
+        url: "/user/topic",
         data: { token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
@@ -196,7 +117,7 @@ export default {
   },
 
   mounted() {
-    this.getData();
+    this.getTopic();
   },
 };
 </script>
