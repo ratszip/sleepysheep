@@ -5,6 +5,7 @@
       <div class="topau">
         <div class="author" @click="goInfo">
           <van-image
+            v-if="tcontent.avatar"
             class="toux"
             round
             style="vertical-align: -20%"
@@ -47,30 +48,30 @@
         </van-swipe-item>
       </van-swipe>
 
-      <span class="title">{{ tcontent.title }}</span>
-
-      <p class="content">&nbsp{{ tcontent.content }}</p>
+      <h1 class="title">{{ tcontent.title }}123</h1>
+      <p class="content">{{ tcontent.content }}</p>
       <div class="tbotom">
+        <span class="topictime">发布于{{ tcontent.createTime }}</span>
         <span class="solve" v-if="tcontent.isSolved == true">
           <van-icon
-            style="vertical-align: -10%"
+            style="vertical-align: -6%"
             size="15"
             name="checked"
             color="green"
           />
-          已解决</span
+          设为未解决</span
         >
         <span class="solve" v-else-if="tcontent.isSolved == false">
-          <van-icon style="vertical-align: -10%" size="15" name="question-o" />
-          未解决
+          <van-icon style="vertical-align: -6%" size="15" name="question-o" />
+          设为已解决
         </span>
-        <span class="topictime">发布于{{ tcontent.createTime }}</span>
       </div>
     </div>
-    <div class="comment" ref="refresh">
+    <div class="comment" ref="refresh" v-if="comments">
       <div class="ttc">共 {{ comments ? comments.length : 0 }} 条评论</div>
-      <div class="citem" v-for="(item, index) in comments">
+      <div class="citem" v-for="(item, index) in comments" :key="index">
         <van-image
+          v-if="item.avatar"
           class="ctoux"
           round
           width="28px"
@@ -159,6 +160,7 @@
    display: flex;
    justify-content: space-between;
    align-items:center;
+   margin: 10px;
     .author{
       display: flex;
       align-items:center;
@@ -196,31 +198,32 @@
   .tbotom {
     display: flex;
     justify-content: space-between;
-    padding-left: 16px;
+    margin: 16px;
   }
   .title {
-    font-size: 40px;
-    height: 50px;
-    font-weight: 550;
-    line-height: 50px;
-    margin: 10px 16px;
-    overflow: hidden;
+    width: 100%;
+    font-size: 30px;
+    // height: 32px;
+    // font-weight: 550;
+    vertical-align: bottom;
+    line-height: 30px;
+    margin: 16px;
     text-overflow: ellipsis;
   }
 
   .content {
-    font-size: 32px;
-    line-height: 50px;
+    font-size: 28px;
+    line-height: 32px;
     word-wrap: break-word;
-    margin: 0;
-    padding-left: 12px;
+    margin-bottom: 10;
+    padding-left: 16px;
     background-color: white;
   }
  
 }
 
 .topictime {
-    margin-left: 20px;
+    // margin-left: 16px;
     margin-right: 10px;
     font-size: 20px;
     color: lightgray;
@@ -228,7 +231,7 @@
   .ttc{
     margin-top: 2px;
     color: rgb(107, 106, 106);
-    font-size: 26px;
+    font-size: 22px;
     padding: 10px;
     background-color: white;
   }
@@ -273,6 +276,7 @@
 </style>
 <script>
 import request from "@/util/request";
+import { Toast } from "vant";
 export default {
   data() {
     return {
@@ -465,6 +469,7 @@ export default {
               this.commnets = [];
             }
             this.comments.push(res.data.data);
+            this.pubopinion = "";
           } else if (res.data.code === 9000) {
             setTimeout(() => {
               this.$pop.open();
@@ -480,48 +485,57 @@ export default {
         }
       );
     },
+    getDetail() {
+      this.topicId = this.$route.params.id;
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
+      request({
+        method: "post",
+        url: "/topic/detail",
+        data: { token: localStorage.token, topicId: this.topicId },
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          Toast.clear();
+          if (res.data.code === 9000) {
+            this.$toast({
+              message: "请先登录",
+            });
+          }
+          this.tcontent = res.data.data;
+          this.comments = res.data.data.comments;
+          if (this.tcontent.userId === this.tcontent.guestId) {
+            this.guest = false;
+          } else {
+            this.guest = true;
+          }
+          if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {
+            let realh =
+              (document.body.clientWidth * this.tcontent.images[0].height) /
+              this.tcontent.images[0].width;
+            if (realh < 200) {
+              this.imgclass.height = "200px";
+            } else {
+              this.imgclass.height = realh + "px";
+            }
+          } else {
+            this.imgclass.height = "400px";
+            this.imgclass.lineHeight = "400px";
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
   },
   mounted() {
-    this.topicId = this.$route.params.id;
-    request({
-      method: "post",
-      url: "/topic/detail",
-      data: { token: localStorage.token, topicId: this.topicId },
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    }).then(
-      (res) => {
-        if (res.data.code === 9000) {
-          this.$toast({
-            message: "请先登录",
-          });
-        }
-        this.tcontent = res.data.data;
-        this.comments = res.data.data.comments;
-        if (this.tcontent.userId === this.tcontent.guestId) {
-          this.guest = false;
-        } else {
-          this.guest = true;
-        }
-        if (this.tcontent.images[0].height <= this.tcontent.images[0].width) {
-          let realh =
-            (document.body.clientWidth * this.tcontent.images[0].height) /
-            this.tcontent.images[0].width;
-          if (realh < 200) {
-            this.imgclass.height = "200px";
-          } else {
-            this.imgclass.height = realh + "px";
-          }
-        } else {
-          this.imgclass.height = "400px";
-          this.imgclass.lineHeight = "400px";
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    this.getDetail();
   },
 };
 </script>
