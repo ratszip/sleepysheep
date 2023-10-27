@@ -1,42 +1,69 @@
 <template>
   <div class="topic">
-    <van-nav-bar left-text="返回" fixed left-arrow @click-left="onClickLeft" />
-    <div class="imgs">
-      <div class="topau">
-        <div class="author" @click="goInfo">
+    <van-nav-bar fixed>
+      <template #left>
+        <div class="author">
+          <van-icon
+            class="left"
+            name="arrow-left"
+            size="20"
+            @click="onClickLeft"
+          />
           <van-image
+            @click="goInfo"
             v-if="tcontent.avatar"
             class="toux"
             round
-            style="vertical-align: -20%"
+            style="vertical-align: 80%"
             width="28px"
             height="28px"
             :src="`${baseurl}/images/${tcontent.avatar}.png`"
           />
-          <span class="auname">{{ tcontent.nickName }}</span>
+          <span class="auname" @click="goInfo">{{ tcontent.nickName }}</span>
         </div>
+      </template>
+      <template #right>
+        <div class="rightgr">
+          <van-button
+            class="follow"
+            v-show="tcontent.guest && !this.tcontent.fans"
+            round
+            size="mini"
+            type="info"
+            @click="follow"
+            >关注</van-button
+          >
+          <van-button
+            v-show="tcontent.guest && this.tcontent.fans"
+            size="mini"
+            class="follow"
+            round
+            type="default"
+            @click="unfollow"
+            >已关注</van-button
+          >
+          <!-- <van-icon v-show="tcontent.guest" size="16" name="share-o" /> -->
 
-        <van-button
-          v-show="this.guest && !this.tcontent.fans"
-          class="follow"
-          size="small"
-          round
-          type="info"
-          plain
-          @click="follow"
-          >关注</van-button
-        >
-        <van-button
-          v-show="this.guest && this.tcontent.fans"
-          class="follow"
-          size="small"
-          round
-          type="default"
-          plain
-          @click="unfollow"
-          >已关注</van-button
-        >
-      </div>
+          <van-popover
+            v-model="showPopover"
+            trigger="click"
+            :actions="actions"
+            @select="onSelect"
+            placement="left-start"
+          >
+            <template #reference>
+              <van-icon
+                style="margin-right: 8px"
+                size="16"
+                name="ellipsis"
+                @click="morein"
+              />
+            </template>
+          </van-popover>
+        </div>
+      </template>
+    </van-nav-bar>
+    <div class="imgs">
       <van-swipe class="imbg">
         <van-swipe-item
           :style="imgclass"
@@ -48,23 +75,24 @@
         </van-swipe-item>
       </van-swipe>
 
-      <h1 class="title">{{ tcontent.title }}123</h1>
+      <h1 class="title">{{ tcontent.title }}</h1>
       <p class="content">{{ tcontent.content }}</p>
       <div class="tbotom">
         <span class="topictime">发布于{{ tcontent.createTime }}</span>
-        <span class="solve" v-if="tcontent.isSolved == true">
-          <van-icon
-            style="vertical-align: -6%"
-            size="15"
-            name="checked"
-            color="green"
-          />
-          设为未解决</span
-        >
-        <span class="solve" v-else-if="tcontent.isSolved == false">
-          <van-icon style="vertical-align: -6%" size="15" name="question-o" />
-          设为已解决
-        </span>
+        <div class="fix" v-show="!tcontent.guest">
+          <span class="solve" v-if="tcontent.isSolved">
+            <van-icon size="13" name="checked" style="vertical-align: -10%" />
+            设为未解决</span
+          >
+          <span class="solve" v-else-if="!tcontent.isSolved">
+            <van-icon
+              size="13"
+              name="question-o"
+              style="vertical-align: -10%"
+            />
+            设为已解决
+          </span>
+        </div>
       </div>
     </div>
     <div class="comment" ref="refresh" v-if="comments">
@@ -78,30 +106,49 @@
           height="28px"
           :src="`${baseurl}/images/${item.avatar}.png`"
         />
-        <span class="cuname"> {{ item.nickName }} </span>
-        <p class="ccontent">{{ item.content }}</p>
-        <span class="topictime ctime">{{ item.createTime }} </span>
-        <div class="handl">
-          <span>copy</span>
-          <van-icon size="18" name="comment-o" />
-          <div class="zan">
-            <van-icon
-              style="vertical-align: -10%"
-              v-if="!item.likeCom"
-              name="bookmark-o"
-              size="18"
-              @click="like(item)"
-            />
-            <van-icon
-              style="vertical-align: -10%"
-              v-if="item.likeCom"
-              name="bookmark"
-              color="red"
-              @click="unlike(item)"
-              size="18"
-            />
-            {{ item.likeCount }}
+        <div class="comitem">
+          <div class="handl">
+            <span class="cuname"> {{ item.nickName }} </span>
+            <div class="zan">
+              <van-icon
+                style="vertical-align: -10%"
+                v-if="!item.likeCom"
+                name="good-job-o"
+                size="18"
+                @click="like(item)"
+              />
+              <van-icon
+                style="vertical-align: -10%"
+                v-if="item.likeCom"
+                name="good-job"
+                color="red"
+                @click="unlike(item)"
+                size="18"
+              />
+              {{ item.likeCount }}
+              <span class="cmore">︙</span>
+            </div>
           </div>
+
+          <p class="ccontent">{{ item.content }}</p>
+          <div>
+            <span class="topictime ctime">{{ item.createTime }} </span>
+            <span class="reply">回复</span>
+          </div>
+          <div class="replylist">
+            <div class="rpitem">
+              <span class="cuname"> {{ item.nickName }}:</span>
+              <span class="rpcont"></span>
+              <span class="cuname"></span>
+              <span class="rpcont">你厉害</span>
+              <div>
+                <span class="topictime ctime"> {{ item.createTime }} </span>
+                <span class="reply"> 回复</span>
+              </div>
+            </div>
+            <div class="showmore">展示更多</div>
+          </div>
+          <van-divider />
         </div>
       </div>
       <div class="nomore">~暂无更多回复~</div>
@@ -151,37 +198,46 @@
     }
   }
 }
-.imgs {
-  background-color: white;
-  // padding: 0 20px;
-  margin-top: 90px;
-  padding-bottom: 10px;
-  .topau {
-   display: flex;
-   justify-content: space-between;
-   align-items:center;
-   margin: 10px;
-    .author{
+.rightgr{
+  display: flex;
+  margin-top: 30px;
+  align-items:center;
+.follow {
+      font-size: 24px;
+      // vertical-align: middle;
+      width: 100px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    
+  }
+.author{
+      // padding-top: 10px;
       display: flex;
       align-items:center;
-      justify-content:center;
+      // justify-content:center;
+       margin-top: 34px;
       .toux {
+        margin-right: 10px;
         vertical-align: middle;
-        margin: 5px 5px 5px 10px;
+        // margin: 5px 5px 5px 10px;
         display: inline-block;
       }
+      .left{
+        margin-right: 10px;
+      }
       .auname {
-        font-size: 30px;
+        font-size: 24px;
       }
     }
-    .follow {
-      font-size: 24px;
-      vertical-align: middle;
-      width: 120px;
-      height: 40px;
-      margin-right: 20px;
-    }
-  }
+
+.imgs {
+  background-color: white;
+  margin-top: 90px;
+  padding-bottom: 10px;
+
+   
+ 
     .mainpic {
       width: auto;
       height: auto;
@@ -190,16 +246,22 @@
       vertical-align: middle,
       // object-fit: contain;
     }
-  
-  .solve {
-    font-size: 26px;
-    color: gray;
+    .fix{
+      padding-bottom: 10px;
+    }
+    .solve {
+    font-size: 20px;
+    color: #7093DB;
+    vertical-align: middle;
   }
+  
   .tbotom {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     margin: 16px;
   }
+
   .title {
     width: 100%;
     font-size: 30px;
@@ -228,6 +290,50 @@
     font-size: 20px;
     color: lightgray;
   }
+  .comitem{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    .handl{
+      display: flex;
+      font-size: 28px;
+      justify-content: space-between;
+      align-items: center;
+      color: gray;
+      margin: 8px;
+      
+      .cmore{
+        margin-left: 30px;
+      }
+    }
+    .reply{
+      color: #A8A8A8;
+      font-size: 20px;
+      margin-left: 10px;
+    }
+    .replylist{
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      background-color: rgb(247, 248, 250);
+      border-radius: 16px;
+      .rpitem{
+        font-size: 0;
+        vertical-align: middle;
+        padding:10px;
+        margin: 0;
+        .rpcont{
+          font-size: 24px;
+        }
+      
+      }
+      .showmore{
+        font-size: 20px;
+        color: #7093DB;
+        margin-left: 8px;
+      }
+    }
+  }
   .ttc{
     margin-top: 2px;
     color: rgb(107, 106, 106);
@@ -242,35 +348,29 @@
     margin-bottom: 60px;
   }
   .citem{
-    // display: flex;
+    display: flex;
     padding: 8px 10px 8px 18px;
-    // margin: 2px 0;
-    margin-bottom: 2px;
+    flex-direction: row;
     background-color: white;
     .ctoux {
       vertical-align: middle;
     }
-    .handl{
-      font-size: 28px;
-      display: flex;
-      justify-content: space-between;
-      color: gray;
-      margin:0 60px;
-    }
+    
     .cuname {
-      font-size: 28px;
+      font-size: 24px;
       color: gray;
     }
     .ccontent{
-      font-size: 28px;
-    line-height: 40px;
+    font-size: 26px;
+    line-height: 36px;
     word-wrap: break-word;
-    margin: 16px 8px 8px 60px;
+    margin: 8px;
     }
     .ctime{
-      display: block;
-      margin: 16px 8px 8px 60px;
+      display: inline-block;
+      margin: 2px;
     }
+   
   }
 
 </style>
@@ -285,6 +385,8 @@ export default {
       tcontent: "",
       comments: [],
       guest: false,
+      actions: [{ text: "删帖" }, { text: "私密" }, { text: "举报" }],
+      showPopover: false,
       baseurl: this.$store.state.sBaseUrl,
       inputSize: {
         maxHeight: 28,
@@ -301,6 +403,9 @@ export default {
   },
 
   methods: {
+    onSelect(action) {
+      Toast(action.text);
+    },
     goInfo() {
       console.log("ttttclick");
     },
@@ -375,11 +480,13 @@ export default {
       }
     },
     onClickLeft() {
+      console.log("left");
       this.$router.back();
     },
     focus() {
       this.inputSize.maxHeight = 120;
     },
+    morein() {},
     blur() {
       this.inputSize.maxHeight = 30;
     },
