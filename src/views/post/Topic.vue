@@ -26,7 +26,7 @@
         <div class="rightgr">
           <van-button
             class="follow"
-            v-show="tcontent.guest && !this.tcontent.fans"
+            v-show="tcontent.userId != tcontent.guestId && !tcontent.fans"
             round
             size="mini"
             type="info"
@@ -34,7 +34,7 @@
             >关注</van-button
           >
           <van-button
-            v-show="tcontent.guest && this.tcontent.fans"
+            v-show="tcontent.userId != tcontent.guestId && tcontent.fans"
             size="mini"
             class="follow"
             round
@@ -80,11 +80,19 @@
       <div class="tbotom">
         <span class="topictime">发布于{{ tcontent.createTime }}</span>
         <div class="fix" v-show="!tcontent.guest">
-          <span class="solve" v-if="tcontent.isSolved">
+          <span
+            class="solve"
+            v-if="tcontent.isSolved && tcontent.userId == tcontent.guestId"
+          >
             <van-icon size="13" name="checked" style="vertical-align: -10%" />
             设为未解决</span
           >
-          <span class="solve" v-else-if="!tcontent.isSolved">
+          <span
+            class="solve"
+            v-else-if="
+              !tcontent.isSolved && tcontent.userId == tcontent.guestId
+            "
+          >
             <van-icon
               size="13"
               name="question-o"
@@ -133,7 +141,7 @@
           <p class="ccontent">{{ item.content }}</p>
           <div>
             <span class="topictime ctime">{{ item.createTime }} </span>
-            <span class="reply">回复</span>
+            <span class="reply" @click="goreply(item.nickName)">回复</span>
           </div>
           <div class="replylist">
             <div class="rpitem">
@@ -153,12 +161,12 @@
       </div>
       <div class="nomore">~暂无更多回复~</div>
     </div>
-    <div class="empty"></div>
+
     <div class="huifu">
       <van-field
         class="rep"
         type="textarea"
-        placeholder="发表一下观点吧"
+        :placeholder="placeholder"
         extra="发表"
         v-model="pubopinion"
         @focus="focus"
@@ -177,10 +185,9 @@
 </template>
 
 <style lang="less">
-.empty{
-  width: 100%;
-  height: 60px;
-}
+// .empty{
+//   display: none;
+// }
 .huifu{
   position: fixed;
   bottom: 0;
@@ -388,6 +395,8 @@ export default {
       actions: [{ text: "删帖" }, { text: "私密" }, { text: "举报" }],
       showPopover: false,
       baseurl: this.$store.state.sBaseUrl,
+      placeholder: "发表一下观点吧",
+      publishType: 0,
       inputSize: {
         maxHeight: 28,
         minHeight: 28,
@@ -403,6 +412,14 @@ export default {
   },
 
   methods: {
+    goreply(nickName) {
+      this.$nextTick(function () {
+        this.placeholder = "回复" + nickName;
+        this.$refs.input.focus();
+        this.publishType = 1;
+        console.log(nickName);
+      });
+    },
     onSelect(action) {
       Toast(action.text);
     },
@@ -488,6 +505,7 @@ export default {
     },
     morein() {},
     blur() {
+      this.placeholder = "发表一下观点吧";
       this.inputSize.maxHeight = 30;
     },
     like(item) {
@@ -561,36 +579,44 @@ export default {
     },
     // 发布评论
     publish() {
-      request({
-        method: "post",
-        url: "/comment/insertComment",
-        data: { topicId: this.topicId, content: this.pubopinion },
-        headers: {
-          "content-type": "multipart/form-data",
-          token: localStorage.token,
-        },
-      }).then(
-        (res) => {
-          if (res.data.code === 2000) {
-            if (this.commnets === undefined) {
-              this.commnets = [];
+      if (this.publishType === 0) {
+        request({
+          method: "post",
+          url: "/comment/insertComment",
+          data: { topicId: this.topicId, content: this.pubopinion },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              if (this.commnets === undefined) {
+                this.commnets = [];
+              }
+              this.comments.push(res.data.data);
+              this.pubopinion = "";
+            } else if (res.data.code === 9000) {
+              setTimeout(() => {
+                this.$pop.open();
+              }, 1000);
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
             }
-            this.comments.push(res.data.data);
-            this.pubopinion = "";
-          } else if (res.data.code === 9000) {
-            setTimeout(() => {
-              this.$pop.open();
-            }, 1000);
-          } else {
-            this.$toast({
-              message: res.data.msg,
-            });
+          },
+          (err) => {
+            console.log(err);
           }
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+        );
+      } else if (this.publishType === 1) {
+        console.log("reply one");
+        this.pubopinion = "";
+      } else {
+        console.log("reply second");
+        this.pubopinion = "";
+      }
     },
     getDetail() {
       this.topicId = this.$route.params.id;
