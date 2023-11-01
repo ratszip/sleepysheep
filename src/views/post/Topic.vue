@@ -10,7 +10,7 @@
             @click="onClickLeft"
           />
           <van-image
-            @click="goInfo"
+            @click="goInfo(tcontent.userId)"
             v-if="tcontent.avatar"
             class="toux"
             round
@@ -19,7 +19,9 @@
             height="28px"
             :src="`${baseurl}/images/${tcontent.avatar}.png`"
           />
-          <span class="auname" @click="goInfo">{{ tcontent.nickName }}</span>
+          <span class="auname" @click="goInfo(tcontent.userId)">{{
+            tcontent.nickName
+          }}</span>
         </div>
       </template>
       <template #right>
@@ -141,24 +143,86 @@
           <p class="ccontent">{{ item.content }}</p>
           <div>
             <span class="topictime ctime">{{ item.createTime }} </span>
-            <span class="reply" @click="goreply(item.nickName)">回复</span>
+            <span class="reply" @click="goreply(item, empty[0])">回复</span>
           </div>
-          <div class="replylist">
-            <div class="rpitem">
-              <span class="cuname"> {{ item.nickName }}:</span>
-              <span class="rpcont"></span>
-              <span class="cuname"></span>
-              <span class="rpcont">你厉害</span>
+          <div class="replylist" v-if="item.replyList">
+            <div
+              class="rpitem"
+              v-for="(rp, rindex) in item.replyList"
+              :key="rindex"
+              v-if="rindex < 1"
+              :ref="'rp' + rindex"
+            >
+              <span class="cuname" @click="goInfo(rp.fromUid)">
+                {{ rp.fromUname }}:</span
+              >
+              <span class="cuname" v-show="rp.toUid">回复 </span
+              ><span class="cuname" v-show="rp.toUid" @click="goInfo(rp.toUid)"
+                >{{ rp.toUname }}:</span
+              >
+              <span class="rpcont">{{ rp.content }}</span>
               <div>
-                <span class="topictime ctime"> {{ item.createTime }} </span>
-                <span class="reply"> 回复</span>
+                <span class="topictime ctime"> {{ rp.createTime }} </span>
+                <span class="reply" @click="goreply(rp, empty[1], index)">
+                  回复</span
+                >
               </div>
             </div>
-            <div class="showmore">展示更多</div>
+            <div
+              class="showmore"
+              v-if="item.replyList.length > 1"
+              @click="showmore(item, index)"
+            >
+              展示更多
+            </div>
           </div>
           <van-divider />
         </div>
       </div>
+      <van-action-sheet v-model="showsheet">
+        <div class="contentlist">
+          <div
+            class="rpitemls"
+            v-for="(rp, rindex) in sheetlist"
+            :key="rindex"
+            :ref="'rp' + rindex"
+          >
+            <span class="rcuname" @click="goInfo(rp.fromUid)">
+              {{ rp.fromUname }}:</span
+            >
+            <span class="rcuname" v-show="rp.toUid">回复 </span
+            ><span class="rcuname" v-show="rp.toUid" @click="goInfo(rp.toUid)"
+              >{{ rp.toUname }}:</span
+            >
+            <span class="rpcontl">{{ rp.content }}</span>
+            <div>
+              <span class="topictime ctime"> {{ rp.createTime }} </span>
+              <span class="replyl" @click="goreply(rp, empty[2], curIndex)">
+                回复</span
+              >
+            </div>
+          </div>
+          <div class="huifu">
+            <van-field
+              class="rep"
+              type="textarea"
+              :placeholder="placeholder"
+              extra="发表"
+              v-model="pubopinion"
+              @focus="focus1"
+              @blur="blur1"
+              ref="input1"
+              :autosize="inputSize"
+            >
+              <template #button>
+                <van-button @click="publish" size="small" round type="primary"
+                  >发表</van-button
+                >
+              </template>
+            </van-field>
+          </div>
+        </div>
+      </van-action-sheet>
       <div class="nomore">~暂无更多回复~</div>
     </div>
 
@@ -354,6 +418,22 @@
     color: lightgray;
     margin-bottom: 60px;
   }
+  .contentlist{
+    max-height: 70%;
+    padding: 25px 20px 180px;
+  }
+  .rcuname{
+      font-size: 28px;
+      color: gray;
+  }
+  .replyl{
+      color: #A8A8A8;
+      font-size: 24px;
+      margin-left: 10px;
+    }
+    .rpcontl{
+      font-size: 28px;
+    }
   .citem{
     display: flex;
     padding: 8px 10px 8px 18px;
@@ -387,10 +467,16 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      showsheet: false,
+      sheetlist: [],
+      empty: [1, 2, 3],
       pubopinion: "",
       topicId: null,
       tcontent: "",
       comments: [],
+      curCommentId: null,
+      curToUid: null,
+      curIndex: null,
       guest: false,
       actions: [{ text: "删帖" }, { text: "私密" }, { text: "举报" }],
       showPopover: false,
@@ -412,20 +498,44 @@ export default {
   },
 
   methods: {
-    goreply(nickName) {
+    showmore(item, cindex) {
+      // v-if="item.replyList.length > 1"
+      this.showsheet = true;
+      this.sheetlist = item.replyList;
+      this.curIndex = cindex;
+      this.goreply(item, 1, cindex);
+      // console.log(this.$refs[`rp${index}`]);
+    },
+    goreply(item, e, cindex) {
+      var name, cid, input;
+      this.curIndex = cindex;
+      if (e === 1) {
+        name = item.nickName;
+        input = this.$refs.input;
+        cid = item.id;
+      } else if (e === 2) {
+        input = this.$refs.input;
+        name = item.fromUname;
+        cid = item.commentId;
+      } else {
+        name = item.fromUname;
+        cid = item.commentId;
+        input = this.$refs.input1;
+        e = 2;
+      }
       this.$nextTick(function () {
-        this.placeholder = "回复" + nickName;
-        this.$refs.input.focus();
-        this.publishType = 1;
-        console.log(nickName);
+        this.placeholder = "回复" + name;
+        this.publishType = e;
+        this.curToUid = item.fromUid;
+        this.curCommentId = cid;
+        input.focus();
+        console.log(item.fromUid + "--" + cid);
       });
     },
     onSelect(action) {
       Toast(action.text);
     },
-    goInfo() {
-      console.log("ttttclick");
-    },
+    goInfo(id) {},
     follow() {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -503,11 +613,16 @@ export default {
     focus() {
       this.inputSize.maxHeight = 120;
     },
+    focus1() {
+      this.inputSize.maxHeight = 120;
+    },
     morein() {},
     blur() {
       this.placeholder = "发表一下观点吧";
+      this.publishType = 0;
       this.inputSize.maxHeight = 30;
     },
+
     like(item) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -579,6 +694,12 @@ export default {
     },
     // 发布评论
     publish() {
+      if (this.pubopinion.trim() === "") {
+        this.$toast({
+          message: "不能为空",
+        });
+        return;
+      }
       if (this.publishType === 0) {
         request({
           method: "post",
@@ -611,12 +732,49 @@ export default {
           }
         );
       } else if (this.publishType === 1) {
-        console.log("reply one");
+        this.insertReply(1);
         this.pubopinion = "";
       } else {
-        console.log("reply second");
+        this.insertReply(2);
         this.pubopinion = "";
       }
+    },
+    insertReply(type) {
+      if (type === 1) {
+        this.curToUid = null;
+      }
+
+      request({
+        method: "post",
+        url: "/comment/insertReply",
+        data: {
+          commentId: this.curCommentId,
+          content: this.pubopinion,
+          toUid: this.curToUid,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 2000) {
+            this.comments[this.curIndex].replyList.push();
+            this.pubopinion = "";
+          } else if (res.data.code === 9000) {
+            setTimeout(() => {
+              this.$pop.open();
+            }, 1000);
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     getDetail() {
       this.topicId = this.$route.params.id;
