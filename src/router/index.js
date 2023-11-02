@@ -2,13 +2,14 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Register from '../views/register/Register.vue'
 import Home from '../views/home/Home.vue'
-import Homewf from '../views/home/Homewf.vue'
 import Post from '@/views/post/Post.vue'
 import User from '@/views/user/User.vue'
 import Pop from '@/views/Pop.vue'
 import FoFans from '@/views/user/Fofan.vue'
 import EditUser from '@/views/user/EditUser.vue'
-import Topic from '@/views/post/Topic.vue'
+import Topic from '@/views/post/Topic.vue' 
+import TopicNav from '@/views/post/TopicNav.vue'
+import TopicInfo from '@/views/post/TopicInfo.vue'
 
 Vue.use(VueRouter)
 
@@ -24,11 +25,13 @@ const routes = [
     {path:'/fans',name:'fans',component:FoFans},
     {path:'/edit',name:'edit',component:EditUser},
     {path:'/topic/:id',name:'topic',component:Topic},
+    {path:'/tnav',name:'topicnav',component:TopicNav},
+    {path:'/tinfo',name:'topicinfo',component:TopicInfo},
 ]
 
 const router = new VueRouter({
-    // mode:'history',
-    mode:'hash',
+    mode:'history',
+    // mode:'hash',
     routes
 })
 // 重复跳转不报错
