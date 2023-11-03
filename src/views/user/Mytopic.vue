@@ -53,6 +53,7 @@ export default {
     return {
       mylist: "",
       baseurl: this.$store.state.sBaseUrl,
+      userId: null,
     };
   },
   methods: {
@@ -158,6 +159,7 @@ export default {
       // console.log(id);
     },
     getTopic() {
+      this.userId = this.$route.params.uid;
       this.$toast.loading({
         duration: 0,
         message: "加载中...",
@@ -166,6 +168,9 @@ export default {
       request({
         method: "post",
         url: "/user/topic",
+        data: {
+          userId: this.userId,
+        },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,

@@ -29,6 +29,7 @@ export default {
         guestId: null,
       },
       contentData: {
+        topicId: null,
         title: null,
         content: null,
         userId: null,

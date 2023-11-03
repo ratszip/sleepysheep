@@ -17,7 +17,6 @@ Vue.use(VueRouter)
 const routes = [
     {path:'/register',name:'register',component:Register},
     {path:'/home',name:'home',component:Home},
-    // {path:'/home',name:'homewf',component:Homewf},
     {path: '/', redirect: '/home'},
     {path:'/user/:uid',name:'user',component:User},
     {path:'/post',name:'post',component:Post},

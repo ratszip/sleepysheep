@@ -160,7 +160,7 @@ export default {
     align-items: center;
     flex-direction: row-reverse;
     .follow {
-      width: 100px;
+      width: 120px;
       height: 50px;
       color: rgb(99, 121, 218);
     }

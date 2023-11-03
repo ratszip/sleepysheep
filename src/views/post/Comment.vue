@@ -47,19 +47,19 @@
             class="rpitem"
             v-for="(rp, rindex) in item.replyList"
             :key="rindex"
-            v-if="rindex < 1"
+            v-if="rindex < curRepNum"
             :ref="'rp' + rindex"
           >
             <span class="cuname" @click="goUserInfo(rp.fromUid)">
-              {{ rp.fromUname }}:</span
-            >
+              {{ rp.fromUname }}：
+            </span>
             <span class="cuname" style="color: black" v-show="rp.toUid"
               >回复 </span
             ><span
               class="cuname"
               v-show="rp.toUid"
               @click="goUserInfo(rp.toUid)"
-              >{{ rp.toUname }}:</span
+              >{{ rp.toUname }}：</span
             >
             <span class="rpcont">{{ rp.content }}</span>
             <div>
@@ -69,7 +69,7 @@
           </div>
           <div
             class="showmore"
-            v-if="item.replyList.length > 1"
+            v-if="item.replyList.length > curRepNum"
             @click="showmore(item, index)"
           >
             展示更多
@@ -78,30 +78,76 @@
         <van-divider />
       </div>
     </div>
+
+    <van-action-sheet v-model="showsheet" overlay="">
+      <div class="contentlist">
+        <div class="rpitemls" v-for="(rp, rindex) in sheetlist" :key="rindex">
+          <span class="rcuname" @click="goUserInfo(rp.fromUid)">
+            {{ rp.fromUname }}:</span
+          >
+          <span class="rcuname" v-show="rp.toUid" style="color: black"
+            >回复 </span
+          ><span class="rcuname" v-show="rp.toUid" @click="goUserInfo(rp.toUid)"
+            >{{ rp.toUname }}:</span
+          >
+          <span class="rpcontl">{{ rp.content }}</span>
+          <div>
+            <span class="topictime ctime"> {{ rp.createTime }} </span>
+            <span class="replyl" @click="goreply(rp, curCommentIndex)">
+              回复</span
+            >
+          </div>
+        </div>
+        <div class="outcomment">
+          <van-field
+            ref="oninput"
+            class="outinput"
+            type="textarea"
+            v-model="pubreply"
+            @blur="outBlur"
+            :placeholder="replyTo"
+            v-show="onputshow"
+          >
+            <template #button>
+              <van-button size="small" type="primary" @touchstart="repTouch"
+                >发表</van-button
+              >
+            </template>
+          </van-field>
+        </div>
+      </div>
+    </van-action-sheet>
+
     <div class="nomore">~暂无更多回复~</div>
     <div class="outcomment">
       <van-field
         ref="outinput"
         class="outinput"
         type="textarea"
+        v-model="pubcoment"
         placeholder="发表一下观点吧"
         v-show="!btshow && !onputshow"
         @blur="outBlur"
       >
         <template #button>
-          <van-button size="small" type="primary">发表</van-button>
+          <van-button size="small" type="primary" @touchstart="repTouch"
+            >发表</van-button
+          >
         </template>
       </van-field>
       <van-field
         ref="oninput"
         class="outinput"
         type="textarea"
+        v-model="pubreply"
         @blur="outBlur"
         :placeholder="replyTo"
         v-show="onputshow"
       >
         <template #button>
-          <van-button size="small" type="primary">发表</van-button>
+          <van-button size="small" type="primary" @touchstart="repTouch"
+            >发表</van-button
+          >
         </template>
       </van-field>
     </div>
@@ -124,10 +170,19 @@ export default {
     return {
       baseurl: this.$store.state.sBaseUrl,
       replyTo: "",
-      inputSize: 30,
       btshow: true,
       onputshow: false,
       curCommentIndex: null,
+      pubcoment: "",
+      pubreply: "",
+      pubstatus: 0,
+      curToUid: null,
+      curCommentId: null,
+      topicId: null,
+      publishType: null,
+      curRepNum: 3,
+      sheetlist: [],
+      showsheet: false,
     };
   },
   methods: {
@@ -139,26 +194,143 @@ export default {
       }
       this.$router.push(`/user/${id}`);
     },
-    outBlur() {
-      this.btshow = true;
-      this.onputshow = false;
+
+    outBlur(e) {
+      if (this.pubstatus == 0) {
+        this.btshow = true;
+        this.onputshow = false;
+      } else {
+        e.target.focus();
+      }
     },
-    showmore() {},
+    repTouch() {
+      this.pubstatus = 1;
+      if (this.publishType === 0) {
+        request({
+          method: "post",
+          url: "/comment/insertComment",
+          data: {
+            topicId: this.pcomments[0].topicId,
+            content: this.pubcoment,
+            commentId: this.curCommentId,
+          },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        })
+          .then(
+            (res) => {
+              if (res.data.code === 2000) {
+                if (this.pcomments === undefined) {
+                  this.pcomments = [];
+                }
+                this.pcomments.push(res.data.data);
+                this.pubcoment = "";
+              } else if (res.data.code === 9000) {
+                setTimeout(() => {
+                  this.$pop.open();
+                }, 1000);
+              } else {
+                this.$toast({
+                  message: res.data.msg,
+                });
+              }
+            },
+            (err) => {
+              console.log(err);
+            }
+          )
+          .finally(() => {
+            this.pubstatus = 0;
+          });
+      } else if (this.publishType === 1) {
+        this.insertReply(1);
+        this.pubreply = "";
+      } else {
+        this.insertReply(2);
+        this.pubreply = "";
+      }
+      this.pubstatus = 0;
+    },
+    insertReply(type) {
+      if (type === 1) {
+        this.curToUid = null;
+      }
+      request({
+        method: "post",
+        url: "/comment/insertReply",
+        data: {
+          commentId: this.curCommentId,
+          content: this.pubreply,
+          toUid: this.curToUid,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      })
+        .then(
+          (res) => {
+            if (res.data.code === 2000) {
+              if (!this.pcomments[this.curCommentIndex].replyList) {
+                this.$set(
+                  this.pcomments[this.curCommentIndex],
+                  "replyList",
+                  []
+                );
+              }
+              this.pcomments[this.curCommentIndex].replyList.push(
+                res.data.data
+              );
+              this.pubreply = "";
+            } else if (res.data.code === 9000) {
+              setTimeout(() => {
+                this.$pop.open();
+              }, 1000);
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        )
+        .finally(() => {
+          this.pubstatus = 0;
+        });
+    },
+    showmore(item, index) {
+      this.showsheet = true;
+      this.sheetlist = item.replyList;
+      this.curCommentIndex = index;
+      this.goreply(item, index);
+    },
     goreply(item, index) {
       this.curCommentIndex = index;
       this.onputshow = true;
       this.btshow = true;
+      if (item.nickName) {
+        this.publishType = 1;
+      } else {
+        this.publishType = 2;
+      }
       this.$nextTick(function () {
         this.$refs.oninput.focus();
       });
       this.replyTo = item.nickName ? item.nickName : item.fromUname;
       this.replyTo = "回复" + this.replyTo;
+      this.curCommentId = item.commentId ? item.commentId : item.id;
+      this.curToUid = item.fromUid;
     },
     commentBtn() {
       this.btshow = false;
       this.$nextTick(function () {
         this.$refs.outinput.focus();
       });
+      this.publishType = 0;
     },
     like(item) {
       if (localStorage.getItem("token") == null) {
@@ -234,27 +406,46 @@ export default {
 </script>
 
 <style lang="less">
+.contentlist {
+  max-height: 70%;
+  padding: 25px 10px 120px;
+}
+.rcuname {
+  font-size: 28px;
+  color: gray;
+}
+.replyl {
+  color: #a8a8a8;
+  font-size: 24px;
+  margin-left: 10px;
+}
+.rpcontl {
+  font-size: 28px;
+}
+
 .outcomment {
   position: fixed;
   display: flex;
   align-items: center;
   width: 100%;
-  height: 60px;
-  padding: 20px;
+  height: 68px;
+  // padding: 10px;
   bottom: 0;
+  background-color: white;
   .outinput {
     .van-field__body {
       width: 100%;
       .van-field__control {
-        width: 90%;
+        width: 88%;
         // height: 60px;
-        padding-left: 20px;
+        padding-left: 10px;
         background-color: #f0f0f0;
         border-radius: 10px;
       }
     }
   }
 }
+
 .commentBt {
   position: fixed;
   border-top: 1px solid lightgray;
