@@ -1,7 +1,9 @@
 <template>
   <div class="comment" v-if="pcomments">
-    <div class="total">共 {{ pcomments ? pcomments.length : 0 }} 条评论</div>
-    <div class="citem" v-for="(item, index) in pcomments" :key="index">
+    <div class="total">
+      共 {{ pcomments.comments ? pcomments.comments.length : 0 }} 条评论
+    </div>
+    <div class="citem" v-for="(item, index) in pcomments.comments" :key="index">
       <van-image
         @click="goUserInfo(item.fromUid)"
         v-if="item.avatar"
@@ -205,14 +207,14 @@ export default {
     },
     repTouch() {
       this.pubstatus = 1;
+      console;
       if (this.publishType === 0) {
         request({
           method: "post",
           url: "/comment/insertComment",
           data: {
-            topicId: this.pcomments[0].topicId,
+            topicId: this.pcomments.topicId,
             content: this.pubcoment,
-            commentId: this.curCommentId,
           },
           headers: {
             "content-type": "multipart/form-data",
@@ -222,10 +224,10 @@ export default {
           .then(
             (res) => {
               if (res.data.code === 2000) {
-                if (this.pcomments === undefined) {
-                  this.pcomments = [];
+                if (this.pcomments.comments === undefined) {
+                  this.pcomments.comments = [];
                 }
-                this.pcomments.push(res.data.data);
+                this.pcomments.comments.push(res.data.data);
                 this.pubcoment = "";
               } else if (res.data.code === 9000) {
                 setTimeout(() => {
@@ -273,14 +275,14 @@ export default {
         .then(
           (res) => {
             if (res.data.code === 2000) {
-              if (!this.pcomments[this.curCommentIndex].replyList) {
+              if (!this.pcomments.comments[this.curCommentIndex].replyList) {
                 this.$set(
-                  this.pcomments[this.curCommentIndex],
+                  this.pcomments.comments[this.curCommentIndex],
                   "replyList",
                   []
                 );
               }
-              this.pcomments[this.curCommentIndex].replyList.push(
+              this.pcomments.comments[this.curCommentIndex].replyList.push(
                 res.data.data
               );
               this.pubreply = "";

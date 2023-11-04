@@ -1,8 +1,11 @@
 <template>
   <div class="topic">
     <topicNav v-if="nvData.avatar" :pnv="nvData"></topicNav>
-    <topicInfo v-if="contentData.likeCount" :pcontent="contentData"></topicInfo>
-    <commentV v-if="comments" :pcomments="comments"></commentV>
+    <topicInfo
+      v-if="contentData.createTime"
+      :pcontent="contentData"
+    ></topicInfo>
+    <commentV :pcomments="comments"></commentV>
   </div>
 </template>
 <script>
@@ -27,19 +30,20 @@ export default {
         userId: null,
         fans: null,
         guestId: null,
+        topicId: null,
       },
       contentData: {
         topicId: null,
         title: null,
         content: null,
         userId: null,
-        solved: null,
+        isSolved: null,
         guestId: null,
         createTime: null,
         images: null,
         likeCount: null,
       },
-      comments: [],
+      comments: { comments: null, topicId: null },
     };
   },
   methods: {
@@ -50,17 +54,20 @@ export default {
       this.nvData.guestId = resData.guestId;
       this.nvData.fans = resData.fans;
       this.nvData.avatar = resData.avatar;
+      this.nvData.topicId = this.topicId;
 
+      this.contentData.likeCount = resData.likeCount;
       this.contentData.title = resData.title;
+      this.contentData.topicId = this.topicId;
       this.contentData.content = resData.content;
       this.contentData.userId = resData.userId;
-      this.contentData.solved = resData.isSolved;
+      this.contentData.isSolved = resData.isSolved;
       this.contentData.guestId = resData.guestId;
-      this.contentData.createTime = resData.createTime;
       this.contentData.images = resData.images;
-      this.contentData.likeCount = resData.likeCount;
+      this.contentData.createTime = resData.createTime;
 
-      this.comments = resData.comments;
+      this.comments.comments = resData.comments;
+      this.comments.topicId = this.topicId;
     },
     //获取帖子详情
     getDetail() {

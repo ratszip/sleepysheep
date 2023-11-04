@@ -14,7 +14,20 @@
         alt=""
       />
       <h1 @click="t_click(item.id)" class="title2">
-        {{ item.title }}
+        <van-icon
+          size="13"
+          color="green"
+          name="checked"
+          style="vertical-align: -10%"
+          v-if="item.isSolved"
+        />
+        <van-icon
+          size="13"
+          color="red"
+          name="question-o"
+          style="vertical-align: -10%"
+          v-else-if="!item.isSolved"
+        />{{ item.title }}
       </h1>
       <div class="info2">
         <div class="uinfo2" @click="t_click(item.id)">

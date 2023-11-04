@@ -18,16 +18,34 @@
       <div class="isfixed">
         <span
           class="solve"
-          v-if="pcontent.isSolved && pcontent.userId == pcontent.guestId"
+          @click="setSolve(0)"
+          v-if="
+            pcontent.isSolved == 1 &&
+            this.pcontent.userId == this.pcontent.guestId
+          "
         >
-          <van-icon size="13" name="checked" style="vertical-align: -10%" />
+          <van-icon
+            size="13"
+            color="green"
+            name="checked"
+            style="vertical-align: -10%"
+          />
           设为未解决</span
         >
         <span
           class="solve"
-          v-else-if="!pcontent.isSolved && pcontent.userId == pcontent.guestId"
+          @click="setSolve(1)"
+          v-else-if="
+            pcontent.isSolved == 0 &&
+            this.pcontent.userId == this.pcontent.guestId
+          "
         >
-          <van-icon size="13" name="question-o" style="vertical-align: -10%" />
+          <van-icon
+            size="13"
+            color="red"
+            name="question-o"
+            style="vertical-align: -10%"
+          />
           设为已解决
         </span>
       </div>
@@ -36,6 +54,8 @@
 </template>
 
 <script>
+import request from "@/util/request";
+import { Dialog } from "vant";
 export default {
   props: {
     pcontent: {},
@@ -53,6 +73,46 @@ export default {
     };
   },
   methods: {
+    setSolve(is) {
+      Dialog.confirm({
+        message: "修改问题解决状态",
+      })
+        .then(() => {
+          // on confirm
+          request({
+            method: "post",
+            url: "/topic/solve",
+            data: {
+              id: this.pcontent.topicId,
+              isSolved: is,
+            },
+            headers: {
+              "content-type": "multipart/form-data",
+              token: localStorage.token,
+            },
+          }).then(
+            (res) => {
+              if (res.data.code === 2000) {
+                this.pcontent.isSolved = is;
+              } else if (res.data.code === 9000) {
+                setTimeout(() => {
+                  this.$pop.open();
+                }, 1000);
+              } else {
+                this.$toast({
+                  message: res.data.msg,
+                });
+              }
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
     measure() {
       if (this.pcontent.userId === this.pcontent.guestId) {
         this.guest = false;

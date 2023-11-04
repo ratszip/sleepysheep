@@ -13,13 +13,27 @@
         pnv.nickName
       }}</span>
       <div class="navright">
-        <van-icon name="ellipsis" style="margin: 0 10px" />
+        <van-popover
+          v-model="showPopover"
+          placement="bottom-start"
+          trigger="click"
+          theme="dark"
+        >
+          <div class="poverout">
+            <span class="pover" @click="deleteTopic">删除</span>
+            <span class="pover" @click="reportTopic">举报</span>
+          </div>
+
+          <template #reference>
+            <van-icon name="ellipsis" style="margin: 0 10px; width: 40px" />
+          </template>
+        </van-popover>
         <van-button
           class="follow"
           size="small"
           v-show="pnv.userId != pnv.guestId && !pnv.fans"
           round
-          type="default"
+          type="danger"
           @click="follow"
           >关 注</van-button
         >
@@ -40,16 +54,67 @@
 
 <script>
 import request from "@/util/request";
+import { Dialog } from "vant";
 export default {
   data() {
     return {
       baseurl: this.$store.state.sBaseUrl,
+      showPopover: false,
     };
   },
   props: {
     pnv: {},
   },
   methods: {
+    reportTopic() {
+      Dialog.confirm({
+        message: "确认举报？",
+      })
+        .then(() => {
+          this.$toast({
+            message: "已举报",
+          });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    deleteTopic() {
+      Dialog.confirm({
+        title: "删除警告",
+        message: "是否删除帖子，不可恢复",
+      })
+        .then(() => {
+          // on confirm
+          request({
+            method: "post",
+            url: "/topic/delete",
+            data: { id: this.pnv.topicId },
+            headers: {
+              "content-type": "multipart/form-data",
+              token: localStorage.token,
+            },
+          }).then(
+            (res) => {
+              if (res.data.code === 2000) {
+                this.$router.back();
+              } else if (res.data.code === 9000) {
+                this.$pop.open();
+              } else {
+                this.$toast({
+                  message: res.data.msg,
+                });
+              }
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
     onClickLeft() {
       this.$router.back();
     },
@@ -139,6 +204,18 @@ export default {
 .nvsp {
   height: 81px;
 }
+.poverout {
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .pover {
+    font-size: 28px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+}
+
 .topicnav {
   position: fixed;
   z-index: 9999;
@@ -162,7 +239,6 @@ export default {
     .follow {
       width: 120px;
       height: 50px;
-      color: rgb(99, 121, 218);
     }
   }
 }
