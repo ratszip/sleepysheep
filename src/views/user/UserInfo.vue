@@ -36,7 +36,7 @@
     <div class="bottom">
       <span class="fan">
         关注:
-        <a href="javaScript:void(0); " @click="fanslist">{{
+        <a href="javaScript:void(0); " @click="followlist">{{
           userInfo.followCount
         }}</a>
       </span>
@@ -99,8 +99,11 @@ export default {
     edit() {
       this.$router.push("/edit");
     },
+    followlist() {
+      this.$router.push(`/fans/${this.userInfo.id}/1`);
+    },
     fanslist() {
-      this.$router.push("/fans");
+      this.$router.push(`/fans/${this.userInfo.id}/2`);
     },
     getUserInfo() {
       this.uid = this.$route.params.uid;

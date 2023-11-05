@@ -400,7 +400,7 @@ export default {
   }
 }
 .txcontent {
-  padding: 20px 10px 30px 10px;
+  padding: 20px 10px;
 }
 li {
   list-style: none;

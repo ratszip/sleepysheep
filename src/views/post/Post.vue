@@ -235,7 +235,6 @@ export default {
     afterRead(file) {
       file = file.file;
       this.compressImg(file, 0.2);
-      // console.log(this.uploader);
     },
 
     backClick() {
@@ -246,13 +245,10 @@ export default {
       let formData = new FormData();
       this.uploader.forEach((item, index) => {
         formData.append("files", item.file);
-        // console.log(item.file);
       });
-      // formData.append("files", this.uploader[0].file);
       formData.append("title", this.p_title);
       formData.append("content", this.p_content);
-      // console.log(formData);
-      // console.log(localStorage.token);
+
       request({
         method: "post",
         url: "/topic/create",
@@ -268,7 +264,7 @@ export default {
             this.$toast({
               message: "发帖成功",
             });
-            this.$router.push("/user");
+            this.$router.push("/user/0");
           } else if (res.data.code === 3000) {
             this.$toast({
               message: res.data.msg,
@@ -276,7 +272,6 @@ export default {
           } else if (res.data.code === 9000) {
             this.$pop.open();
           }
-          // console.log(this.suglist.data[0].images[0].path);
         },
         (err) => {
           console.log(err);

@@ -103,7 +103,7 @@ export default {
             this.$toast({
               message: "登录成功",
             });
-
+            // this.$store.commit("setCurId", res.data.uid);
             localStorage.setItem("token", res.data.data);
             this.$refs.dialogref.close();
             location.reload();

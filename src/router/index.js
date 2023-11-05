@@ -21,7 +21,7 @@ const routes = [
     {path:'/user/:uid',name:'user',component:User},
     {path:'/post',name:'post',component:Post},
     {path:'/wt',name:'pop',component:Pop},
-    {path:'/fans',name:'fans',component:FoFans},
+    {path:'/fans/:id/:act',name:'fans',component:FoFans},
     {path:'/edit',name:'edit',component:EditUser},
     {path:'/topic/:id',name:'topic',component:Topic},
     {path:'/tnav',name:'topicnav',component:TopicNav},
@@ -29,8 +29,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    // mode:'history',
-    mode:'hash',
+    mode:'history',
+    // mode:'hash',
     routes
 })
 // 重复跳转不报错

@@ -188,23 +188,26 @@ export default {
           "content-type": "multipart/form-data",
           token: localStorage.token,
         },
-      }).then(
-        (res) => {
-          Toast.clear();
-          this.mylist = res.data;
-          setTimeout(() => {
-            this.water();
-          }, 1000);
-          if (res.data.msg.includes("登录")) {
-            this.$pop.open();
-          }
+      })
+        .then(
+          (res) => {
+            this.mylist = res.data;
+            setTimeout(() => {
+              this.water();
+            }, 1000);
+            if (res.data.msg.includes("登录")) {
+              this.$pop.open();
+            }
 
-          // console.log(this.mylist);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+            // console.log(this.mylist);
+          },
+          (err) => {
+            console.log(err);
+          }
+        )
+        .finally(() => {
+          Toast.clear();
+        });
     },
   },
 
