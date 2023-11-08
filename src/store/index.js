@@ -9,12 +9,14 @@ export default new Vuex.Store({
     sBaseUrl:"http://113.125.22.29:8081",
     bottomHeight:0,
     userInfoH:0,
+    homeH:0,
     curUid:null
   },
   getters: {
     getBotH:state => state.bottomHeight,
     getUinfoH:state => state.userInfoH,
     getCurUid:state => state.curUid,
+    getHomeH:state => state.homeH,
   },
   mutations: {
     setBotHeight(state,bheight){
@@ -27,6 +29,9 @@ export default new Vuex.Store({
     },
     setCurId(state,curid){
       state.curUid=curid;
+    },
+    setHomeH(state,homeh){
+      state.homeH=homeh;
     }
   },
   actions: {

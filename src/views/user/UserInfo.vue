@@ -107,6 +107,11 @@ export default {
     },
     getUserInfo() {
       this.uid = this.$route.params.uid;
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
         url: "/user/info",

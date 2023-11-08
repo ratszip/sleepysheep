@@ -4,22 +4,32 @@
       <van-icon name="arrow-left" @click="fback" size="26" />
     </van-sticky>
 
-    <van-tabs v-model="active" @click="tabClick" sticky>
+    <van-tabs
+      v-model="active"
+      @click="tabClick"
+      sticky
+      :before-change="changeTab"
+    >
       <van-search
-        v-model="value"
-        @focus="onfocus"
+        :show-action="showCancel"
+        v-model="searchValue"
+        @search="onSearch()"
+        @cancel="onCancel"
         placeholder="请输入搜索关键词"
       />
       <van-tab disabled></van-tab>
       <van-tab title="关注">
-        <div v-for="(item, index) in follows" class="item">
+        <div v-for="(item, index) in followsShow" class="item">
           <van-image
+            @click="gouser(item.followId)"
             round
             width="40px"
             height="40px"
             :src="`${baseurl}/images/${item.avatar}.png`"
           />
-          <span class="uname">{{ item.nickName }}</span>
+          <span @click="gouser(item.followId)" class="uname">{{
+            item.nickName
+          }}</span>
           <van-button
             plain
             round
@@ -42,14 +52,17 @@
         </div>
       </van-tab>
       <van-tab title="粉丝">
-        <div v-for="(item, index) in fans" class="item" :key="index">
+        <div v-for="(item, index) in fansShow" class="item" :key="index">
           <van-image
             round
+            @click="gouser(item.fansId)"
             width="40px"
             height="40px"
             :src="`${baseurl}/images/${item.avatar}.png`"
           />
-          <span class="uname">{{ item.nickName }}</span>
+          <span class="uname" @click="gouser(item.fansId)">{{
+            item.nickName
+          }}</span>
           <van-button
             v-if="!item.isB && item.fansId != tokenid"
             type="danger"
@@ -90,7 +103,6 @@
       :actions="actions"
       cancel-text="取消"
       close-on-click-action
-      @cancel="onCancel"
     />
   </div>
 </template>
@@ -100,14 +112,16 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      showCancel: false,
       baseurl: this.$store.state.sBaseUrl,
       userId: null,
-      active: null,
+      active: 1,
       tokenid: null,
       fans: [],
+      fansShow: [],
       follows: [],
-      searchRes: [],
-      value: "",
+      followsShow: [],
+      searchValue: "",
       sheet: false,
       actions: [{ name: "移除" }],
     };
@@ -187,15 +201,93 @@ export default {
         );
       }
     },
-
+    gouser(id) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      }
+      this.$router.push(`/user/${id}`);
+    },
     moreAct() {
       this.sheet = true;
     },
-    onCancel() {},
-    cancel() {},
-    onfocus() {},
-    tabClick(index, title) {
-      console.log(this.userId == this.tokenid);
+    onCancel() {
+      this.clear();
+    },
+    clear() {
+      console.log;
+      if (this.active > 1) {
+        this.fansList();
+      } else {
+        this.followList();
+      }
+      this.searchValue = "";
+      this.showCancel = false;
+    },
+    changeTab() {
+      if (this.showCancel) {
+        this.clear();
+      }
+      return true;
+    },
+    onSearch() {
+      this.showCancel = true;
+      if (this.searchValue.trim() === "") {
+        this.$toast({
+          message: "不能为空",
+        });
+        this.showCancel = false;
+        return;
+      }
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
+      request({
+        method: "post",
+        url: "/common/search",
+        data: {
+          info: this.searchValue,
+          type: this.active - 1,
+          id: this.userId,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      })
+        .then(
+          (res) => {
+            if (res.data.code === 2000) {
+              console.log(res.data.data);
+              if (this.active > 1) {
+                this.fansShow = res.data.data;
+              } else {
+                this.followsShow = res.data.data;
+              }
+            } else if (res.data.code === 9000) {
+              this.showCancel = false;
+              this.$pop.open();
+            } else {
+              this.showCancel = false;
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        )
+        .finally(() => {
+          Toast.clear();
+        });
+    },
+    tabClick(index) {
+      // console.log(this.userId == this.tokenid);
+      // console.log(this.active);
       if (index == 2 && this.fans.length == 0) {
         this.fansList();
       } else if (index == 1 && this.follows.length == 0) {
@@ -203,9 +295,8 @@ export default {
       }
     },
     init() {
-      this.$nextTick(function () {
-        this.active = this.$route.params.act;
-      });
+      // this.active = Number(this.$route.params.act);
+      this.active = Number(this.$route.params.act);
       this.userId = this.$route.params.id;
     },
     fback() {
@@ -230,6 +321,7 @@ export default {
           (res) => {
             if (res.data.code === 2000) {
               this.fans = res.data.data.flist;
+              this.fansShow = this.fans;
               this.tokenid = res.data.data.uid;
             } else if (res.data.code === 9000) {
               this.$pop.open();
@@ -266,6 +358,7 @@ export default {
           (res) => {
             if (res.data.code === 2000) {
               this.follows = res.data.data.flist;
+              this.followsShow = this.follows;
               this.tokenid = res.data.data.uid;
             } else if (res.data.code === 9000) {
               this.$pop.open();
@@ -284,7 +377,6 @@ export default {
         });
     },
     getdata() {
-      this.active = 2;
       if (this.active == 1) {
         this.followList();
       } else if (this.active == 2) {
@@ -292,6 +384,7 @@ export default {
       }
     },
   },
+
   mounted() {
     this.init();
     this.getdata();

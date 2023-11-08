@@ -1,33 +1,53 @@
 <template>
-  <van-sticky class="navbar">
-    <div class="content">
-      <div class="nav_left ntab"></div>
-      <div class="nav_center">
-        <van-tabs
-          v-model="active"
-          :before-change="beforeChange"
-          @click="fclick"
-        >
-          <van-tab title="关注"></van-tab>
-          <van-tab title="推荐">
-            <router-link to="/home"></router-link>
-          </van-tab>
-        </van-tabs>
+  <van-tabs
+    v-model="active"
+    :before-change="beforeChange"
+    @click="fclick"
+    sticky
+  >
+    <van-tab disabled></van-tab>
+    <van-tab title="关注">
+      <div ref="ct" class="cont">
+        <homefol></homefol>
       </div>
-      <div class="nav_right ntab"></div>
-    </div>
-  </van-sticky>
+    </van-tab>
+    <van-tab title="推荐">
+      <div ref="ct" class="cont">
+        <homesug></homesug>
+      </div>
+    </van-tab>
+
+    <van-tab disabled></van-tab>
+  </van-tabs>
 </template>
 <script >
+import homesug from "./Homewf.vue";
+import homefol from "./HomeFol.vue";
 export default {
+  components: {
+    homesug,
+    homefol,
+  },
   data() {
     return {
-      active: 1,
+      active: 2,
     };
   },
+  updated() {
+    this.setContain();
+  },
+  mounted() {
+    this.setContain();
+  },
   methods: {
+    async setContain() {
+      await this.$nextTick();
+      var ct = this.$refs.ct;
+      var fixedH = this.$store.state.bottomHeight + 40;
+      ct.style.height = document.documentElement.clientHeight - fixedH + "px";
+    },
     beforeChange(index) {
-      if (index == 0 && localStorage.getItem("token") == null) {
+      if (index == 1 && localStorage.getItem("token") == null) {
         this.$root.$pop.open();
         return false;
       } else {
@@ -41,17 +61,8 @@ export default {
 };
 </script>
 <style lang="less">
-.navbar {
-  .content {
-    display: flex;
-    display: -webkit-flex;
-    background-color: #ffff;
-  }
-  .ntab {
-    flex: 1;
-  }
-  .nav_center {
-    flex: 2;
-  }
+.cont {
+  width: 100%;
+  overflow: scroll;
 }
 </style>

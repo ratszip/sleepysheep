@@ -1,5 +1,5 @@
 <template>
-  <div class="contentsug">
+  <waterfall class="contentsug" :data="suglist.data">
     <!-- <div class="sugad">banner</div> -->
     <div
       class="box"
@@ -10,7 +10,7 @@
       <img
         @click="t_click(item.id)"
         class="image"
-        v-lazy="`${baseurl}/${item.images[0].path}`"
+        :lazy-src="`${baseurl}/${item.images[0].path}`"
         alt=""
       />
       <h1 @click="t_click(item.id)" class="title">
@@ -59,12 +59,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </waterfall>
 </template>
 
 <script>
 import request from "@/util/request";
-import $ from "jquery";
+import { Toast } from "vant";
 export default {
   data() {
     return {
@@ -73,35 +73,6 @@ export default {
     };
   },
   methods: {
-    water() {
-      // console.log(this.suglist);
-      var columnHeightArr = [];
-      columnHeightArr.length = 2;
-      var boxArr = $(".box");
-
-      // let realh =
-      //   (document.body.clientWidth * this.suglist.data[0].images[0].height) /
-      //   this.suglist.data[0].images[0].width;
-      // console.log(realh);
-      boxArr.each(function (index, item) {
-        if (index < 2) {
-          columnHeightArr[index] =
-            $(item).position().top + $(item).outerHeight(true);
-        } else {
-          var minHeight = Math.min.apply(null, columnHeightArr),
-            minHeightIndex = $.inArray(minHeight, columnHeightArr);
-
-          $(item).css({
-            position: "absolute",
-            top: minHeight,
-            left: boxArr.eq(minHeightIndex).position().left,
-          });
-
-          columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
-        }
-      });
-      $(".contentsug").css("minHeight", Math.max.apply(null, columnHeightArr));
-    },
     gouser(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -186,6 +157,11 @@ export default {
       // console.log(id);
     },
     getData() {
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
         url: "/index/sug",
@@ -193,25 +169,23 @@ export default {
         headers: {
           "content-type": "multipart/form-data",
         },
-      }).then(
-        (res) => {
-          this.suglist = res.data;
-          setTimeout(() => {
-            this.water();
-          }, 1000);
-          if (res.data.msg.includes("登录")) {
-            this.$pop.open();
+      })
+        .then(
+          (res) => {
+            this.suglist = res.data;
+            if (res.data.msg.includes("登录")) {
+              this.$pop.open();
+            }
+          },
+          (err) => {
+            console.log(err);
           }
-
-          // console.log(this.suglist.data[0].images[0].path);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+        )
+        .finally(() => {
+          Toast.clear();
+        });
     },
   },
-
   mounted() {
     this.getData();
   },
@@ -224,17 +198,18 @@ export default {
 }
 .sugad {
   width: 100%;
-  height: 100px;
+  height: 300px;
   background-color: bisque;
 }
-.space {
-  height: 200px;
-}
+// .space {
+//   height: 200px;
+// }
 .box {
-  float: left;
+  // float: left;
+  // position: absolute;
   // width: 50%;
-  width: 364px;
-  margin: 3px 0px 3px 6px;
+  width: 382px !important;
+  margin-top: 6px;
   background-color: white;
 }
 .image {

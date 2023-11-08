@@ -1,6 +1,5 @@
 <template>
-  <div class="contentsug2">
-    <!-- <div class="sugad">广告位</div> -->
+  <waterfall class="contentsug2" :data="mylist2.data">
     <div
       class="box2"
       ref="box2"
@@ -10,7 +9,7 @@
       <img
         @click="t_click(item.id)"
         class="image2"
-        v-lazy="`${baseurl}/${item.images[0].path}`"
+        :lazy-src="`${baseurl}/${item.images[0].path}`"
         alt=""
       />
       <h1 @click="t_click(item.id)" class="title2">
@@ -54,12 +53,11 @@
         </div>
       </div>
     </div>
-  </div>
+  </waterfall>
 </template>
 
 <script>
 import request from "@/util/request";
-import $ from "jquery";
 import { Toast } from "vant";
 export default {
   data() {
@@ -122,7 +120,6 @@ export default {
               item.like = false;
               item.likeCount--;
               this.mylist2.data.splice(index, 1);
-              // console.log(index);
             } else if (res.data.code === 9000) {
               this.$pop.open();
             } else {
@@ -137,32 +134,6 @@ export default {
         );
       }
     },
-    water() {
-      var columnHeightArr = [];
-      columnHeightArr.length = 2;
-      var box2Arr = $(".box2");
-      box2Arr.each(function (index, item) {
-        if (index < 2) {
-          columnHeightArr[index] =
-            $(item).position().top + $(item).outerHeight(true);
-        } else {
-          var minHeight = Math.min.apply(null, columnHeightArr),
-            minHeightIndex = $.inArray(minHeight, columnHeightArr);
-
-          $(item).css({
-            position: "absolute",
-            top: minHeight,
-            left: box2Arr.eq(minHeightIndex).position().left,
-          });
-
-          columnHeightArr[minHeightIndex] += $(item).outerHeight(true);
-        }
-      });
-      $(".contentsug2")
-        .parent()
-        .css("minHeight", Math.max.apply(null, columnHeightArr));
-    },
-
     t_click(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -180,7 +151,7 @@ export default {
       });
       request({
         method: "post",
-        url: "/user/like",
+        url: "/user/collect",
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -189,14 +160,9 @@ export default {
         (res) => {
           Toast.clear();
           this.mylist2 = res.data;
-          setTimeout(() => {
-            this.water();
-          }, 1000);
           if (res.data.msg.includes("登录")) {
             this.$pop.open();
           }
-
-          // console.log(this.mylist2);
         },
         (err) => {
           console.log(err);
@@ -213,21 +179,14 @@ export default {
 
 <style lang="less">
 .contentsug2 {
-  box-sizing: border-box2;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
-// .sugad {
-//   width: 100%;
-//   height: 100px;
-//   background-color: bisque;
-// }
-// .space2 {
-//   height: 200px;
-// }
+
 .box2 {
-  float: left;
   // width: 50%;
-  width: 364px;
-  margin: 3px 0px 3px 6px;
+  width: 382px !important;
+  margin-top: 6px;
   background-color: white;
 }
 .image2 {

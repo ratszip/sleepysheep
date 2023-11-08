@@ -10,7 +10,8 @@ import pop from '@/util/globle'
 import 'vant/lib/index.css'
 import './style/index.less'
 import "amfe-flexible"
-
+import waterfall from 'vue-waterfall2'
+Vue.use(waterfall)
 Vue.use(Vant)
 Vue.use(pop)
 Vue.use(Toast)

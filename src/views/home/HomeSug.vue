@@ -39,7 +39,6 @@
 
 <script>
 import request from "@/util/request";
-
 export default {
   data() {
     return {
@@ -124,7 +123,7 @@ export default {
       // console.log(id);
     },
   },
-  mounted() {
+  getSug() {
     request({
       method: "post",
       url: "/index/sug",
@@ -138,13 +137,14 @@ export default {
         if (res.data.msg.includes("登录")) {
           this.$pop.open();
         }
-
-        // console.log(this.suglist.data[0].images[0].path);
       },
       (err) => {
         console.log(err);
       }
     );
+  },
+  mounted() {
+    this.getSug();
   },
 };
 </script>

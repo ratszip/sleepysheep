@@ -7,7 +7,7 @@
 
 <script>
 import userinfo from "./UserInfo.vue";
-import usertabs from "./userTab.vue";
+import usertabs from "./userTab/userTab.vue";
 export default {
   data() {
     return {
