@@ -62,6 +62,7 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      userId: null,
       mylist2: "",
       baseurl: this.$store.state.sBaseUrl,
     };
@@ -119,7 +120,6 @@ export default {
             if (res.data.code === 2000 || res.data.code === 3100) {
               item.like = false;
               item.likeCount--;
-              this.mylist2.data.splice(index, 1);
             } else if (res.data.code === 9000) {
               this.$pop.open();
             } else {
@@ -144,6 +144,8 @@ export default {
       // console.log(id);
     },
     getTopic() {
+      this.userId = this.$route.params.uid;
+      console.log(this.userId + "---");
       this.$toast.loading({
         duration: 0,
         message: "加载中...",
@@ -152,6 +154,7 @@ export default {
       request({
         method: "post",
         url: "/user/collect",
+        data: { userId: this.userId },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -185,7 +188,7 @@ export default {
 
 .box2 {
   // width: 50%;
-  width: 382px !important;
+  width: 380px !important;
   margin-top: 6px;
   background-color: white;
 }
