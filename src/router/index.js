@@ -8,7 +8,7 @@ import Pop from '@/views/Pop.vue'
 import FoFans from '@/views/user/Fofan.vue'
 import EditUser from '@/views/user/EditUser.vue'
 import Topic from '@/views/post/Topic.vue' 
-
+import Setting from '@/views/user/Settings.vue' 
 Vue.use(VueRouter)
 
 // 路由表
@@ -22,6 +22,7 @@ const routes = [
     {path:'/fans/:id/:act',name:'fans',component:FoFans},
     {path:'/edit',name:'edit',component:EditUser},
     {path:'/topic/:id',name:'topic',component:Topic},
+    {path:'/settings',name:'set',component:Setting},
 ]
 
 const router = new VueRouter({

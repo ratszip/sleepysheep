@@ -13,6 +13,7 @@
           <span class="uname3">{{ item.nickName }}</span>
           <span class="time3">{{ item.createTime }}</span>
         </div>
+        <span @click="onMore" style="flex: 1; text-align: end">︙</span>
       </div>
       <h1 class="content3">{{ item.content }}</h1>
       <div v-if="item.title" class="topic3">
@@ -27,6 +28,12 @@
         <van-icon name="close" />帖子已被删除
       </div>
     </div>
+    <van-action-sheet
+      v-model="show"
+      :actions="actions"
+      cancel-text="取消"
+      close-on-click-action
+    />
   </div>
 </template>
 <script>
@@ -36,14 +43,19 @@ export default {
   data() {
     return {
       commlist: [],
+      show: false,
       userId: null,
       baseurl: this.$store.state.sBaseUrl,
+      actions: [{ name: "点赞" }, { name: "删除" }, { name: "举报" }],
     };
   },
   mounted() {
     this.getComments();
   },
   methods: {
+    onMore() {
+      this.show = true;
+    },
     getComments() {
       this.userId = this.$route.params.uid;
       this.$toast.loading({

@@ -213,11 +213,12 @@ export default {
       this.$router.back();
     },
     more() {},
-    settings() {},
+    settings() {
+      this.$router.push("/settings");
+    },
   },
   mounted() {
     this.getUserInfo();
-    this.settings();
   },
 };
 </script>
