@@ -13,7 +13,7 @@
           <span class="uname3">{{ item.nickName }}</span>
           <span class="time3">{{ item.createTime }}</span>
         </div>
-        <span @click="onMore" style="flex: 1; text-align: end">︙</span>
+        <span class="more3" @click="onMore(item)">︙</span>
       </div>
       <h1 class="content3">{{ item.content }}</h1>
       <div v-if="item.title" class="topic3">
@@ -30,10 +30,17 @@
     </div>
     <van-action-sheet
       v-model="show"
-      :actions="actions"
       cancel-text="取消"
+      :actions="actions"
       close-on-click-action
-    />
+      @select="onSelect"
+    >
+      <!-- <van-cell-group>
+        <van-cell class="cell" title="点赞" />
+        <van-cell class="cell" title="删除" />
+        <van-cell class="cell" title="举报" />
+      </van-cell-group> -->
+    </van-action-sheet>
   </div>
 </template>
 <script>
@@ -42,19 +49,76 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      actions: [{ name: "点赞" }, { name: "删除" }, { name: "举报" }],
       commlist: [],
       show: false,
       userId: null,
       baseurl: this.$store.state.sBaseUrl,
-      actions: [{ name: "点赞" }, { name: "删除" }, { name: "举报" }],
+      curComment: null,
     };
   },
   mounted() {
     this.getComments();
   },
   methods: {
-    onMore() {
+    onSelect(action, index) {
+      if (index === 0) {
+        this.likeComment();
+      } else if (index === 1) {
+        this.deleteComment();
+      }
+    },
+    onMore(item) {
       this.show = true;
+      this.curComment = item.id;
+    },
+    deleteComment() {
+      request({
+        method: "post",
+        url: "/comment/deleteComment",
+        data: { commentId: this.curComment },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.msg.includes("登录")) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    likeComment() {
+      request({
+        method: "post",
+        url: "/comment/like",
+        data: { commentId: this.curComment },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.msg.includes("登录")) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     getComments() {
       this.userId = this.$route.params.uid;
@@ -94,6 +158,15 @@ export default {
 </script>
 
 <style lang="less">
+.cell {
+  text-align: center;
+  height: 100px;
+}
+.more3 {
+  flex: 1;
+  text-align: end;
+  font-size: 34px;
+}
 .container3 {
   box-sizing: border-box;
   margin-bottom: 20px;
@@ -141,7 +214,7 @@ export default {
   }
   .image3 {
     background-color: white;
-    border: 2px solid lightblue;
+    border: 2px solid rgb(247, 248, 250);
     width: 200px;
     max-height: 200px;
     min-height: 140px;

@@ -13,7 +13,7 @@
           <span class="uname4">{{ item.nickName }}</span>
           <span class="time4">{{ item.createTime }}</span>
         </div>
-        <span @click="onMorel" style="flex: 1; text-align: end">︙</span>
+        <span @click="onMorel(item)" class="more4">︙</span>
       </div>
       <h1 class="content4">{{ item.content }}</h1>
       <div v-if="item.title" class="topic4">
@@ -29,11 +29,17 @@
       </div>
     </div>
     <van-action-sheet
-      v-model="show"
       :actions="actions"
+      v-model="show"
       cancel-text="取消"
       close-on-click-action
-    />
+      @select="onSelect"
+    >
+      <!-- <van-cell-group>
+        <van-cell class="cell" title="移除" />
+        <van-cell class="cell" title="举报" />
+      </van-cell-group> -->
+    </van-action-sheet>
   </div>
 </template>
 <script>
@@ -42,19 +48,56 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      actions: [{ name: "移除" }, { name: "举报" }],
       commlike: [],
       userId: null,
       baseurl: this.$store.state.sBaseUrl,
-      actions: [{ name: "移除" }, { name: "举报" }],
       show: false,
+      curComment: null,
     };
   },
   mounted() {
     this.getComments();
   },
   methods: {
-    onMorel() {
+    onMorel(item) {
       this.show = true;
+      this.curComment = item.id;
+    },
+    onSelect(action, index) {
+      if (index === 0) {
+        this.unlike();
+      }
+    },
+    unlike() {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/comment/unlike",
+          data: { commentId: this.curComment },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
     },
     getComments() {
       this.userId = this.$route.params.uid;
@@ -94,6 +137,15 @@ export default {
 </script>
 
 <style lang="less">
+.cell {
+  text-align: center;
+  height: 100px;
+}
+.more4 {
+  flex: 1;
+  text-align: end;
+  font-size: 34px;
+}
 .item4 {
   background-color: white;
   margin: 4px 6px;
@@ -137,7 +189,7 @@ export default {
   }
   .image4 {
     background-color: white;
-    border: 2px solid lightblue;
+    border: 2px solid rgb(247, 248, 250);
     width: 200px;
     max-height: 200px;
     min-height: 140px;

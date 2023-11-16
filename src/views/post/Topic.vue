@@ -66,8 +66,35 @@ export default {
       this.contentData.images = resData.images;
       this.contentData.createTime = resData.createTime;
 
-      this.comments.comments = resData.comments;
+      // this.comments.comments = resData.comments;
       this.comments.topicId = this.topicId;
+    },
+    getComments() {
+      request({
+        method: "post",
+        url: "/comment/queryComments",
+        data: {
+          token: localStorage.token,
+          topicId: this.topicId,
+          page: 1,
+          size: 2,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$toast({
+              message: "请先登录",
+            });
+          }
+          this.comments.comments = res.data.data;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     //获取帖子详情
     getDetail() {
@@ -86,6 +113,8 @@ export default {
         },
       }).then(
         (res) => {
+          this.getComments();
+          // this.comments.comments = getComments;
           Toast.clear();
           this.initData(res.data.data);
           if (res.data.code === 9000) {

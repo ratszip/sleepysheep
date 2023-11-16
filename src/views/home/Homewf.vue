@@ -1,65 +1,67 @@
 <template>
-  <waterfall class="contentsug" :data="suglist.data">
-    <!-- <div class="sugad">banner</div> -->
-    <div
-      class="box"
-      ref="box"
-      v-for="(item, index) in suglist.data"
-      :key="index"
-    >
-      <img
-        @click="t_click(item.id)"
-        class="image"
-        :lazy-src="`${baseurl}/${item.images[0].path}`"
-        alt=""
-      />
-      <h1 @click="t_click(item.id)" class="title">
-        <van-icon
-          size="13"
-          color="green"
-          name="checked"
-          style="vertical-align: -10%"
-          v-if="item.isSolved"
+  <van-pull-refresh :head-height="80" @refresh="onRefresh">
+    <waterfall class="contentsug" :data="suglist.data">
+      <!-- <div class="sugad">banner</div> -->
+      <div
+        class="box"
+        ref="box"
+        v-for="(item, index) in suglist.data"
+        :key="index"
+      >
+        <img
+          @click="t_click(item.id)"
+          class="image"
+          :lazy-src="`${baseurl}/${item.images[0].path}`"
+          alt=""
         />
-        <van-icon
-          size="13"
-          color="red"
-          name="question-o"
-          style="vertical-align: -10%"
-          v-else-if="!item.isSolved"
-        />
-        {{ item.title }}
-      </h1>
-      <div class="info">
-        <div class="uinfo">
-          <img
-            class="tx"
-            @click="gouser(item.userId)"
-            :src="`${baseurl}/images/${item.avatar}.png`"
-          />
-          <span @click="gouser(item.userId)">&nbsp;{{ item.nickName }}</span>
-        </div>
-        <div class="tinfo">
+        <h1 @click="t_click(item.id)" class="title">
           <van-icon
+            size="13"
+            color="green"
+            name="checked"
             style="vertical-align: -10%"
-            v-if="!item.like"
-            name="like-o"
-            size="16"
-            @click="like(item)"
+            v-if="item.isSolved"
           />
           <van-icon
-            style="vertical-align: -10%"
-            v-if="item.like"
-            name="like"
+            size="13"
             color="red"
-            @click="unlike(item)"
-            size="16"
+            name="question-o"
+            style="vertical-align: -10%"
+            v-else-if="!item.isSolved"
           />
-          {{ item.likeCount }}
+          {{ item.title }}
+        </h1>
+        <div class="info">
+          <div class="uinfo">
+            <img
+              class="tx"
+              @click="gouser(item.userId)"
+              :src="`${baseurl}/images/${item.avatar}.png`"
+            />
+            <span @click="gouser(item.userId)">&nbsp;{{ item.nickName }}</span>
+          </div>
+          <div class="tinfo">
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="!item.like"
+              name="like-o"
+              size="16"
+              @click="like(item)"
+            />
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="item.like"
+              name="like"
+              color="red"
+              @click="unlike(item)"
+              size="16"
+            />
+            {{ item.likeCount }}
+          </div>
         </div>
       </div>
-    </div>
-  </waterfall>
+    </waterfall>
+  </van-pull-refresh>
 </template>
 
 <script>
@@ -73,6 +75,9 @@ export default {
     };
   },
   methods: {
+    onRefresh() {
+      this.getData();
+    },
     gouser(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -165,7 +170,8 @@ export default {
       request({
         method: "post",
         url: "/index/sug",
-        data: { token: localStorage.token },
+
+        data: { page: 1, size: 2, token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
         },
@@ -208,7 +214,6 @@ export default {
   // float: left;
   // position: absolute;
   // width: 50%;
-  width: 382px !important;
   margin-top: 6px;
   background-color: white;
 }

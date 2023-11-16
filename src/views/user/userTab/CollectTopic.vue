@@ -145,7 +145,6 @@ export default {
     },
     getTopic() {
       this.userId = this.$route.params.uid;
-      console.log(this.userId + "---");
       this.$toast.loading({
         duration: 0,
         message: "加载中...",

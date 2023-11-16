@@ -81,6 +81,7 @@
 
 <script>
 import request from "@/util/request";
+import { Toast } from "vant";
 export default {
   data() {
     return {
@@ -128,6 +129,7 @@ export default {
             this.setUser();
           } else if (res.data.code === 9000) {
             this.$pop.open();
+            Toast.clear();
           } else {
             this.$toast({
               message: res.data.msg,

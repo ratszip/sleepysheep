@@ -1,5 +1,5 @@
 <template>
-  <div class="container4">
+  <van-pull-refresh v-model="isLoading" class="container4" @refresh="onRefresh">
     <div class="item4" v-for="(item, index) in commhome" :key="index">
       <div class="head4">
         <van-image
@@ -26,7 +26,7 @@
           }}</span>
           <span class="time4">{{ item.createTime }}</span>
         </div>
-        <span @click="onMorel" style="flex: 1; text-align: end">︙</span>
+        <span @click="onMorel(item)" class="more4">︙</span>
       </div>
       <h1 class="content4" v-if="item.commentId">{{ item.content }}</h1>
       <div v-if="item.title" class="topic4">
@@ -46,11 +46,13 @@
     </div>
     <van-action-sheet
       v-model="show"
-      :actions="actions"
       cancel-text="取消"
+      :actions="actions"
       close-on-click-action
-    />
-  </div>
+      @select="onSelect"
+    >
+    </van-action-sheet>
+  </van-pull-refresh>
 </template>
 <script>
 import request from "@/util/request";
@@ -58,18 +60,54 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      actions: [{ name: "喜欢" }, { name: "举报" }],
       commhome: [],
       baseurl: this.$store.state.sBaseUrl,
-      actions: [{ name: "喜欢" }, { name: "举报" }],
       show: false,
+      isLoading: true,
+      curComment: null,
     };
   },
   mounted() {
     this.getComments();
   },
   methods: {
-    onMorel() {
+    likeComment() {
+      request({
+        method: "post",
+        url: "/comment/like",
+        data: { commentId: this.curComment },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.msg.includes("登录")) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    onSelect(action, index) {
+      if (index === 0) {
+        this.likeComment();
+      }
+    },
+    onMorel(item) {
       this.show = true;
+      this.curComment = item.commentId;
+    },
+    onRefresh() {
+      this.getComments();
+      this.isLoading = false;
     },
     getComments() {
       this.userId = this.$route.params.uid;
@@ -108,6 +146,11 @@ export default {
 </script>
 
 <style lang="less">
+.more4 {
+  flex: 1;
+  text-align: end;
+  font-size: 34px;
+}
 .item4 {
   background-color: white;
   margin: 4px 6px;
@@ -163,7 +206,7 @@ export default {
 
   .image4 {
     background-color: white;
-    border: 2px solid lightblue;
+    border: 2px solid rgb(247, 248, 250);
     width: 200px;
     max-height: 200px;
     min-height: 140px;

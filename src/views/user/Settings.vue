@@ -31,7 +31,7 @@
     <div class="group">
       <van-cell title="修改密码" />
       <van-cell title="注销账号" />
-      <van-cell title="退出登录" />
+      <van-cell title="退出登录" @click="logout" />
     </div>
   </div>
 </template>
@@ -40,6 +40,29 @@ export default {
   methods: {
     onClickLeft() {
       this.$router.back();
+    },
+    logout() {
+      request({
+        method: "post",
+        url: "/user/logout",
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
   },
 };

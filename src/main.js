@@ -11,6 +11,11 @@ import 'vant/lib/index.css'
 import './style/index.less'
 import "amfe-flexible"
 import waterfall from 'vue-waterfall2'
+import { PullRefresh } from 'vant';
+import { ActionSheet } from 'vant';
+
+Vue.use(ActionSheet);
+Vue.use(PullRefresh)
 Vue.use(waterfall)
 Vue.use(Vant)
 Vue.use(pop)
