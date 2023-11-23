@@ -1,13 +1,19 @@
 <template>
-  <van-pull-refresh :head-height="80" @refresh="onRefresh">
-    <waterfall class="contentsug" :data="suglist.data">
+  <!-- <van-pull-refresh v-model="isloading" @refresh="onRefresh" v-if="topics"> -->
+  <scroller
+    style="top: 50px"
+    :on-refresh="onRefresh"
+    :on-infinite="infinite"
+    ref="myscroller"
+  >
+    <waterfall
+      class="contentsug"
+      :height="rqh"
+      :data="topics"
+      :loadDistance="150"
+    >
       <!-- <div class="sugad">banner</div> -->
-      <div
-        class="box"
-        ref="box"
-        v-for="(item, index) in suglist.data"
-        :key="index"
-      >
+      <div class="box" ref="box" v-for="(item, index) in topics" :key="index">
         <img
           @click="t_click(item.id)"
           class="image"
@@ -61,7 +67,7 @@
         </div>
       </div>
     </waterfall>
-  </van-pull-refresh>
+  </scroller>
 </template>
 
 <script>
@@ -70,12 +76,60 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
-      suglist: "",
+      isloading: true,
+      rqh: null,
+      topics: [],
+      lastTime: null,
       baseurl: this.$store.state.sBaseUrl,
     };
   },
+  mounted() {
+    this.$refs.myscroller.finishInfinite(true);
+    this.getData();
+  },
   methods: {
+    infinite(done) {
+      this.loadmore();
+    },
+    loadmore() {
+      request({
+        method: "post",
+        url: "/index/sug",
+        data: {
+          size: 4,
+          token: localStorage.token,
+          createTime: this.lastTime,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller.finishInfinite(true);
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          }
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          this.topics.push(...res.data.data);
+          // console.log(this.topics);
+          let lastEle = this.topics.slice(-1);
+          this.lastTime = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
     onRefresh() {
+      this.lastTime = null;
       this.getData();
     },
     gouser(id) {
@@ -171,15 +225,18 @@ export default {
         method: "post",
         url: "/index/sug",
 
-        data: { page: 1, size: 2, token: localStorage.token },
+        data: { size: 4, token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
         },
       })
         .then(
           (res) => {
-            this.suglist = res.data;
-            if (res.data.msg.includes("登录")) {
+            this.topics = res.data.data;
+            let lastEle = this.topics.slice(-1);
+            this.lastTime = lastEle[0].createTime;
+            this.$refs.myscroller.finishPullToRefresh();
+            if (res.data.code === 9000) {
               this.$pop.open();
             }
           },
@@ -189,11 +246,9 @@ export default {
         )
         .finally(() => {
           Toast.clear();
+          this.isloading = false;
         });
     },
-  },
-  mounted() {
-    this.getData();
   },
 };
 </script>

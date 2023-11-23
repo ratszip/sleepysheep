@@ -1,60 +1,62 @@
 <template>
-  <waterfall class="contentsug" :data="mylist.data">
-    <!-- <div class="sugad">广告位</div> -->
-    <div
-      class="box"
-      ref="box"
-      v-for="(item, index) in mylist.data"
-      :key="index"
-    >
-      <img
-        @click="t_click(item.id)"
-        class="image"
-        :lazy-src="`${baseurl}/${item.images[0].path}`"
-        alt=""
-      />
-      <h1 @click="t_click(item.id)" class="title">
-        <van-icon
-          size="13"
-          color="green"
-          name="checked"
-          style="vertical-align: -10%"
-          v-if="item.isSolved"
+  <scroller
+    style="top: 50px"
+    :on-refresh="onRefresh"
+    :on-infinite="infinite"
+    ref="myscroller"
+  >
+    <waterfall class="contentsug" :data="mylist">
+      <!-- <div class="sugad">广告位</div> -->
+      <div class="box" ref="box" v-for="(item, index) in mylist" :key="index">
+        <img
+          @click="t_click(item.id)"
+          class="image"
+          :lazy-src="`${baseurl}/${item.images[0].path}`"
+          alt=""
         />
-        <van-icon
-          size="13"
-          color="red"
-          name="question-o"
-          style="vertical-align: -10%"
-          v-else-if="!item.isSolved"
-        />{{ item.title }}
-      </h1>
-      <div class="info">
-        <div class="uinfo" @click="t_click(item.id)">
-          <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
-          <span>&nbsp;{{ item.nickName }}</span>
-        </div>
-        <div class="tinfo">
+        <h1 @click="t_click(item.id)" class="title">
           <van-icon
+            size="13"
+            color="green"
+            name="checked"
             style="vertical-align: -10%"
-            v-if="!item.like"
-            name="like-o"
-            size="16"
-            @click="like(item)"
+            v-if="item.isSolved"
           />
           <van-icon
-            style="vertical-align: -10%"
-            v-if="item.like"
-            name="like"
+            size="13"
             color="red"
-            @click="unlike(item)"
-            size="16"
-          />
-          {{ item.likeCount }}
+            name="question-o"
+            style="vertical-align: -10%"
+            v-else-if="!item.isSolved"
+          />{{ item.title }}
+        </h1>
+        <div class="info">
+          <div class="uinfo" @click="t_click(item.id)">
+            <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
+            <span>&nbsp;{{ item.nickName }}</span>
+          </div>
+          <div class="tinfo">
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="!item.like"
+              name="like-o"
+              size="16"
+              @click="like(item)"
+            />
+            <van-icon
+              style="vertical-align: -10%"
+              v-if="item.like"
+              name="like"
+              color="red"
+              @click="unlike(item)"
+              size="16"
+            />
+            {{ item.likeCount }}
+          </div>
         </div>
       </div>
-    </div>
-  </waterfall>
+    </waterfall>
+  </scroller>
 </template>
 
 <script>
@@ -66,9 +68,62 @@ export default {
       mylist: "",
       baseurl: this.$store.state.sBaseUrl,
       userId: null,
+      lastTime: null,
     };
   },
   methods: {
+    infinite(done) {
+      this.loadmore();
+    },
+    onRefresh() {
+      this.lastTime = null;
+      this.getTopic();
+    },
+    loadmore() {
+      this.userId = this.$route.params.uid;
+      request({
+        method: "post",
+        url: "/user/topic",
+        data: {
+          userId: this.userId,
+          createTime: this.lastTime,
+          size: 4,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      })
+        .then(
+          (res) => {
+            this.$refs.myscroller.finishInfinite(true);
+            if (res.data.data == undefined) {
+              this.$toast({
+                message: "没有更多了~",
+              });
+              return;
+            }
+            if (res.data.code === 6000) {
+              this.$toast({
+                message: "访问过于频繁，稍后再试",
+              });
+              return;
+            }
+            this.mylist.push(...res.data.data);
+            // console.log(this.mylist);
+            let lastEle = this.mylist.slice(-1);
+            this.lastTime = lastEle[0].createTime;
+
+            // console.log(this.mylist);
+          },
+          (err) => {
+            console.log(err);
+          }
+        )
+        .finally(() => {
+          Toast.clear();
+        });
+    },
     like(item) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {
@@ -157,6 +212,7 @@ export default {
         url: "/user/topic",
         data: {
           userId: this.userId,
+          size: 4,
         },
         headers: {
           "content-type": "multipart/form-data",
@@ -165,7 +221,10 @@ export default {
       })
         .then(
           (res) => {
-            this.mylist = res.data;
+            this.mylist = res.data.data;
+            let lastEle = this.mylist.slice(-1);
+            this.lastTime = lastEle[0].createTime;
+            this.$refs.myscroller.finishPullToRefresh();
             if (res.data.msg.includes("登录")) {
               this.$pop.open();
             }
@@ -183,6 +242,7 @@ export default {
   },
 
   mounted() {
+    this.$refs.myscroller.finishInfinite(true);
     this.getTopic();
   },
 };

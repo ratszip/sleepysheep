@@ -1,5 +1,11 @@
 <template>
-  <div class="container4">
+  <scroller
+    style="top: 50px"
+    :on-refresh="onRefresh"
+    :on-infinite="infinite"
+    ref="myscroller"
+    class="container4"
+  >
     <div class="item4" v-for="(item, index) in commlike" :key="index">
       <div class="head4">
         <van-image
@@ -35,12 +41,8 @@
       close-on-click-action
       @select="onSelect"
     >
-      <!-- <van-cell-group>
-        <van-cell class="cell" title="移除" />
-        <van-cell class="cell" title="举报" />
-      </van-cell-group> -->
     </van-action-sheet>
-  </div>
+  </scroller>
 </template>
 <script>
 import request from "@/util/request";
@@ -54,12 +56,55 @@ export default {
       baseurl: this.$store.state.sBaseUrl,
       show: false,
       curComment: null,
+      lastTime: null,
     };
   },
   mounted() {
+    this.$refs.myscroller.finishInfinite(true);
     this.getComments();
   },
   methods: {
+    infinite(done) {
+      this.loadmore();
+    },
+    onRefresh() {
+      this.lastTime = null;
+      this.getComments();
+    },
+    loadmore() {
+      this.userId = this.$route.params.uid;
+      request({
+        method: "post",
+        url: "/user/like",
+        data: { userId: this.userId, size: 4, createTime: this.lastTime },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller.finishInfinite(true);
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          }
+          this.commlike.push(...res.data.data);
+          let lastEle = this.commlike.slice(-1);
+          this.lastTime = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
     onMorel(item) {
       this.show = true;
       this.curComment = item.id;
@@ -109,7 +154,7 @@ export default {
       request({
         method: "post",
         url: "/user/like",
-        data: { userId: this.userId },
+        data: { userId: this.userId, size: 4 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -117,12 +162,13 @@ export default {
       })
         .then(
           (res) => {
-            Toast.clear();
             this.commlike = res.data.data;
+            let lastEle = this.commlike.slice(-1);
+            this.lastTime = lastEle[0].createTime;
+            this.$refs.myscroller.finishPullToRefresh();
             if (res.data.msg.includes("登录")) {
               this.$pop.open();
             }
-            // console.log(this.mylist2);
           },
           (err) => {
             console.log(err);

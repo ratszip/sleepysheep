@@ -1,5 +1,11 @@
 <template>
-  <van-pull-refresh v-model="isLoading" class="container4" @refresh="onRefresh">
+  <scroller
+    class="container4"
+    style="top: 50px"
+    :on-refresh="onRefresh"
+    :on-infinite="infinite"
+    ref="myscroller"
+  >
     <div class="item4" v-for="(item, index) in commhome" :key="index">
       <div class="head4">
         <van-image
@@ -52,7 +58,7 @@
       @select="onSelect"
     >
     </van-action-sheet>
-  </van-pull-refresh>
+  </scroller>
 </template>
 <script>
 import request from "@/util/request";
@@ -64,14 +70,61 @@ export default {
       commhome: [],
       baseurl: this.$store.state.sBaseUrl,
       show: false,
-      isLoading: true,
+      // isLoading: true,
       curComment: null,
+      lastTime: null,
     };
   },
   mounted() {
+    this.$refs.myscroller.finishInfinite(true);
     this.getComments();
   },
   methods: {
+    infinite(done) {
+      this.loadmore();
+    },
+    loadmore() {
+      // console.log(this.lastTime);
+      // let ltime = new Date(this.lastTime);
+      // console.log(ltime);
+      request({
+        method: "post",
+        url: "/common/home",
+        data: {
+          size: 4,
+          createTime: this.lastTime,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller.finishInfinite(true);
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          } else if (red.data.code === 9000) {
+            this.$pop.open();
+          }
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          this.commhome.push(...res.data.data);
+          // console.log(this.commhome);
+          let lastEle = this.commhome.slice(-1);
+          this.lastTime = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
     likeComment() {
       request({
         method: "post",
@@ -83,7 +136,7 @@ export default {
         },
       }).then(
         (res) => {
-          if (res.data.msg.includes("登录")) {
+          if (res.data.code === 9000) {
             this.$pop.open();
           } else {
             this.$toast({
@@ -106,8 +159,9 @@ export default {
       this.curComment = item.commentId;
     },
     onRefresh() {
+      this.lastTime = null;
       this.getComments();
-      this.isLoading = false;
+      // this.isLoading = false;
     },
     getComments() {
       this.userId = this.$route.params.uid;
@@ -119,6 +173,7 @@ export default {
       request({
         method: "post",
         url: "/common/home",
+        data: { size: 4 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -127,10 +182,17 @@ export default {
         .then(
           (res) => {
             Toast.clear();
-            this.commhome = res.data.data;
-            if (res.data.msg.includes("登录")) {
+
+            if (res.data.code === 9000) {
               this.$pop.open();
+            } else {
+              this.commhome = res.data.data;
+              let lastEle = this.commhome.slice(-1);
+              this.lastTime = lastEle[0].createTime;
+              this.$refs.myscroller.finishInfinite(true);
+              this.$refs.myscroller.finishPullToRefresh();
             }
+
             // console.log(this.mylist2);
           },
           (err) => {
@@ -146,6 +208,9 @@ export default {
 </script>
 
 <style lang="less">
+.container4 {
+  overflow: scroll;
+}
 .more4 {
   flex: 1;
   text-align: end;

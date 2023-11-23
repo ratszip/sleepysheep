@@ -19,85 +19,95 @@
       />
       <van-tab disabled></van-tab>
       <van-tab title="关注">
-        <div v-for="(item, index) in followsShow" class="item">
-          <van-image
-            @click="gouser(item.followId)"
-            round
-            width="40px"
-            height="40px"
-            :src="`${baseurl}/images/${item.avatar}.png`"
-          />
-          <span @click="gouser(item.followId)" class="uname">{{
-            item.nickName
-          }}</span>
-          <van-button
-            plain
-            round
-            v-if="item.isF && item.followId != tokenid"
-            type="default"
-            size="mini"
-            style="margin-left: 10px; width: 56px; font-size: 10px"
-            @click="unfollow(item, index)"
-            >已关注</van-button
-          >
-          <van-button
-            v-else-if="!item.isF && item.followId != tokenid"
-            round
-            type="danger"
-            style="margin-left: 10px; width: 56px; font-size: 10px"
-            size="mini"
-            @click="follow(item, index)"
-            >关 &nbsp;注</van-button
-          >
-        </div>
+        <scroller
+          style="top: 100px"
+          :height="sch"
+          ref="myscroller"
+          :on-infinite="infinite1"
+        >
+          <div v-for="(item, index) in followsShow" class="item">
+            <van-image
+              @click="gouser(item.followId)"
+              round
+              width="40px"
+              height="40px"
+              :src="`${baseurl}/images/${item.avatar}.png`"
+            />
+            <span @click="gouser(item.followId)" class="uname">{{
+              item.nickName
+            }}</span>
+            <van-button
+              plain
+              round
+              v-if="item.isF && item.followId != tokenid"
+              type="default"
+              size="mini"
+              style="margin-left: 10px; width: 56px; font-size: 10px"
+              @click="unfollow(item, index)"
+              >已关注</van-button
+            >
+            <van-button
+              v-else-if="!item.isF && item.followId != tokenid"
+              round
+              type="danger"
+              style="margin-left: 10px; width: 56px; font-size: 10px"
+              size="mini"
+              @click="follow(item, index)"
+              >关 &nbsp;注</van-button
+            >
+          </div>
+        </scroller>
       </van-tab>
       <van-tab title="粉丝">
-        <div v-for="(item, index) in fansShow" class="item" :key="index">
-          <van-image
-            round
-            @click="gouser(item.fansId)"
-            width="40px"
-            height="40px"
-            :src="`${baseurl}/images/${item.avatar}.png`"
-          />
-          <span class="uname" @click="gouser(item.fansId)">{{
-            item.nickName
-          }}</span>
-          <van-button
-            v-if="!item.isB && item.fansId != tokenid"
-            type="danger"
-            size="mini"
-            round
-            style="margin-left: 10px; width: 56px; font-size: 10px"
-            @click="follow(item, index)"
-            >关 注</van-button
-          >
+        <scroller
+          style="top: 100px"
+          :height="sch"
+          ref="myscroller"
+          :on-infinite="infinite2"
+        >
+          <div v-for="(item, index) in fansShow" class="item" :key="index">
+            <van-image
+              round
+              @click="gouser(item.fansId)"
+              width="40px"
+              height="40px"
+              :src="`${baseurl}/images/${item.avatar}.png`"
+            />
+            <span class="uname" @click="gouser(item.fansId)">{{
+              item.nickName
+            }}</span>
+            <van-button
+              v-if="!item.isB && item.fansId != tokenid"
+              type="danger"
+              size="mini"
+              round
+              style="margin-left: 10px; width: 56px; font-size: 10px"
+              @click="follow(item, index)"
+              >关 注</van-button
+            >
 
-          <van-button
-            v-else-if="item.isB && item.fansId != tokenid"
-            plain
-            type="default"
-            size="mini"
-            round
-            style="margin-left: 10px; width: 56px; font-size: 10px"
-            @click="unfollow(item, index)"
-            >已关注</van-button
-          >
-          <van-icon
-            size="20"
-            v-if="userId == tokenid"
-            @click="moreAct"
-            name="ellipsis"
-            style="margin-left: 10px"
-          />
-        </div>
+            <van-button
+              v-else-if="item.isB && item.fansId != tokenid"
+              plain
+              type="default"
+              size="mini"
+              round
+              style="margin-left: 10px; width: 56px; font-size: 10px"
+              @click="unfollow(item, index)"
+              >已关注</van-button
+            >
+            <van-icon
+              size="20"
+              v-if="userId == tokenid"
+              @click="moreAct"
+              name="ellipsis"
+              style="margin-left: 10px"
+            />
+          </div>
+        </scroller>
       </van-tab>
       <van-tab disabled></van-tab>
     </van-tabs>
-    <van-divider
-      :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }"
-      >到底了</van-divider
-    >
     <van-action-sheet
       v-model="sheet"
       :actions="actions"
@@ -124,9 +134,95 @@ export default {
       searchValue: "",
       sheet: false,
       actions: [{ name: "移除" }],
+      sch: document.documentElement.clientHeight + "",
+      lastTime1: null,
+      lastTime2: null,
     };
   },
+  mounted() {
+    this.init();
+    this.getdata();
+    this.setContain();
+  },
   methods: {
+    async setContain() {
+      await this.$nextTick();
+      this.$refs.myscroller1.finishInfinite(true);
+      this.$refs.myscroller2.finishInfinite(true);
+    },
+
+    infinite1(done) {
+      this.loadmorefol();
+    },
+    infinite2() {
+      this.loadmorefan();
+    },
+    loadmorefol(done) {
+      request({
+        method: "post",
+        url: "/common/followList",
+        data: { fansId: this.userId, size: 20, createTime: this.lastTime1 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller1.finishInfinite(true);
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          }
+          this.follows.push(...res.data.data);
+          let lastEle = this.follows.slice(-1);
+          this.lastTime1 = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    loadmorefan() {
+      request({
+        method: "post",
+        url: "/common/fansList",
+        data: { followId: this.userId, size: 20, createTime: this.lastTime2 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller2.finishInfinite(true);
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          }
+          this.fans.push(...res.data.data);
+          let lastEle = this.fans.slice(-1);
+          this.lastTime2 = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
     follow(item) {
       var uid = item.followId ? item.followId : item.fansId;
       if (localStorage.getItem("token") == null) {
@@ -216,7 +312,6 @@ export default {
       this.clear();
     },
     clear() {
-      console.log;
       if (this.active > 1) {
         this.fansList();
       } else {
@@ -261,7 +356,6 @@ export default {
         .then(
           (res) => {
             if (res.data.code === 2000) {
-              console.log(res.data.data);
               if (this.active > 1) {
                 this.fansShow = res.data.data;
               } else {
@@ -286,8 +380,6 @@ export default {
         });
     },
     tabClick(index) {
-      // console.log(this.userId == this.tokenid);
-      // console.log(this.active);
       if (index == 2 && this.fans.length == 0) {
         this.fansList();
       } else if (index == 1 && this.follows.length == 0) {
@@ -295,7 +387,6 @@ export default {
       }
     },
     init() {
-      // this.active = Number(this.$route.params.act);
       this.active = Number(this.$route.params.act);
       this.userId = this.$route.params.id;
     },
@@ -311,7 +402,7 @@ export default {
       request({
         method: "post",
         url: "/common/fansList",
-        data: { followId: this.userId, size: 20, page: 1 },
+        data: { followId: this.userId, size: 20, createTime: this.lastTime2 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -323,6 +414,8 @@ export default {
               this.fans = res.data.data.flist;
               this.fansShow = this.fans;
               this.tokenid = res.data.data.uid;
+              let lastEle = this.fans.slice(-1);
+              this.lastTime2 = lastEle[0].createTime;
             } else if (res.data.code === 9000) {
               this.$pop.open();
             } else {
@@ -348,7 +441,7 @@ export default {
       request({
         method: "post",
         url: "/common/followList",
-        data: { fansId: this.userId, size: 20, page: 1 },
+        data: { fansId: this.userId, size: 20, createTime: this.lastTime1 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -360,6 +453,8 @@ export default {
               this.follows = res.data.data.flist;
               this.followsShow = this.follows;
               this.tokenid = res.data.data.uid;
+              let lastEle = this.follows.slice(-1);
+              this.lastTime1 = lastEle[0].createTime;
             } else if (res.data.code === 9000) {
               this.$pop.open();
             } else {
@@ -383,11 +478,6 @@ export default {
         this.fansList();
       }
     },
-  },
-
-  mounted() {
-    this.init();
-    this.getdata();
   },
 };
 </script>

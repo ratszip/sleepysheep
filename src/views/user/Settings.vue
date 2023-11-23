@@ -6,7 +6,7 @@
       left-arrow
       @click-left="onClickLeft"
     />
-    <div class="group">
+    <!-- <div class="group">
       <van-cell center title="帖子">
         <template #right-icon>
           <van-switch v-model="checked" size="24" />
@@ -27,21 +27,23 @@
           <van-switch v-model="checked" size="24" />
         </template>
       </van-cell>
-    </div>
-    <div class="group">
-      <van-cell title="修改密码" />
-      <van-cell title="注销账号" />
-      <van-cell title="退出登录" @click="logout" />
-    </div>
+    </div> -->
+    <van-cell-group class="group">
+      <van-cell title="修改密码" clickable @click="modifyPwd" />
+      <!-- <van-cell title="注销账号" clickable /> -->
+      <van-cell title="退出登录" @click.native="logout" clickable />
+    </van-cell-group>
   </div>
 </template>
 <script>
+import request from "@/util/request";
 export default {
   methods: {
     onClickLeft() {
       this.$router.back();
     },
     logout() {
+      console.log("ccc");
       request({
         method: "post",
         url: "/user/logout",

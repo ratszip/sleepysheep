@@ -13,7 +13,11 @@ import "amfe-flexible"
 import waterfall from 'vue-waterfall2'
 import { PullRefresh } from 'vant';
 import { ActionSheet } from 'vant';
-
+import VueScroller from 'vue-scroller'
+import { Cell, CellGroup } from 'vant';
+Vue.use(Cell);
+Vue.use(CellGroup)
+Vue.use(VueScroller)
 Vue.use(ActionSheet);
 Vue.use(PullRefresh)
 Vue.use(waterfall)

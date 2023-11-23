@@ -1,5 +1,11 @@
 <template>
-  <div class="container3">
+  <scroller
+    style="top: 50px"
+    :on-refresh="onRefresh"
+    :on-infinite="infinite"
+    ref="myscroller"
+    class="container3"
+  >
     <div class="item3" v-for="(item, index) in commlist" :key="index">
       <div class="head3">
         <van-image
@@ -13,7 +19,7 @@
           <span class="uname3">{{ item.nickName }}</span>
           <span class="time3">{{ item.createTime }}</span>
         </div>
-        <span class="more3" @click="onMore(item)">︙</span>
+        <span class="more3" @click="onMore(item, index)">︙</span>
       </div>
       <h1 class="content3">{{ item.content }}</h1>
       <div v-if="item.title" class="topic3">
@@ -35,13 +41,8 @@
       close-on-click-action
       @select="onSelect"
     >
-      <!-- <van-cell-group>
-        <van-cell class="cell" title="点赞" />
-        <van-cell class="cell" title="删除" />
-        <van-cell class="cell" title="举报" />
-      </van-cell-group> -->
     </van-action-sheet>
-  </div>
+  </scroller>
 </template>
 <script>
 import request from "@/util/request";
@@ -55,12 +56,57 @@ export default {
       userId: null,
       baseurl: this.$store.state.sBaseUrl,
       curComment: null,
+      curIndex: null,
+      lastTime: null,
     };
   },
   mounted() {
+    this.$refs.myscroller.finishInfinite(true);
     this.getComments();
   },
   methods: {
+    infinite(done) {
+      this.loadmore();
+    },
+    onRefresh() {
+      this.lastTime = null;
+      this.getComments();
+    },
+    loadmore() {
+      this.userId = this.$route.params.uid;
+      request({
+        method: "post",
+        url: "/user/comment",
+        data: { comm: this.userId, size: 10, createTime: this.lastTime },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          this.$refs.myscroller.finishInfinite(true);
+          if (res.data.data == undefined) {
+            this.$toast({
+              message: "没有更多了~",
+            });
+            return;
+          }
+          if (res.data.code === 6000) {
+            this.$toast({
+              message: "访问过于频繁，稍后再试",
+            });
+            return;
+          }
+          this.commlist.push(...res.data.data);
+          let lastEle = this.commlist.slice(-1);
+          this.lastTime = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+
     onSelect(action, index) {
       if (index === 0) {
         this.likeComment();
@@ -68,9 +114,10 @@ export default {
         this.deleteComment();
       }
     },
-    onMore(item) {
+    onMore(item, index) {
       this.show = true;
       this.curComment = item.id;
+      this.curIndex = index;
     },
     deleteComment() {
       request({
@@ -85,6 +132,9 @@ export default {
         (res) => {
           if (res.data.msg.includes("登录")) {
             this.$pop.open();
+          }
+          if (res.data.code === 2000) {
+            this.commlist.splice(this.curIndex, 1);
           } else {
             this.$toast({
               message: res.data.msg,
@@ -130,7 +180,7 @@ export default {
       request({
         method: "post",
         url: "/user/comment",
-        data: { userId: this.userId },
+        data: { userId: this.userId, size: 10 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -140,10 +190,12 @@ export default {
           (res) => {
             Toast.clear();
             this.commlist = res.data.data;
+            let lastEle = this.commlist.slice(-1);
+            this.lastTime = lastEle[0].createTime;
+            this.$refs.myscroller.finishPullToRefresh();
             if (res.data.msg.includes("登录")) {
               this.$pop.open();
             }
-            // console.log(this.mylist2);
           },
           (err) => {
             console.log(err);
