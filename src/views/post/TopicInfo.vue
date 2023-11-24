@@ -4,24 +4,41 @@
       <van-swipe-item
         ref="pics"
         :style="imgclass"
-        v-for="(image, index) in pcontent.images"
+        v-for="(image, index) in detail.images"
         :key="index"
       >
         <img class="mainpic" v-lazy="`${baseurl}/${image.path}`" />
       </van-swipe-item>
     </van-swipe>
 
-    <h1 class="topictitle">{{ pcontent.title }}</h1>
-    <p class="topictext">{{ pcontent.content }}</p>
+    <h1 class="topictitle">
+      {{ detail.title }}
+
+      <div class="like">
+        <van-icon
+          v-if="!detail.like"
+          size="20"
+          name="like-o"
+          @click="like_t(detail.topicId)"
+        />
+        <van-icon
+          v-if="detail.like"
+          color="red"
+          size="20"
+          name="like"
+          @click="unlike_t(detail.topicId)"
+        />
+      </div>
+    </h1>
+    <p class="topictext">{{ detail.content }}</p>
     <div class="topicbottom">
-      <span class="topictime">{{ pcontent.createTime }}</span>
+      <span class="topictime">{{ detail.createTime }}</span>
       <div class="isfixed">
         <span
           class="solve"
           @click="setSolve(0)"
           v-if="
-            pcontent.isSolved == 1 &&
-            this.pcontent.userId == this.pcontent.guestId
+            detail.isSolved == 1 && this.detail.userId == this.detail.guestId
           "
         >
           <van-icon
@@ -36,8 +53,7 @@
           class="solve"
           @click="setSolve(1)"
           v-else-if="
-            pcontent.isSolved == 0 &&
-            this.pcontent.userId == this.pcontent.guestId
+            detail.isSolved == 0 && this.detail.userId == this.detail.guestId
           "
         >
           <van-icon
@@ -63,6 +79,7 @@ export default {
   data() {
     return {
       baseurl: this.$store.state.sBaseUrl,
+      detail: this.pcontent,
       imgclass: {
         margin: "0 auto",
         height: "",
@@ -83,7 +100,7 @@ export default {
             method: "post",
             url: "/topic/solve",
             data: {
-              id: this.pcontent.topicId,
+              id: this.detail.topicId,
               isSolved: is,
             },
             headers: {
@@ -93,7 +110,7 @@ export default {
           }).then(
             (res) => {
               if (res.data.code === 2000) {
-                this.pcontent.isSolved = is;
+                this.detail.isSolved = is;
               } else if (res.data.code === 9000) {
                 setTimeout(() => {
                   this.$pop.open();
@@ -114,15 +131,15 @@ export default {
         });
     },
     measure() {
-      if (this.pcontent.userId === this.pcontent.guestId) {
+      if (this.detail.userId === this.detail.guestId) {
         this.guest = false;
       } else {
         this.guest = true;
       }
-      if (this.pcontent.images[0].height <= this.pcontent.images[0].width) {
+      if (this.detail.images[0].height <= this.detail.images[0].width) {
         let realh =
-          (document.body.clientWidth * this.pcontent.images[0].height) /
-          this.pcontent.images[0].width;
+          (document.body.clientWidth * this.detail.images[0].height) /
+          this.detail.images[0].width;
         if (realh < 200) {
           this.imgclass.height = "200px";
         } else {
@@ -131,6 +148,73 @@ export default {
       } else {
         this.imgclass.height = "400px";
         this.imgclass.lineHeight = "400px";
+      }
+    },
+
+    like_t(id) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/like",
+          data: { topicId: id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.detail.like = true;
+              // item.likeCount++;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    },
+    unlike_t(id) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/unlike",
+          data: { topicId: id },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 2000) {
+              this.detail.like = false;
+              // this.detail.likeCount--;
+            } else if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
       }
     },
   },
@@ -149,12 +233,17 @@ export default {
       // object-fit: contain;
 }
 .topictitle {
+    display: flex;
     width: 100%;
     font-size: 30px;
     vertical-align: bottom;
     line-height: 30px;
-    margin: 16px;
+    margin-left: 16px;
     text-overflow: ellipsis;
+    justify-content: space-between;
+    .like{
+      padding-right: 40px;
+    }
 }
   .topictext {
     font-size: 28px;

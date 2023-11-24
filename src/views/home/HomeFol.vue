@@ -1,55 +1,57 @@
 <template>
-  <scroller
-    class="container4"
-    style="top: 50px"
-    :on-refresh="onRefresh"
-    :on-infinite="infinite"
-    ref="myscroller"
-  >
-    <div class="item4" v-for="(item, index) in commhome" :key="index">
-      <div class="head4">
-        <van-image
-          v-if="item.commentAvatar"
-          round
-          width="34px"
-          height="34px"
-          :src="`${baseurl}/images/${item.commentAvatar}.png`"
-        />
-        <van-image
-          v-if="!item.commentAvatar"
-          round
-          width="34px"
-          height="34px"
-          :src="`${baseurl}/images/${item.topicAvatar}.png`"
-        />
-        <div class="info4">
-          <span class="space4"></span>
-          <span class="uname4" v-if="item.commentId">{{
-            item.commentUname
-          }}</span>
-          <span class="uname4" v-if="!item.commentId">{{
-            item.topicUname
-          }}</span>
-          <span class="time4">{{ item.createTime }}</span>
+  <div>
+    <scroller
+      class="container4"
+      style="top: 50px"
+      :on-refresh="onRefresh"
+      :on-infinite="infinite"
+      ref="myscroller"
+    >
+      <div class="item4" v-for="(item, index) in commhome" :key="index">
+        <div class="head4">
+          <van-image
+            v-if="item.commentAvatar"
+            round
+            width="34px"
+            height="34px"
+            :src="`${baseurl}/images/${item.commentAvatar}.png`"
+          />
+          <van-image
+            v-if="!item.commentAvatar"
+            round
+            width="34px"
+            height="34px"
+            :src="`${baseurl}/images/${item.topicAvatar}.png`"
+          />
+          <div class="info4">
+            <span class="space4"></span>
+            <span class="uname4" v-if="item.commentId">{{
+              item.commentUname
+            }}</span>
+            <span class="uname4" v-if="!item.commentId">{{
+              item.topicUname
+            }}</span>
+            <span class="time4">{{ item.createTime }}</span>
+          </div>
+          <span @click="onMorel(item)" class="more4">︙</span>
         </div>
-        <span @click="onMorel(item)" class="more4">︙</span>
-      </div>
-      <h1 class="content4" v-if="item.commentId">{{ item.content }}</h1>
-      <div v-if="item.title" class="topic4">
-        <img
-          class="image4"
-          v-lazy="`${baseurl}/${item.images[0].path}`"
-          alt=""
-        />
-        <div class="topicInfo4">
-          <div class="title4">{{ item.title }}</div>
-          <div class="tcontent4">{{ item.tcontent }}</div>
+        <h1 class="content4" v-if="item.commentId">{{ item.content }}</h1>
+        <div v-if="item.title" class="topic4" @click="gotopic(item)">
+          <img
+            class="image4"
+            v-lazy="`${baseurl}/${item.images[0].path}`"
+            alt=""
+          />
+          <div class="topicInfo4">
+            <div class="title4">{{ item.title }}</div>
+            <div class="tcontent4">{{ item.tcontent }}</div>
+          </div>
+        </div>
+        <div v-if="!item.title" class="unknow">
+          <van-icon name="close" />帖子已被删除
         </div>
       </div>
-      <div v-if="!item.title" class="unknow">
-        <van-icon name="close" />帖子已被删除
-      </div>
-    </div>
+    </scroller>
     <van-action-sheet
       v-model="show"
       cancel-text="取消"
@@ -58,7 +60,7 @@
       @select="onSelect"
     >
     </van-action-sheet>
-  </scroller>
+  </div>
 </template>
 <script>
 import request from "@/util/request";
@@ -80,13 +82,13 @@ export default {
     this.getComments();
   },
   methods: {
+    gotopic(item) {
+      this.$router.push(`/topic/${item.topicId}`);
+    },
     infinite(done) {
       this.loadmore();
     },
     loadmore() {
-      // console.log(this.lastTime);
-      // let ltime = new Date(this.lastTime);
-      // console.log(ltime);
       request({
         method: "post",
         url: "/common/home",
@@ -126,6 +128,10 @@ export default {
       );
     },
     likeComment() {
+      if (this.curItem.content === undefined) {
+        this.likeTopic(this.curItem);
+        return;
+      }
       request({
         method: "post",
         url: "/comment/like",
@@ -157,6 +163,7 @@ export default {
     onMorel(item) {
       this.show = true;
       this.curComment = item.commentId;
+      this.curItem = item;
     },
     onRefresh() {
       this.lastTime = null;
@@ -202,6 +209,36 @@ export default {
         .finally(() => {
           Toast.clear();
         });
+    },
+    likeTopic(item) {
+      if (localStorage.getItem("token") == null) {
+        setTimeout(() => {
+          this.$pop.open();
+        }, 1000);
+      } else {
+        request({
+          method: "post",
+          url: "/topic/like",
+          data: { topicId: item.topicId },
+          headers: {
+            "content-type": "multipart/form-data",
+            token: localStorage.token,
+          },
+        }).then(
+          (res) => {
+            if (res.data.code === 9000) {
+              this.$pop.open();
+            } else {
+              this.$toast({
+                message: res.data.msg,
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
     },
   },
 };

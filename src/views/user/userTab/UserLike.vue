@@ -1,39 +1,41 @@
 <template>
-  <scroller
-    style="top: 50px"
-    :on-refresh="onRefresh"
-    :on-infinite="infinite"
-    ref="myscroller"
-    class="container4"
-  >
-    <div class="item4" v-for="(item, index) in commlike" :key="index">
-      <div class="head4">
-        <van-image
-          round
-          width="34px"
-          height="34px"
-          :src="`${baseurl}/images/${item.avatar}.png`"
-        />
-        <div class="info4">
-          <span class="space4"></span>
-          <span class="uname4">{{ item.nickName }}</span>
-          <span class="time4">{{ item.createTime }}</span>
+  <div>
+    <scroller
+      style="top: 50px"
+      :on-refresh="onRefresh"
+      :on-infinite="infinite"
+      ref="myscroller"
+      class="container4"
+    >
+      <div class="item4" v-for="(item, index) in commlike" :key="index">
+        <div class="head4">
+          <van-image
+            round
+            width="34px"
+            height="34px"
+            :src="`${baseurl}/images/${item.avatar}.png`"
+          />
+          <div class="info4">
+            <span class="space4"></span>
+            <span class="uname4">{{ item.nickName }}</span>
+            <span class="time4">{{ item.createTime }}</span>
+          </div>
+          <span @click="onMorel(item, index)" class="more4">︙</span>
         </div>
-        <span @click="onMorel(item)" class="more4">︙</span>
+        <h1 class="content4">{{ item.content }}</h1>
+        <div v-if="item.title" class="topic4" @click="gotopic(item)">
+          <img
+            class="image4"
+            v-lazy="`${baseurl}/${item.images[0].path}`"
+            alt=""
+          />
+          <span class="title4">{{ item.title }}</span>
+        </div>
+        <div v-if="!item.title" class="unknow">
+          <van-icon name="close" />帖子已被删除
+        </div>
       </div>
-      <h1 class="content4">{{ item.content }}</h1>
-      <div v-if="item.title" class="topic4">
-        <img
-          class="image4"
-          v-lazy="`${baseurl}/${item.images[0].path}`"
-          alt=""
-        />
-        <span class="title4">{{ item.title }}</span>
-      </div>
-      <div v-if="!item.title" class="unknow">
-        <van-icon name="close" />帖子已被删除
-      </div>
-    </div>
+    </scroller>
     <van-action-sheet
       :actions="actions"
       v-model="show"
@@ -42,7 +44,7 @@
       @select="onSelect"
     >
     </van-action-sheet>
-  </scroller>
+  </div>
 </template>
 <script>
 import request from "@/util/request";
@@ -50,12 +52,13 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
-      actions: [{ name: "移除" }, { name: "举报" }],
+      actions: [{ name: "取消点赞" }, { name: "举报" }],
       commlike: [],
       userId: null,
       baseurl: this.$store.state.sBaseUrl,
       show: false,
       curComment: null,
+      curIndex: null,
       lastTime: null,
     };
   },
@@ -64,6 +67,9 @@ export default {
     this.getComments();
   },
   methods: {
+    gotopic(item) {
+      this.$router.push(`/topic/${item.topicId}`);
+    },
     infinite(done) {
       this.loadmore();
     },
@@ -105,9 +111,10 @@ export default {
         }
       );
     },
-    onMorel(item) {
+    onMorel(item, index) {
       this.show = true;
       this.curComment = item.id;
+      this.curIndex = index;
     },
     onSelect(action, index) {
       if (index === 0) {
@@ -132,6 +139,8 @@ export default {
           (res) => {
             if (res.data.code === 9000) {
               this.$pop.open();
+            } else if (res.data.code === 2000) {
+              this.commlike.splice(this.curIndex, 1);
             } else {
               this.$toast({
                 message: res.data.msg,
@@ -166,7 +175,7 @@ export default {
             let lastEle = this.commlike.slice(-1);
             this.lastTime = lastEle[0].createTime;
             this.$refs.myscroller.finishPullToRefresh();
-            if (res.data.msg.includes("登录")) {
+            if (res.data.code === 9000) {
               this.$pop.open();
             }
           },

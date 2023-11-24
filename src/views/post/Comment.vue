@@ -35,7 +35,7 @@
               size="18"
             />
             {{ item.likeCount }}
-            <span class="cmore">︙</span>
+            <span class="cmore" @click="cmore(item, index)">︙</span>
           </div>
         </div>
 
@@ -67,6 +67,8 @@
             <div>
               <span class="topictime ctime"> {{ rp.createTime }} </span>
               <span class="reply" @click="goreply(rp, index)"> 回复</span>
+              <span class="reply" style="margin-left: 140px"> 举报</span>
+              <span class="reply"> 删除</span>
             </div>
           </div>
           <div
@@ -98,6 +100,8 @@
             <span class="replyl" @click="goreply(rp, curCommentIndex)">
               回复</span
             >
+            <span class="replyl"> 举报</span>
+            <span class="replyl"> 删除</span>
           </div>
         </div>
         <div class="outcomment">
@@ -159,6 +163,14 @@
         <span>发表一下观点吧</span>
       </div>
     </div>
+    <van-action-sheet
+      v-model="show"
+      cancel-text="取消"
+      :actions="actions"
+      close-on-click-action
+      @select="onSelect"
+    >
+    </van-action-sheet>
   </div>
 </template>
 
@@ -170,8 +182,10 @@ export default {
   },
   data() {
     return {
+      actions: [{ name: "删除" }, { name: "举报" }],
       baseurl: this.$store.state.sBaseUrl,
       replyTo: "",
+      show: false,
       btshow: true,
       onputshow: false,
       curCommentIndex: null,
@@ -188,6 +202,10 @@ export default {
     };
   },
   methods: {
+    cmore(item, index) {
+      this.show = true;
+      console.log(index);
+    },
     goUserInfo(id) {
       if (localStorage.getItem("token") == null) {
         setTimeout(() => {

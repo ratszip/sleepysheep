@@ -1,39 +1,41 @@
 <template>
-  <scroller
-    style="top: 50px"
-    :on-refresh="onRefresh"
-    :on-infinite="infinite"
-    ref="myscroller"
-    class="container3"
-  >
-    <div class="item3" v-for="(item, index) in commlist" :key="index">
-      <div class="head3">
-        <van-image
-          round
-          width="34px"
-          height="34px"
-          :src="`${baseurl}/images/${item.avatar}.png`"
-        />
-        <div class="info3">
-          <span class="space3"></span>
-          <span class="uname3">{{ item.nickName }}</span>
-          <span class="time3">{{ item.createTime }}</span>
+  <div>
+    <scroller
+      style="top: 50px"
+      :on-refresh="onRefresh"
+      :on-infinite="infinite"
+      ref="myscroller"
+      class="container3"
+    >
+      <div class="item3" v-for="(item, index) in commlist" :key="index">
+        <div class="head3">
+          <van-image
+            round
+            width="34px"
+            height="34px"
+            :src="`${baseurl}/images/${item.avatar}.png`"
+          />
+          <div class="info3">
+            <span class="space3"></span>
+            <span class="uname3">{{ item.nickName }}</span>
+            <span class="time3">{{ item.createTime }}</span>
+          </div>
+          <span class="more3" @click="onMore(item, index)">︙</span>
         </div>
-        <span class="more3" @click="onMore(item, index)">︙</span>
+        <h1 class="content3">{{ item.content }}</h1>
+        <div v-if="item.title" class="topic3" @click="gotopic(item)">
+          <img
+            class="image3"
+            v-lazy="`${baseurl}/${item.images[0].path}`"
+            alt=""
+          />
+          <span class="title3">{{ item.title }}</span>
+        </div>
+        <div v-if="!item.title" class="unknow">
+          <van-icon name="close" />帖子已被删除
+        </div>
       </div>
-      <h1 class="content3">{{ item.content }}</h1>
-      <div v-if="item.title" class="topic3">
-        <img
-          class="image3"
-          v-lazy="`${baseurl}/${item.images[0].path}`"
-          alt=""
-        />
-        <span class="title3">{{ item.title }}</span>
-      </div>
-      <div v-if="!item.title" class="unknow">
-        <van-icon name="close" />帖子已被删除
-      </div>
-    </div>
+    </scroller>
     <van-action-sheet
       v-model="show"
       cancel-text="取消"
@@ -42,7 +44,7 @@
       @select="onSelect"
     >
     </van-action-sheet>
-  </scroller>
+  </div>
 </template>
 <script>
 import request from "@/util/request";
@@ -65,6 +67,9 @@ export default {
     this.getComments();
   },
   methods: {
+    gotopic(item) {
+      this.$router.push(`/topic/${item.topicId}`);
+    },
     infinite(done) {
       this.loadmore();
     },

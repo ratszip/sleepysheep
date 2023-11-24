@@ -41,7 +41,7 @@ export default {
         guestId: null,
         createTime: null,
         images: null,
-        likeCount: null,
+        like: null,
       },
       comments: { comments: null, topicId: null },
     };
@@ -56,7 +56,7 @@ export default {
       this.nvData.avatar = resData.avatar;
       this.nvData.topicId = this.topicId;
 
-      this.contentData.likeCount = resData.likeCount;
+      this.contentData.like = resData.like;
       this.contentData.title = resData.title;
       this.contentData.topicId = this.topicId;
       this.contentData.content = resData.content;
