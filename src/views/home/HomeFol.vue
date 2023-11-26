@@ -93,7 +93,7 @@ export default {
         method: "post",
         url: "/common/home",
         data: {
-          size: 4,
+          size: 10,
           createTime: this.lastTime,
         },
         headers: {
@@ -103,12 +103,7 @@ export default {
       }).then(
         (res) => {
           this.$refs.myscroller.finishInfinite(true);
-          if (res.data.code === 6000) {
-            this.$toast({
-              message: "访问过于频繁，稍后再试",
-            });
-            return;
-          } else if (red.data.code === 9000) {
+          if (red.data.code === 9000) {
             this.$pop.open();
           }
           if (res.data.data == undefined) {
@@ -118,7 +113,6 @@ export default {
             return;
           }
           this.commhome.push(...res.data.data);
-          // console.log(this.commhome);
           let lastEle = this.commhome.slice(-1);
           this.lastTime = lastEle[0].createTime;
         },
@@ -180,7 +174,7 @@ export default {
       request({
         method: "post",
         url: "/common/home",
-        data: { size: 4 },
+        data: { size: 10 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,

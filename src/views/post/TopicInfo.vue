@@ -220,6 +220,9 @@ export default {
   },
   mounted() {
     this.measure();
+    // this.$nextTick(() => {
+    //   this.bus.$emit("tinfoh", this.$refs.tinfo.offsetHeight);
+    // });
   },
 };
 </script>

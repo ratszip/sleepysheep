@@ -3,85 +3,99 @@
     <div class="total">
       共 {{ pcomments.comments ? pcomments.comments.length : 0 }} 条评论
     </div>
-    <div class="citem" v-for="(item, index) in pcomments.comments" :key="index">
-      <van-image
-        @click="goUserInfo(item.fromUid)"
-        v-if="item.avatar"
-        class="ctoux"
-        round
-        width="28px"
-        height="28px"
-        :src="`${baseurl}/images/${item.avatar}.png`"
-      />
-      <div class="comitem">
-        <div class="handl">
-          <span class="cuname" @click="goUserInfo(item.fromUid)">
-            {{ item.nickName }}
-          </span>
-          <div class="zan">
-            <van-icon
-              style="vertical-align: -10%"
-              v-if="!item.likeCom"
-              name="good-job-o"
-              size="18"
-              @click="like(item)"
-            />
-            <van-icon
-              style="vertical-align: -10%"
-              v-if="item.likeCom"
-              name="good-job"
-              color="red"
-              @click="unlike(item)"
-              size="18"
-            />
-            {{ item.likeCount }}
-            <span class="cmore" @click="cmore(item, index)">︙</span>
-          </div>
-        </div>
-
-        <p class="ccontent">{{ item.content }}</p>
-        <div>
-          <span class="topictime ctime">{{ item.createTime }} </span>
-          <span class="reply" @click="goreply(item, index)">回复</span>
-        </div>
-        <div class="replylist" v-if="item.replyList">
-          <div
-            class="rpitem"
-            v-for="(rp, rindex) in item.replyList"
-            :key="rindex"
-            v-if="rindex < curRepNum"
-            :ref="'rp' + rindex"
-          >
-            <span class="cuname" @click="goUserInfo(rp.fromUid)">
-              {{ rp.fromUname }}：
+    <div class="colist">
+      <div
+        class="citem"
+        v-for="(item, index) in pcomments.comments"
+        :key="index"
+      >
+        <van-image
+          @click="goUserInfo(item.fromUid)"
+          v-if="item.avatar"
+          class="ctoux"
+          round
+          width="28px"
+          height="28px"
+          :src="`${baseurl}/images/${item.avatar}.png`"
+        />
+        <div class="comitem">
+          <div class="handl">
+            <span class="cuname" @click="goUserInfo(item.fromUid)">
+              {{ item.nickName }}
             </span>
-            <span class="cuname" style="color: black" v-show="rp.toUid"
-              >回复 </span
-            ><span
-              class="cuname"
-              v-show="rp.toUid"
-              @click="goUserInfo(rp.toUid)"
-              >{{ rp.toUname }}：</span
-            >
-            <span class="rpcont">{{ rp.content }}</span>
-            <div>
-              <span class="topictime ctime"> {{ rp.createTime }} </span>
-              <span class="reply" @click="goreply(rp, index)"> 回复</span>
-              <span class="reply" style="margin-left: 140px"> 举报</span>
-              <span class="reply"> 删除</span>
+            <div class="zan">
+              <van-icon
+                style="vertical-align: -10%"
+                v-if="!item.likeCom"
+                name="good-job-o"
+                size="18"
+                @click="like(item)"
+              />
+              <van-icon
+                style="vertical-align: -10%"
+                v-if="item.likeCom"
+                name="good-job"
+                color="red"
+                @click="unlike(item)"
+                size="18"
+              />
+              {{ item.likeCount }}
+              <span class="cmore" @click="cmore(item, index)">︙</span>
             </div>
           </div>
-          <div
-            class="showmore"
-            v-if="item.replyList.length > curRepNum"
-            @click="showmore(item, index)"
-          >
-            展示更多
+
+          <p class="ccontent">{{ item.content }}</p>
+          <div>
+            <span class="topictime ctime">{{ item.createTime }} </span>
+            <span class="reply" @click="goreply(item, index)">回复</span>
           </div>
+          <div class="replylist" v-if="item.replyList">
+            <div
+              class="rpitem"
+              v-for="(rp, rindex) in item.replyList"
+              :key="rindex"
+              v-if="rindex < curRepNum"
+              :ref="'rp' + rindex"
+            >
+              <span class="cuname" @click="goUserInfo(rp.fromUid)">
+                {{ rp.fromUname }}：
+              </span>
+              <span class="cuname" style="color: black" v-show="rp.toUid"
+                >回复 </span
+              ><span
+                class="cuname"
+                v-show="rp.toUid"
+                @click="goUserInfo(rp.toUid)"
+                >{{ rp.toUname }}：</span
+              >
+              <span class="rpcont">{{ rp.content }}</span>
+              <div>
+                <span class="topictime ctime"> {{ rp.createTime }} </span>
+                <span class="reply" @click="goreply(rp, index)"> 回复</span>
+                <span class="reply" style="margin-left: 140px"> 举报</span>
+                <span class="reply"> 删除</span>
+              </div>
+            </div>
+            <div
+              class="showmore"
+              v-if="item.replyList.length > curRepNum"
+              @click="showmore(item, index)"
+            >
+              展示更多
+            </div>
+          </div>
+          <van-divider />
         </div>
-        <van-divider />
       </div>
     </div>
+    <!-- <van-pagination
+      class="page"
+      v-model="currentPage"
+      :total-items="125"
+      :show-page-size="3"
+      force-ellipses
+    /> -->
+    <div class="nomore" v-if="nomore">~暂无更多回复~</div>
 
     <van-action-sheet v-model="showsheet" overlay="">
       <div class="contentlist">
@@ -104,6 +118,7 @@
             <span class="replyl"> 删除</span>
           </div>
         </div>
+
         <div class="outcomment">
           <van-field
             ref="oninput"
@@ -123,8 +138,6 @@
         </div>
       </div>
     </van-action-sheet>
-
-    <div class="nomore">~暂无更多回复~</div>
     <div class="outcomment">
       <van-field
         ref="outinput"
@@ -163,6 +176,7 @@
         <span>发表一下观点吧</span>
       </div>
     </div>
+
     <van-action-sheet
       v-model="show"
       cancel-text="取消"
@@ -176,6 +190,8 @@
 
 <script >
 import request from "@/util/request";
+import { Dialog } from "vant";
+
 export default {
   props: {
     pcomments: {},
@@ -184,27 +200,155 @@ export default {
     return {
       actions: [{ name: "删除" }, { name: "举报" }],
       baseurl: this.$store.state.sBaseUrl,
+      infoHeight: null,
       replyTo: "",
       show: false,
       btshow: true,
       onputshow: false,
       curCommentIndex: null,
-      pubcoment: "",
-      pubreply: "",
+      pubcoment: "", //需要发表的评论
+      pubreply: "", //需要发布的reply
       pubstatus: 0,
-      curToUid: null,
-      curCommentId: null,
+      curToUid: null, //当前要回复的对象id
+      curCommentId: null, //当前comment的id
       topicId: null,
       publishType: null,
       curRepNum: 3,
       sheetlist: [],
       showsheet: false,
+      lastTime: null,
+      nomore: false, //没有更多评论，到底了
     };
   },
+  watch: {
+    pcomments: {
+      handler(item1, item2) {
+        let lastEle = item1.comments.slice(-1);
+        this.lastTime = lastEle[0].createTime;
+      },
+      deep: true,
+    },
+  },
   methods: {
+    loadMore() {
+      this.getMoreComments();
+    },
+    getMoreComments() {
+      request({
+        method: "post",
+        url: "/comment/queryComments",
+        data: {
+          token: localStorage.token,
+          topicId: this.pcomments.topicId,
+          size: 10,
+          createTime: this.lastTime,
+        },
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$toast({
+              message: "请先登录",
+            });
+          }
+          if (res.data.data === undefined) {
+            this.$toast({
+              message: "没有更多了",
+            });
+            this.nomore = true;
+            return;
+          }
+          this.pcomments.comments.push(...res.data.data);
+          let lastEle = this.pcomments.comments.slice(-1);
+          this.lastTime = lastEle[0].createTime;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    onSelect(action, index) {
+      console.log(index);
+      if (index === 0) {
+        Dialog.confirm({
+          message: "确认删除?",
+        })
+          .then(() => {
+            this.deleteComment();
+          })
+          .catch(() => {
+            // on cancel
+          });
+      } else if (index === 1) {
+        Dialog.confirm({
+          message: "确认举报?",
+        })
+          .then(() => {
+            this.reportComment();
+          })
+          .catch(() => {
+            // on cancel
+          });
+      }
+    },
+    reportComment() {
+      request({
+        method: "post",
+        url: "/index/report",
+        data: { reporterId: this.curCommentId, type: 1 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    deleteComment() {
+      console.log(this.curCommentId);
+      request({
+        method: "post",
+        url: "/comment/deleteComment",
+        data: { commentId: this.curCommentId },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          }
+          if (res.data.code === 2000) {
+            this.pcomments.comments.splice(this.curCommentIndex, 1);
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
     cmore(item, index) {
       this.show = true;
-      console.log(index);
+      this.curCommentIndex = index;
+      this.curCommentId = item.id;
     },
     goUserInfo(id) {
       if (localStorage.getItem("token") == null) {
@@ -245,7 +389,6 @@ export default {
                 if (this.pcomments.comments === undefined) {
                   this.pcomments.comments = [];
                 }
-                this.pcomments.comments.push(res.data.data);
                 this.pubcoment = "";
               } else if (res.data.code === 9000) {
                 setTimeout(() => {
@@ -426,6 +569,9 @@ export default {
 </script>
 
 <style lang="less">
+.colist {
+  margin-bottom: 20px;
+}
 .contentlist {
   max-height: 70%;
   padding: 25px 10px 120px;

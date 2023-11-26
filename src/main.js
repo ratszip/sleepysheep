@@ -15,6 +15,9 @@ import { PullRefresh } from 'vant';
 import { ActionSheet } from 'vant';
 import VueScroller from 'vue-scroller'
 import { Cell, CellGroup } from 'vant';
+import { Pagination } from 'vant';
+
+Vue.use(Pagination);
 Vue.use(Cell);
 Vue.use(CellGroup)
 Vue.use(VueScroller)

@@ -87,7 +87,7 @@ export default {
         data: {
           userId: this.userId,
           createTime: this.lastTime,
-          size: 4,
+          size: 8,
         },
         headers: {
           "content-type": "multipart/form-data",
@@ -212,7 +212,7 @@ export default {
         url: "/user/topic",
         data: {
           userId: this.userId,
-          size: 4,
+          size: 8,
         },
         headers: {
           "content-type": "multipart/form-data",

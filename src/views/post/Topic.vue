@@ -1,11 +1,11 @@
 <template>
-  <div class="topic">
+  <div class="topic" @scroll="onScroll">
     <topicNav v-if="nvData.avatar" :pnv="nvData"></topicNav>
     <topicInfo
       v-if="contentData.createTime"
       :pcontent="contentData"
     ></topicInfo>
-    <commentV :pcomments="comments"></commentV>
+    <commentV :pcomments="comments" ref="comment"></commentV>
   </div>
 </template>
 <script>
@@ -47,6 +47,14 @@ export default {
     };
   },
   methods: {
+    onScroll(e) {
+      let oh = e.srcElement.offsetHeight;
+      let sc = e.srcElement.scrollTop;
+      let sh = e.srcElement.scrollHeight;
+      if (oh + sc === sh) {
+        this.$refs.comment.loadMore();
+      }
+    },
     //初始化数据
     initData(resData) {
       this.nvData.nickName = resData.nickName;
@@ -65,9 +73,6 @@ export default {
       this.contentData.guestId = resData.guestId;
       this.contentData.images = resData.images;
       this.contentData.createTime = resData.createTime;
-
-      // this.comments.comments = resData.comments;
-      this.comments.topicId = this.topicId;
     },
     getComments() {
       request({
@@ -76,8 +81,7 @@ export default {
         data: {
           token: localStorage.token,
           topicId: this.topicId,
-          page: 1,
-          size: 2,
+          size: 10,
         },
         headers: {
           "content-type": "multipart/form-data",
@@ -90,6 +94,7 @@ export default {
             });
           }
           this.comments.comments = res.data.data;
+          this.comments.topicId = this.topicId;
         },
         (err) => {
           console.log(err);
@@ -137,5 +142,7 @@ export default {
 <style lang="less">
 .topic {
   background-color: white;
+  height: 100vh;
+  overflow: scroll;
 }
 </style>

@@ -96,7 +96,7 @@ export default {
         method: "post",
         url: "/index/sug",
         data: {
-          size: 4,
+          size: 10,
           token: localStorage.token,
           createTime: this.lastTime,
         },
@@ -225,7 +225,7 @@ export default {
         method: "post",
         url: "/index/sug",
 
-        data: { size: 4, token: localStorage.token },
+        data: { size: 10, token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
         },

@@ -82,7 +82,7 @@ export default {
       request({
         method: "post",
         url: "/user/like",
-        data: { userId: this.userId, size: 4, createTime: this.lastTime },
+        data: { userId: this.userId, size: 8, createTime: this.lastTime },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,
@@ -119,7 +119,41 @@ export default {
     onSelect(action, index) {
       if (index === 0) {
         this.unlike();
+      } else if (index === 1) {
+        Dialog.confirm({
+          message: "确认举报？",
+        })
+          .then(() => {
+            this.reportComment();
+          })
+          .catch(() => {
+            // on cancel
+          });
       }
+    },
+    reportComment() {
+      request({
+        method: "post",
+        url: "/index/report",
+        data: { reporterId: this.curComment, type: 1 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     unlike() {
       if (localStorage.getItem("token") == null) {
@@ -163,7 +197,7 @@ export default {
       request({
         method: "post",
         url: "/user/like",
-        data: { userId: this.userId, size: 4 },
+        data: { userId: this.userId, size: 8 },
         headers: {
           "content-type": "multipart/form-data",
           token: localStorage.token,

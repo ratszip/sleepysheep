@@ -66,18 +66,40 @@ export default {
     pnv: {},
   },
   methods: {
-    reportTopic() {
+    report() {
       Dialog.confirm({
         message: "确认举报？",
       })
         .then(() => {
-          this.$toast({
-            message: "已举报",
-          });
+          this.reportTopic();
         })
         .catch(() => {
           // on cancel
         });
+    },
+    reportTopic() {
+      request({
+        method: "post",
+        url: "/index/report",
+        data: { reporterId: pnv.topicId, type: 0 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     deleteTopic() {
       Dialog.confirm({

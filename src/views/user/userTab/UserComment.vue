@@ -116,8 +116,50 @@ export default {
       if (index === 0) {
         this.likeComment();
       } else if (index === 1) {
-        this.deleteComment();
+        Dialog.confirm({
+          message: "确认删除?",
+        })
+          .then(() => {
+            this.deleteComment();
+          })
+          .catch(() => {
+            // on cancel
+          });
+      } else if (index === 2) {
+        Dialog.confirm({
+          message: "确认举报？",
+        })
+          .then(() => {
+            this.reportComment();
+          })
+          .catch(() => {
+            // on cancel
+          });
       }
+    },
+    reportComment() {
+      request({
+        method: "post",
+        url: "/index/report",
+        data: { reporterId: this.curComment, type: 1 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     onMore(item, index) {
       this.show = true;
