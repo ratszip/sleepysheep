@@ -42,7 +42,7 @@
             <img
               class="tx"
               @click="gouser(item.userId)"
-              :src="`${baseurl}/images/${item.avatar}.png`"
+              :src="`${baseurl}/${item.avatar}`"
             />
             <span @click="gouser(item.userId)">&nbsp;{{ item.nickName }}</span>
           </div>
@@ -80,7 +80,7 @@ export default {
       rqh: null,
       topics: [],
       lastTime: null,
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
     };
   },
   mounted() {

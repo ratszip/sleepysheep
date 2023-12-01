@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   namespaced:true,
   state: {
-    sBaseUrl:"http://113.125.22.29:8081",
+    sourceUrl:"http://175.178.114.30:9000",
     bottomHeight:0,
     userInfoH:0,
     homeH:0,

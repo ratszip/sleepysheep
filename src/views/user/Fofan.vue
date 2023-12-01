@@ -31,7 +31,7 @@
               round
               width="40px"
               height="40px"
-              :src="`${baseurl}/images/${item.avatar}.png`"
+              :src="`${baseurl}/${item.avatar}`"
             />
             <span @click="gouser(item.followId)" class="uname">{{
               item.nickName
@@ -71,7 +71,7 @@
               @click="gouser(item.fansId)"
               width="40px"
               height="40px"
-              :src="`${baseurl}/images/${item.avatar}.png`"
+              :src="`${baseurl}/${item.avatar}`"
             />
             <span class="uname" @click="gouser(item.fansId)">{{
               item.nickName
@@ -123,7 +123,7 @@ export default {
   data() {
     return {
       showCancel: false,
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       userId: null,
       active: 1,
       tokenid: null,

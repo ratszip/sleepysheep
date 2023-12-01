@@ -16,7 +16,7 @@
           round
           width="28px"
           height="28px"
-          :src="`${baseurl}/images/${item.avatar}.png`"
+          :src="`${baseurl}/${item.avatar}`"
         />
         <div class="comitem">
           <div class="handl">
@@ -72,8 +72,16 @@
               <div>
                 <span class="topictime ctime"> {{ rp.createTime }} </span>
                 <span class="reply" @click="goreply(rp, index)"> 回复</span>
-                <span class="reply" style="margin-left: 140px"> 举报</span>
-                <span class="reply"> 删除</span>
+                <span
+                  class="reply"
+                  style="margin-left: 140px"
+                  @click="reportRep(rp, rindex)"
+                >
+                  举报</span
+                >
+                <span class="reply" @click="deleteReply(rp, rindex)">
+                  删除</span
+                >
               </div>
             </div>
             <div
@@ -114,8 +122,8 @@
             <span class="replyl" @click="goreply(rp, curCommentIndex)">
               回复</span
             >
-            <span class="replyl"> 举报</span>
-            <span class="replyl"> 删除</span>
+            <span class="replyl" @click="reportRep(rp, rindex)"> 举报</span>
+            <span class="replyl" @click="deleteReply(rp, rindex)"> 删除</span>
           </div>
         </div>
 
@@ -199,7 +207,7 @@ export default {
   data() {
     return {
       actions: [{ name: "删除" }, { name: "举报" }],
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       infoHeight: null,
       replyTo: "",
       show: false,
@@ -213,7 +221,7 @@ export default {
       curCommentId: null, //当前comment的id
       topicId: null,
       publishType: null,
-      curRepNum: 3,
+      curRepNum: 3, //展示的reply数量
       sheetlist: [],
       showsheet: false,
       lastTime: null,
@@ -232,6 +240,63 @@ export default {
   methods: {
     loadMore() {
       this.getMoreComments();
+    },
+    deleteReply(rp, rindex) {
+      request({
+        method: "post",
+        url: "/comment/deleteReply",
+        data: { id: rp.id },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          }
+          if (res.data.code === 2000) {
+            this.pcomments.comments[this.curCommentIndex].replyList.splice(
+              rindex,
+              1
+            );
+            // console.log(
+            //   this.pcomments.comments[this.curCommentIndex].replyList
+            // );
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    reportRep(rp, rindex) {
+      request({
+        method: "post",
+        url: "/index/report",
+        data: { reporterId: rp.id, type: 2 },
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     getMoreComments() {
       request({
@@ -318,7 +383,7 @@ export default {
       );
     },
     deleteComment() {
-      console.log(this.curCommentId);
+      // console.log(this.curCommentId);
       request({
         method: "post",
         url: "/comment/deleteComment",

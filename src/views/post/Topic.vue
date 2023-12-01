@@ -116,22 +116,29 @@ export default {
         headers: {
           "content-type": "multipart/form-data",
         },
-      }).then(
-        (res) => {
-          this.getComments();
-          // this.comments.comments = getComments;
-          Toast.clear();
-          this.initData(res.data.data);
-          if (res.data.code === 9000) {
-            this.$toast({
-              message: "请先登录",
-            });
+      })
+        .then(
+          (res) => {
+            if (res.data.code === 8000) {
+              this.$router.push("/404");
+              return;
+            }
+            this.getComments();
+            // this.comments.comments = getComments;
+            this.initData(res.data.data);
+            if (res.data.code === 9000) {
+              this.$toast({
+                message: "请先登录",
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
           }
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+        )
+        .finally(() => {
+          Toast.clear();
+        });
     },
   },
   mounted() {

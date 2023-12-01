@@ -7,8 +7,8 @@
           <van-uploader
             v-model="uploader"
             multiple
-            :max-count="3"
-            :max-size="1024 * 1024 * 50"
+            :max-count="1"
+            :max-size="1024 * 1024 * 30"
             :after-read="afterRead"
             :before-read="beforeRead"
           />
@@ -102,8 +102,8 @@ export default {
   methods: {
     compressImg(file, quality) {
       var qualitys = 0.52;
-      console.log(parseInt((file.size / 1024).toFixed(2)) + "111");
-      console.log(parseInt((file.size / 1024).toFixed(2)));
+      // console.log(parseInt((file.size / 1024).toFixed(2)) + "111");
+      // console.log(parseInt((file.size / 1024).toFixed(2)));
       if (parseInt((file.size / 1024).toFixed(2)) < 1024) {
         qualitys = 0.85;
       }

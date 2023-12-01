@@ -7,7 +7,7 @@
         round
         width="30px"
         height="30px"
-        :src="`${baseurl}/images/${pnv.avatar}.png`"
+        :src="`${baseurl}/${pnv.avatar}`"
       />
       <span class="lzName" @click="goUserInfo(pnv.userId)">{{
         pnv.nickName
@@ -58,7 +58,7 @@ import { Dialog } from "vant";
 export default {
   data() {
     return {
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       showPopover: false,
     };
   },

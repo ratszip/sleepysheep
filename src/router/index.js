@@ -9,6 +9,7 @@ import FoFans from '@/views/user/Fofan.vue'
 import EditUser from '@/views/user/EditUser.vue'
 import Topic from '@/views/post/Topic.vue' 
 import Setting from '@/views/user/Settings.vue' 
+import NotFound from '@/views/NotFound.vue'
 Vue.use(VueRouter)
 
 // 路由表
@@ -23,6 +24,8 @@ const routes = [
     {path:'/edit',name:'edit',component:EditUser},
     {path:'/topic/:id',name:'topic',component:Topic},
     {path:'/settings',name:'set',component:Setting},
+    {path:'/404',name:'404',component:NotFound},
+    { path: '*',redirect: '404' }
 ]
 
 const router = new VueRouter({

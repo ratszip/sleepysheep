@@ -14,14 +14,14 @@
             round
             width="34px"
             height="34px"
-            :src="`${baseurl}/images/${item.commentAvatar}.png`"
+            :src="`${baseurl}/${item.commentAvatar}`"
           />
           <van-image
             v-if="!item.commentAvatar"
             round
             width="34px"
             height="34px"
-            :src="`${baseurl}/images/${item.topicAvatar}.png`"
+            :src="`${baseurl}/${item.topicAvatar}`"
           />
           <div class="info4">
             <span class="space4"></span>
@@ -70,7 +70,7 @@ export default {
     return {
       actions: [{ name: "喜欢" }, { name: "举报" }],
       commhome: [],
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       show: false,
       // isLoading: true,
       curComment: null,

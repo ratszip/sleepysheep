@@ -78,7 +78,7 @@ export default {
   },
   data() {
     return {
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       detail: this.pcontent,
       imgclass: {
         margin: "0 auto",

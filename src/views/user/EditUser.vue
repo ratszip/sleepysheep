@@ -8,7 +8,7 @@
       width="60px"
       height="60px"
       @click="avatar"
-      :src="`${this.$store.state.sBaseUrl}/images/${userInfo.avatar}.png`"
+      :src="`${baseurl}/${userInfo.avatar}`"
     />
     <van-field
       v-model="userInfo.nickName"
@@ -113,12 +113,7 @@
           :class="{ txactive: txactive == index }"
           @click="txclick(item, index)"
         >
-          <van-image
-            width="52"
-            height="52"
-            round
-            :src="`http://116.204.65.79:8080/images/${item}.png`"
-          />
+          <van-image width="52" height="52" round :src="`${baseurl}/${item}`" />
         </li>
       </ul>
       <div class="txbt">
@@ -145,6 +140,7 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      baseurl: this.$store.state.sourceUrl,
       txactive: -1, //选中头像的index
       txselect: "", //选中头像名称
       dialogbt: false, //确认取消按钮显示

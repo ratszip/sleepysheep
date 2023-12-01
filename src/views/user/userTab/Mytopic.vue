@@ -4,6 +4,7 @@
     :on-refresh="onRefresh"
     :on-infinite="infinite"
     ref="myscroller"
+    class="contopic"
   >
     <waterfall class="contentsug" :data="mylist">
       <!-- <div class="sugad">广告位</div> -->
@@ -32,7 +33,7 @@
         </h1>
         <div class="info">
           <div class="uinfo" @click="t_click(item.id)">
-            <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
+            <img class="tx" :src="`${baseurl}/${item.avatar}`" />
             <span>&nbsp;{{ item.nickName }}</span>
           </div>
           <div class="tinfo">
@@ -66,7 +67,7 @@ export default {
   data() {
     return {
       mylist: "",
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       userId: null,
       lastTime: null,
     };
@@ -253,7 +254,15 @@ export default {
   box-sizing: border-box;
   margin-bottom: 20px;
 }
-
+.pull-to-refresh-layer {
+  height: 0 !important;
+  margin-top: 10px !important;
+}
+// .contopic {
+//   margin-top: 80px;
+//   box-sizing: border-box;
+//   margin-bottom: 20px;
+// }
 .space {
   height: 200px;
 }

@@ -4,7 +4,7 @@
       style="top: 50px"
       :on-refresh="onRefresh"
       :on-infinite="infinite"
-      ref="myscroller"
+      ref="myscroller4"
       class="container4"
     >
       <div class="item4" v-for="(item, index) in commlike" :key="index">
@@ -13,7 +13,7 @@
             round
             width="34px"
             height="34px"
-            :src="`${baseurl}/images/${item.avatar}.png`"
+            :src="`${baseurl}/${item.avatar}`"
           />
           <div class="info4">
             <span class="space4"></span>
@@ -55,7 +55,7 @@ export default {
       actions: [{ name: "取消点赞" }, { name: "举报" }],
       commlike: [],
       userId: null,
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       show: false,
       curComment: null,
       curIndex: null,
@@ -63,7 +63,7 @@ export default {
     };
   },
   mounted() {
-    this.$refs.myscroller.finishInfinite(true);
+    this.$refs.myscroller4.finishInfinite(true);
     this.getComments();
   },
   methods: {
@@ -89,7 +89,7 @@ export default {
         },
       }).then(
         (res) => {
-          this.$refs.myscroller.finishInfinite(true);
+          this.$refs.myscroller4.finishInfinite(true);
           if (res.data.data == undefined) {
             this.$toast({
               message: "没有更多了~",
@@ -208,7 +208,7 @@ export default {
             this.commlike = res.data.data;
             let lastEle = this.commlike.slice(-1);
             this.lastTime = lastEle[0].createTime;
-            this.$refs.myscroller.finishPullToRefresh();
+            this.$refs.myscroller4.finishPullToRefresh();
             if (res.data.code === 9000) {
               this.$pop.open();
             }
@@ -229,6 +229,10 @@ export default {
 .cell {
   text-align: center;
   height: 100px;
+}
+.pull-to-refresh-layer {
+  height: 0 !important;
+  margin-top: 10px !important;
 }
 .more4 {
   flex: 1;

@@ -22,7 +22,7 @@
         round
         width="50px"
         height="50px"
-        :src="`${this.$store.state.sBaseUrl}/images/${userInfo.avatar}.png`"
+        :src="`${this.$store.state.sourceUrl}/${userInfo.avatar}`"
       />
       <!-- <span>namesla</span> -->
       <div class="ptext">
@@ -94,7 +94,7 @@ export default {
     setUser() {
       this.$emit("transUser", this.userInfo);
       this.bus.$emit("message", this.userInfo);
-      this.$store.commit("setInfoH", this.$refs.userh.clientHeight + 50);
+      this.$store.commit("setInfoH", this.$refs.userh.clientHeight + 51);
       // console.log(this.$store.state.userInfoH);
     },
     edit() {

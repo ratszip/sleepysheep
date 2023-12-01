@@ -3,7 +3,7 @@
     style="top: 50px"
     :on-refresh="onRefresh"
     :on-infinite="infinite"
-    ref="myscroller"
+    ref="myscroller2"
   >
     <waterfall class="contentsug2" :data="mylist2">
       <div
@@ -36,7 +36,7 @@
         </h1>
         <div class="info2">
           <div class="uinfo2" @click="t_click(item.id)">
-            <img class="tx" :src="`${baseurl}/images/${item.avatar}.png`" />
+            <img class="tx" :src="`${baseurl}/${item.avatar}`" />
             <span>&nbsp;{{ item.nickName }}</span>
           </div>
           <div class="tinfo2">
@@ -72,7 +72,7 @@ export default {
       userId: null,
       mylist2: "",
       lastTime: null,
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
     };
   },
   methods: {
@@ -100,7 +100,7 @@ export default {
       })
         .then(
           (res) => {
-            this.$refs.myscroller.finishInfinite(true);
+            this.$refs.myscroller2.finishInfinite(true);
             if (res.data.data == undefined) {
               this.$toast({
                 message: "没有更多了~",
@@ -221,7 +221,7 @@ export default {
           this.mylist2 = res.data.data;
           let lastEle = this.mylist2.slice(-1);
           this.lastTime = lastEle[0].createTime;
-          this.$refs.myscroller.finishPullToRefresh();
+          this.$refs.myscroller2.finishPullToRefresh();
           if (res.data.msg.includes("登录")) {
             this.$pop.open();
           }
@@ -234,7 +234,7 @@ export default {
   },
 
   mounted() {
-    this.$refs.myscroller.finishInfinite(true);
+    this.$refs.myscroller2.finishInfinite(true);
     this.getTopic();
   },
 };
@@ -245,7 +245,10 @@ export default {
   box-sizing: border-box;
   margin-bottom: 20px;
 }
-
+.pull-to-refresh-layer {
+  height: 0 !important;
+  margin-top: 10px !important;
+}
 .box2 {
   // width: 50%;
   width: 380px !important;

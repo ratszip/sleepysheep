@@ -10,7 +10,7 @@
 
       <div class="info">
         <div class="uinfo">
-          <img :src="`${baseurl}/images/${item.avatar}.png`" />
+          <img :src="`${baseurl}/${item.avatar}`" />
           <span>&nbsp;{{ item.nickName }}</span>
         </div>
         <div class="tinfo">

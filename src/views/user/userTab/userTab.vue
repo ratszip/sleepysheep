@@ -1,5 +1,5 @@
 <template>
-  <van-tabs class="coll" boder v-model="active" sticky>
+  <van-tabs class="coll" boder v-model="active" sticky swipeable>
     <van-tab>
       <template #title>
         帖子<img

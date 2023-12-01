@@ -4,7 +4,7 @@
       style="top: 50px"
       :on-refresh="onRefresh"
       :on-infinite="infinite"
-      ref="myscroller"
+      ref="myscroller3"
       class="container3"
     >
       <div class="item3" v-for="(item, index) in commlist" :key="index">
@@ -13,7 +13,7 @@
             round
             width="34px"
             height="34px"
-            :src="`${baseurl}/images/${item.avatar}.png`"
+            :src="`${baseurl}/${item.avatar}`"
           />
           <div class="info3">
             <span class="space3"></span>
@@ -56,14 +56,14 @@ export default {
       commlist: [],
       show: false,
       userId: null,
-      baseurl: this.$store.state.sBaseUrl,
+      baseurl: this.$store.state.sourceUrl,
       curComment: null,
       curIndex: null,
       lastTime: null,
     };
   },
   mounted() {
-    this.$refs.myscroller.finishInfinite(true);
+    this.$refs.myscroller3.finishInfinite(true);
     this.getComments();
   },
   methods: {
@@ -89,7 +89,7 @@ export default {
         },
       }).then(
         (res) => {
-          this.$refs.myscroller.finishInfinite(true);
+          this.$refs.myscroller3.finishInfinite(true);
           if (res.data.data == undefined) {
             this.$toast({
               message: "没有更多了~",
@@ -239,7 +239,7 @@ export default {
             this.commlist = res.data.data;
             let lastEle = this.commlist.slice(-1);
             this.lastTime = lastEle[0].createTime;
-            this.$refs.myscroller.finishPullToRefresh();
+            this.$refs.myscroller3.finishPullToRefresh();
             if (res.data.msg.includes("登录")) {
               this.$pop.open();
             }
@@ -260,6 +260,11 @@ export default {
 .cell {
   text-align: center;
   height: 100px;
+}
+.pull-to-refresh-layer {
+  height: 0 !important;
+  margin-top: 10px !important;
+  visibility: hidden;
 }
 .more3 {
   flex: 1;
