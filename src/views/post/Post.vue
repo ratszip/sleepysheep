@@ -91,6 +91,7 @@
 </style>
 <script>
 import request from "@/util/request";
+import { Toast } from "vant";
 export default {
   data() {
     return {
@@ -119,7 +120,7 @@ export default {
         ); // 如果是 file 数组返回 Promise 数组
       } else {
         return new Promise((resolve) => {
-          console.log(file);
+          // console.log(file);
           if ((file.size / 1024).toFixed(2) < 300) {
             resolve({
               file: file,
@@ -226,7 +227,9 @@ export default {
     beforeRead(file) {
       let regex = /(.jpg|.jpeg|.png|.bmp)$/;
       if (!regex.test(file.type)) {
-        Toast("图片格式不支持上传");
+        this.$toast({
+          message: "格式不支持",
+        });
         return false;
       } else {
         return true;
@@ -242,13 +245,18 @@ export default {
     },
     onSubmit() {
       // this.afterRead(file);
+
       let formData = new FormData();
       this.uploader.forEach((item, index) => {
         formData.append("files", item.file);
       });
       formData.append("title", this.p_title);
       formData.append("content", this.p_content);
-
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
       request({
         method: "post",
         url: "/topic/create",
@@ -260,17 +268,19 @@ export default {
       }).then(
         (res) => {
           // res.data.token;
+          Toast.clear();
           if (res.data.code === 2000) {
             this.$toast({
               message: "发帖成功",
             });
             this.$router.push("/user/0");
-          } else if (res.data.code === 3000) {
+            // Toast.clear();
+          } else if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
             this.$toast({
               message: res.data.msg,
             });
-          } else if (res.data.code === 9000) {
-            this.$pop.open();
           }
         },
         (err) => {
