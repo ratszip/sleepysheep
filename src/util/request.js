@@ -3,7 +3,11 @@ import axios from 'axios'
 const request = axios.create({
     // baseURL: 'http://175.178.114.30:8081/',
     baseURL: "http://localhost:8081/",
-    timeout: 15000
+    timeout: 15000,
+    headers: {
+      token: localStorage.token,
+      uid:localStorage.uid
+    },
 })
 
 

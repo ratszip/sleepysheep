@@ -16,7 +16,9 @@ import { ActionSheet } from 'vant';
 import VueScroller from 'vue-scroller'
 import { Cell, CellGroup } from 'vant';
 import { Pagination } from 'vant';
+import { CountDown } from 'vant';
 
+Vue.use(CountDown);
 Vue.use(Pagination);
 Vue.use(Cell);
 Vue.use(CellGroup)

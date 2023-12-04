@@ -8,7 +8,7 @@
     :showConfirmButton="tx"
   >
     <div class="header">
-      <h3>welcome to sswd</h3>
+      <h3>问答蟹</h3>
     </div>
     <van-form @submit="onSubmit">
       <van-field
@@ -60,7 +60,7 @@ export default {
     return {
       pubKey:
         "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZ6PSpdV0ORwjzDHRNlpGnkE63LVHmdR0FHwHSUHdVAsO7Gfd3LdAAUN8HzXgrhX+lk7wcR40+/BHkb1Be7mrS80TiadsPEIYRzRXB71btBfy2kLiZGgUK0NEqarAhtzcqeBoD2FHZ8mehbHGL6Fa+IafNjWajY8jQsa+wjzOdwQIDAQAB",
-      checked: false,
+      checked: true,
       show: false,
       tx: false,
       email: "a@t.test",
@@ -104,7 +104,8 @@ export default {
               message: "登录成功",
             });
             // this.$store.commit("setCurId", res.data.uid);
-            localStorage.setItem("token", res.data.data);
+            localStorage.setItem("token", res.data.data.token);
+            localStorage.setItem("uid", res.data.data.uid);
             this.$refs.dialogref.close();
             location.reload();
           }

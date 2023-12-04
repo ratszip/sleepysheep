@@ -256,6 +256,7 @@ export default {
 <style lang="less">
 .contentsug {
   box-sizing: border-box;
+  padding-bottom: 70px;
 }
 .sugad {
   width: 100%;

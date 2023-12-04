@@ -7,32 +7,34 @@
       ref="myscroller3"
       class="container3"
     >
-      <div class="item3" v-for="(item, index) in commlist" :key="index">
-        <div class="head3">
-          <van-image
-            round
-            width="34px"
-            height="34px"
-            :src="`${baseurl}/${item.avatar}`"
-          />
-          <div class="info3">
-            <span class="space3"></span>
-            <span class="uname3">{{ item.nickName }}</span>
-            <span class="time3">{{ item.createTime }}</span>
+      <div class="cont">
+        <div class="item3" v-for="(item, index) in commlist" :key="index">
+          <div class="head3">
+            <van-image
+              round
+              width="34px"
+              height="34px"
+              :src="`${baseurl}/${item.avatar}`"
+            />
+            <div class="info3">
+              <span class="space3"></span>
+              <span class="uname3">{{ item.nickName }}</span>
+              <span class="time3">{{ item.createTime }}</span>
+            </div>
+            <span class="more3" @click="onMore(item, index)">︙</span>
           </div>
-          <span class="more3" @click="onMore(item, index)">︙</span>
-        </div>
-        <h1 class="content3">{{ item.content }}</h1>
-        <div v-if="item.title" class="topic3" @click="gotopic(item)">
-          <img
-            class="image3"
-            v-lazy="`${baseurl}/${item.images[0].path}`"
-            alt=""
-          />
-          <span class="title3">{{ item.title }}</span>
-        </div>
-        <div v-if="!item.title" class="unknow">
-          <van-icon name="close" />帖子已被删除
+          <h1 class="content3">{{ item.content }}</h1>
+          <div v-if="item.title" class="topic3" @click="gotopic(item)">
+            <img
+              class="image3"
+              v-lazy="`${baseurl}/${item.images[0].path}`"
+              alt=""
+            />
+            <span class="title3">{{ item.title }}</span>
+          </div>
+          <div v-if="!item.title" class="unknow">
+            <van-icon name="close" />帖子已被删除
+          </div>
         </div>
       </div>
     </scroller>
@@ -257,6 +259,9 @@ export default {
 </script>
 
 <style lang="less">
+.cont {
+  padding-bottom: 70px;
+}
 .cell {
   text-align: center;
   height: 100px;
@@ -273,7 +278,7 @@ export default {
 }
 .container3 {
   box-sizing: border-box;
-  margin-bottom: 20px;
+  margin-bottom: 100px;
 }
 .item3 {
   background-color: white;

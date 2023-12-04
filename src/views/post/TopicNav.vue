@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="topicnav">
-      <van-icon name="arrow-left" @click="onClickLeft" style="margin: 0 6px" />
+      <van-icon
+        name="arrow-left"
+        size="30"
+        @click="onClickLeft"
+        style="margin: 0 6px"
+      />
       <van-image
         @click="goUserInfo(pnv.userId)"
         round
@@ -25,7 +30,11 @@
           </div>
 
           <template #reference>
-            <van-icon name="ellipsis" style="margin: 0 10px; width: 40px" />
+            <van-icon
+              name="ellipsis"
+              size="30"
+              style="margin: 0 10px; width: 40px"
+            />
           </template>
         </van-popover>
         <van-button

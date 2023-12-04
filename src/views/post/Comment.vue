@@ -1,8 +1,6 @@
 <template>
   <div class="comment" v-if="pcomments">
-    <div class="total">
-      共 {{ pcomments.comments ? pcomments.comments.length : 0 }} 条评论
-    </div>
+    <div class="total">下方为评论</div>
     <div class="colist">
       <div
         class="citem"
@@ -453,6 +451,9 @@ export default {
               if (res.data.code === 2000) {
                 if (this.pcomments.comments === undefined) {
                   this.pcomments.comments = [];
+                  this.pcomments.comments.push(res.data.data);
+                } else if (this.pcomments.comments.length < 10) {
+                  this.pcomments.comments.push(res.data.data);
                 }
                 this.pubcoment = "";
               } else if (res.data.code === 9000) {

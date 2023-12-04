@@ -9,6 +9,7 @@ import FoFans from '@/views/user/Fofan.vue'
 import EditUser from '@/views/user/EditUser.vue'
 import Topic from '@/views/post/Topic.vue' 
 import Setting from '@/views/user/Settings.vue' 
+import password from '@/views/user/modify.vue' 
 import NotFound from '@/views/NotFound.vue'
 Vue.use(VueRouter)
 
@@ -25,6 +26,7 @@ const routes = [
     {path:'/topic/:id',name:'topic',component:Topic},
     {path:'/settings',name:'set',component:Setting},
     {path:'/404',name:'404',component:NotFound},
+    {path:'/password',name:'pwd',component:password},
     { path: '*',redirect: '404' }
 ]
 

@@ -243,7 +243,7 @@ export default {
 <style lang="less">
 .contentsug2 {
   box-sizing: border-box;
-  margin-bottom: 20px;
+  padding-bottom: 70px;
 }
 .pull-to-refresh-layer {
   height: 0 !important;

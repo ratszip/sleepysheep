@@ -1,9 +1,6 @@
 <template>
   <div class="nav_fcenter">
-    <van-sticky class="st">
-      <van-icon name="arrow-left" @click="fback" size="26" />
-    </van-sticky>
-
+    <van-nav-bar left-text="返回" @click-left="fback" left-arrow />
     <van-tabs
       v-model="active"
       @click="tabClick"
@@ -17,6 +14,7 @@
         @cancel="onCancel"
         placeholder="请输入搜索关键词"
       />
+
       <van-tab disabled></van-tab>
       <van-tab title="关注">
         <scroller
@@ -482,11 +480,15 @@ export default {
 };
 </script>
 <style lang="less">
-.st {
-  position: absolute;
-  z-index: 99999;
-  margin: 20px;
-}
+// .st {
+//   // display: block;
+//   z-index: 99999;
+//   top: 0;
+//   margin-left: 30px;
+//   padding: 20px 0;
+//   // line-height: 70px;
+//   text-align: center;
+// }
 .item {
   display: flex;
   width: 100%;

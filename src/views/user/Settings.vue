@@ -42,8 +42,11 @@ export default {
     onClickLeft() {
       this.$router.back();
     },
+    modifyPwd() {
+      this.$router.push("/password");
+    },
     logout() {
-      console.log("ccc");
+      // console.log("ccc");
       request({
         method: "post",
         url: "/user/logout",
@@ -55,6 +58,8 @@ export default {
         (res) => {
           if (res.data.code === 9000) {
             this.$pop.open();
+          } else if (res.data.code === 2000) {
+            this.$router.push("/home");
           } else {
             this.$toast({
               message: res.data.msg,

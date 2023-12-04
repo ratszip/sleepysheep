@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="navbar">
+    <!-- <div class="navbar">
       <van-icon
         class="back"
         @click="onClickBack"
@@ -9,7 +9,14 @@
         color="gray"
       />
       <a>帮助</a>
-    </div>
+    </div> -->
+    <van-nav-bar
+      left-text="返回"
+      right-text="帮助"
+      left-arrow
+      @click-left="onClickBack"
+      @click-right="onClickRight"
+    />
     <div class="login_contain">
       <div class="header">
         <h4>邮箱注册</h4>
