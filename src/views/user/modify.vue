@@ -68,7 +68,6 @@ export default {
     return {
       show: false,
       tx: false,
-      checked: false,
       btable: false,
       sended: false,
       pwd: "",

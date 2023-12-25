@@ -8,6 +8,10 @@
           v-show="userProp.topicPri"
         />
       </template>
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="aa" class="test" v-if="this.$store.state.userInfoH">
         <mytopic></mytopic>
       </div>
@@ -20,6 +24,10 @@
           v-show="userProp.commentPri"
         />
       </template>
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="aa" class="test">
         <myComment></myComment>
       </div>
@@ -32,6 +40,10 @@
           v-show="userProp.collectPri"
         />
       </template>
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="aa" class="test">
         <coltopic></coltopic>
       </div>
@@ -44,6 +56,10 @@
           v-show="userProp.likePri"
         />
       </template>
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="aa" class="test">
         <myLike></myLike>
       </div>

@@ -17,6 +17,8 @@ import VueScroller from 'vue-scroller'
 import { Cell, CellGroup } from 'vant';
 import { Pagination } from 'vant';
 import { CountDown } from 'vant';
+// 引入模块后自动生效
+// import '@vant/touch-emulator';
 
 Vue.use(CountDown);
 Vue.use(Pagination);

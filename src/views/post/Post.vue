@@ -1,6 +1,10 @@
 <template>
   <div class="post_page">
     <van-nav-bar @click-left="backClick" left-text="返回" left-arrow />
+    <van-notice-bar
+      left-icon="volume-o"
+      text="帖子发布后需要审核,请耐心等待,勿重复发帖~"
+    />
     <van-form @submit="onSubmit">
       <van-field name="uploader">
         <template #input>
@@ -271,7 +275,7 @@ export default {
           Toast.clear();
           if (res.data.code === 2000) {
             this.$toast({
-              message: "发帖成功",
+              message: "发帖成功，审核中！",
             });
             this.$router.push("/user/0");
             // Toast.clear();

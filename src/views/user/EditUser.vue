@@ -53,7 +53,7 @@
         type="text"
         placeholder="请输入名字"
         input-align="center"
-        maxlength="16"
+        maxlength="15"
       />
       <span style="font-size: 12px; color: red; margin: 10px">{{ mzmsg }}</span>
       <div class="txbt" style="margin-top: 20px">
@@ -83,7 +83,7 @@
         v-model="introc"
         type="textarea"
         placeholder="请输入简介"
-        maxlength="50"
+        maxlength="40"
       />
       <span style="font-size: 12px; color: red; margin: 10px">{{ mzmsg }}</span>
       <div class="txbt" style="margin-top: 20px">

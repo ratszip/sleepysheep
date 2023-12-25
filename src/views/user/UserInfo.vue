@@ -32,6 +32,9 @@
           {{ userInfo.intro }}
         </div>
       </div>
+      <div class="ercode" @click="dashang">
+        <van-icon name="gold-coin-o" />打赏
+      </div>
     </div>
     <div class="bottom">
       <span class="fan">
@@ -91,6 +94,11 @@ export default {
     };
   },
   methods: {
+    dashang() {
+      this.$toast({
+        message: "功能待推出",
+      });
+    },
     setUser() {
       this.$emit("transUser", this.userInfo);
       this.bus.$emit("message", this.userInfo);
@@ -271,10 +279,15 @@ export default {
 }
 
 .pdinfo {
-  padding: 10px 60px 0px 30px;
+  padding: 10px 0px 0px 30px;
   height: 130px;
   display: flex;
   flex-direction: row;
+  .ercode {
+    margin-right: 60px;
+    margin-top: 28px;
+    font-size: 30px;
+  }
   .ptext {
     flex: 1;
     display: flex;
@@ -294,7 +307,6 @@ export default {
     .intro {
       flex: 2;
       font-size: 22px;
-      padding-right: 90px;
     }
   }
 }

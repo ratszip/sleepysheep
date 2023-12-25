@@ -2,7 +2,7 @@
   <div>
     <scroller
       class="container4"
-      style="top: 50px"
+      style="top: 80px"
       :on-refresh="onRefresh"
       :on-infinite="infinite"
       ref="myscroller"
@@ -49,7 +49,7 @@
             </div>
           </div>
           <div v-if="!item.title" class="unknow">
-            <van-icon name="close" />帖子已被删除
+            <van-icon name="close" />帖子已被删除或隐藏
           </div>
         </div>
       </div>

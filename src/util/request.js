@@ -1,11 +1,12 @@
 import axios from 'axios'
 // import { Toast } from 'vant';
 const request = axios.create({
-    // baseURL: 'http://175.178.114.30:8081/',
-    baseURL: "http://localhost:8081/",
+    baseURL: 'http://175.178.114.30:8081/',
+    // baseURL: "http://localhost:8081/",
     timeout: 15000,
     headers: {
       token: localStorage.token,
+      tokem:localStorage.tokem,
       uid:localStorage.uid
     },
 })

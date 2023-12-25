@@ -11,6 +11,8 @@ import Topic from '@/views/post/Topic.vue'
 import Setting from '@/views/user/Settings.vue' 
 import password from '@/views/user/modify.vue' 
 import NotFound from '@/views/NotFound.vue'
+import ManaLogin from '@/views/manage/ManaLogin.vue'
+import ManaHome from '@/views/manage/ManaHome.vue'
 Vue.use(VueRouter)
 
 // 路由表
@@ -27,7 +29,13 @@ const routes = [
     {path:'/settings',name:'set',component:Setting},
     {path:'/404',name:'404',component:NotFound},
     {path:'/password',name:'pwd',component:password},
-    { path: '*',redirect: '404' }
+    { path: '*',redirect: '404' },
+    {path:'/wendaxie1&manage2&admin3&login',name:'mlogin',component:ManaLogin},
+    {
+      path:'/wendaxie1&manage2&admin3&home',
+      name:'mhome',
+      component:ManaHome,
+    },
 ]
 
 const router = new VueRouter({

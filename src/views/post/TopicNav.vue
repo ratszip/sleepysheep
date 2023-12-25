@@ -26,7 +26,7 @@
         >
           <div class="poverout">
             <span class="pover" @click="deleteTopic">删除</span>
-            <span class="pover" @click="reportTopic">举报</span>
+            <span class="pover" @click="report">举报</span>
           </div>
 
           <template #reference>

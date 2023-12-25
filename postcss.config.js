@@ -8,12 +8,19 @@ module.exports = {
           return file.indexOf('vant') !== -1 ? 37.5 : 75;
         },
         propList: ['*'],
-      }
+        // selectorBlackList: ['-mana','el-']
+        }
+  
+      },
       // 'autoprefixer':{
       //   browsers:['Android>=4.0','iOS >= 8']
       // }
+      // 'postcss-px2rem-exclude': {
+      //   rootValue: 75,
+      //   propList: ['*'],
+      //   exclude: /src/view/manage // 忽略node_modules目录下的文件
+      // }
     }
-  };
 // module.exports = ({ file }) => {
 //   return {
 //     plugins: {

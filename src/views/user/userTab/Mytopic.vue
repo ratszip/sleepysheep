@@ -1,6 +1,6 @@
 <template>
   <scroller
-    style="top: 50px"
+    style="top: 80px"
     :on-refresh="onRefresh"
     :on-infinite="infinite"
     ref="myscroller"
@@ -31,12 +31,12 @@
             v-else-if="!item.isSolved"
           />{{ item.title }}
         </h1>
-        <div class="info">
-          <div class="uinfo" @click="t_click(item.id)">
+        <div class="infomy">
+          <div class="uinfomy" @click="t_click(item.id)">
             <img class="tx" :src="`${baseurl}/${item.avatar}`" />
             <span>&nbsp;{{ item.nickName }}</span>
           </div>
-          <div class="tinfo">
+          <div class="tinfomy">
             <van-icon
               style="vertical-align: -10%"
               v-if="!item.like"
@@ -296,16 +296,21 @@ export default {
 .solv {
   margin-top: 6px;
 }
-.info {
+.infomy {
   display: flex;
+  width: 96%;
   height: 50px;
   margin-left: 10px;
   margin-right: 10px;
   font-size: 26px;
   line-height: 50px;
+  // flex-direction: column;
   justify-content: space-between;
-
-  .uinfo {
+  .tinfomy {
+    vertical-align: top;
+    margin-right: 20px;
+  }
+  .uinfomy {
     vertical-align: baseline;
     .tx {
       width: 32px;
@@ -314,17 +319,14 @@ export default {
       vertical-align: text-bottom;
     }
     span {
+      // flex: 1;
       font-size: 20px;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 160px;
+      width: 100px;
       line-height: 22px;
       display: inline-block;
       white-space: nowrap;
-    }
-    .tinfo {
-      vertical-align: top;
-      padding-right: 20px;
     }
   }
 }

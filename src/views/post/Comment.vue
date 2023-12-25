@@ -21,6 +21,8 @@
             <span class="cuname" @click="goUserInfo(item.fromUid)">
               {{ item.nickName }}
             </span>
+            <span @click="dashang">答谢</span>
+
             <div class="zan">
               <van-icon
                 style="vertical-align: -10%"
@@ -236,6 +238,11 @@ export default {
     },
   },
   methods: {
+    dashang() {
+      this.$toast({
+        message: "功能待推出",
+      });
+    },
     loadMore() {
       this.getMoreComments();
     },

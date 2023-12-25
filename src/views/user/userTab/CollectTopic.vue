@@ -1,6 +1,6 @@
 <template>
   <scroller
-    style="top: 50px"
+    style="top: 80px"
     :on-refresh="onRefresh"
     :on-infinite="infinite"
     ref="myscroller2"

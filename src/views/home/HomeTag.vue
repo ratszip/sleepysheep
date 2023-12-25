@@ -7,11 +7,19 @@
   >
     <van-tab disabled></van-tab>
     <van-tab title="关注">
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="ct" class="cont">
         <homefol></homefol>
       </div>
     </van-tab>
     <van-tab title="推荐">
+      <van-notice-bar
+        left-icon="volume-o"
+        text="帖子发布后需要审核，请耐心等待~"
+      />
       <div ref="ct" class="cont">
         <homesug></homesug>
       </div>
