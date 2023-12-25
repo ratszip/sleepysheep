@@ -268,8 +268,8 @@ export default {
     align-items: center;
     flex-direction: row-reverse;
     .follow {
-      width: 120px;
-      height: 50px;
+      width: 160px;
+      height: 56px;
     }
   }
 }

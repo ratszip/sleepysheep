@@ -11,7 +11,7 @@
         @click="settings"
       />
       <div class="other" v-show="userInfo && !userInfo.self">
-        <van-icon size="20px" name="arrow-left" @click="back" />
+        <van-icon class="more" size="20px" name="arrow-left" @click="back" />
         <van-icon class="more" size="20px" name="ellipsis" @click="more" />
       </div>
     </div>
@@ -37,18 +37,20 @@
       </div>
     </div>
     <div class="bottom">
-      <span class="fan">
-        关注:
-        <a href="javaScript:void(0); " @click="followlist">{{
-          userInfo.followCount
-        }}</a>
-      </span>
+      <div>
+        <span class="fan">
+          关注:
+          <a href="javaScript:void(0); " @click="followlist">{{
+            userInfo.followCount
+          }}</a>
+        </span>
 
-      <span class="fan">
-        粉丝：<a href="javaScript:void(0); " @click="fanslist">{{
-          userInfo.fansCount
-        }}</a>
-      </span>
+        <span class="fan">
+          粉丝：<a href="javaScript:void(0); " @click="fanslist">{{
+            userInfo.fansCount
+          }}</a>
+        </span>
+      </div>
 
       <van-button
         v-show="userInfo && userInfo.self"
@@ -235,6 +237,8 @@ export default {
 
 <style lang="less">
 .bottom {
+  display: flex;
+  justify-content: space-between;
   padding-bottom: 30px;
   .fan {
     font-size: 24px;
@@ -246,10 +250,9 @@ export default {
   }
   .follow {
     font-size: 24px;
-    margin-left: 360px;
     vertical-align: middle;
-    width: 120px;
-    height: 40px;
+    width: 160px;
+    height: 46px;
   }
 }
 .top {
@@ -262,9 +265,9 @@ export default {
   }
   .other {
     padding-bottom: 10px;
-    .more {
-      margin-left: 640px;
-    }
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 }
 .pinfo {

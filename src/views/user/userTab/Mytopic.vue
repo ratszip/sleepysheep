@@ -302,6 +302,7 @@ export default {
   height: 50px;
   margin-left: 10px;
   margin-right: 10px;
+  padding-bottom: 10px;
   font-size: 26px;
   line-height: 50px;
   // flex-direction: column;
@@ -313,18 +314,18 @@ export default {
   .uinfomy {
     vertical-align: baseline;
     .tx {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      vertical-align: text-bottom;
+      // vertical-align: text-bottom;
     }
     span {
       // flex: 1;
-      font-size: 20px;
+      font-size: 24px;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 100px;
-      line-height: 22px;
+      width: 160px;
+      line-height: 24px;
       display: inline-block;
       white-space: nowrap;
     }

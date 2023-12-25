@@ -74,7 +74,7 @@
                 <span class="reply" @click="goreply(rp, index)"> 回复</span>
                 <span
                   class="reply"
-                  style="margin-left: 140px"
+                  style="margin-left: 30px"
                   @click="reportRep(rp, rindex)"
                 >
                   举报</span

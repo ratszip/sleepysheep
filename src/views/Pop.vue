@@ -130,7 +130,7 @@ export default {
 .pops {
   width: 700px !important;
   top: 45%;
-  height: 650px !important;
+  height: 700px !important;
   transform: translate(-50%, -50%);
   overflow: visible !important;
   .close {
