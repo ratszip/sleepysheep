@@ -37,7 +37,11 @@
             <span @click="onMorel(item)" class="more4">︙</span>
           </div>
           <h1 class="content4" v-if="item.commentId">{{ item.content }}</h1>
-          <div v-if="item.title" class="topic4" @click="gotopic(item)">
+          <div
+            v-if="item.title && item.tstatus == 1"
+            class="topic4"
+            @click="gotopic(item)"
+          >
             <img
               class="image4"
               v-lazy="`${baseurl}/${item.images[0].path}`"
@@ -48,7 +52,7 @@
               <div class="tcontent4">{{ item.tcontent }}</div>
             </div>
           </div>
-          <div v-if="!item.title" class="unknow">
+          <div v-if="item.tstatus == 0 || !item.title" class="unknow">
             <van-icon name="close" />帖子已被删除或隐藏
           </div>
         </div>

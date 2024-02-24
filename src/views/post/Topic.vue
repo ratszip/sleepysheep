@@ -43,7 +43,7 @@ export default {
         images: null,
         like: null,
       },
-      comments: { comments: null, topicId: null },
+      comments: { comments: null, topicId: null, logined: null },
     };
   },
   methods: {
@@ -89,9 +89,10 @@ export default {
       }).then(
         (res) => {
           if (res.data.code === 9000) {
-            this.$toast({
-              message: "请先登录",
-            });
+            this.comments.logined = false;
+            this.$pop.open();
+          } else {
+            this.comments.logined = true;
           }
           this.comments.comments = res.data.data;
           this.comments.topicId = this.topicId;

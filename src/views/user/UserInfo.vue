@@ -35,6 +35,20 @@
       <div class="ercode" @click="dashang">
         <van-icon name="gold-coin-o" />打赏
       </div>
+
+      <van-dialog v-model="showds" title="打赏码">
+        <!-- <img src="https://img01.yzcdn.cn/vant/apple-3.jpg" /> -->
+        <img
+          v-if="userInfo.ewm"
+          style="
+            width: 280px;
+            height: 280px;
+            margin-left: 50%;
+            transform: translateX(-50%);
+          "
+          :src="`${baseurl}/${userInfo.ewm}`"
+        />
+      </van-dialog>
     </div>
     <div class="bottom">
       <div>
@@ -93,13 +107,19 @@ export default {
       userInfo: "",
       pageLoading: "",
       uid: 0,
+      showds: false,
+      baseurl: this.$store.state.sourceUrl,
     };
   },
   methods: {
     dashang() {
-      this.$toast({
-        message: "功能待推出",
-      });
+      if (!this.userInfo.ewm) {
+        this.$toast({
+          message: "对方未开通此功能",
+        });
+        return;
+      }
+      this.showds = true;
     },
     setUser() {
       this.$emit("transUser", this.userInfo);
@@ -236,6 +256,10 @@ export default {
 </script>
 
 <style lang="less">
+.van-image--round img {
+  border-radius: inherit;
+  object-fit: cover;
+}
 .bottom {
   display: flex;
   justify-content: space-between;
@@ -250,7 +274,8 @@ export default {
   }
   .follow {
     font-size: 24px;
-    vertical-align: middle;
+    vertical-align: bottom;
+    margin-top: 20px;
     width: 160px;
     height: 46px;
   }

@@ -39,3 +39,25 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+// Vue.directive('watermark', {
+//   bind: function(el, binding) {
+//     // 创建一个canvas元素
+//     const canvas = document.createElement('canvas');
+//     canvas.width = el.width;
+//     canvas.height = el.height;
+//     const ctx = canvas.getContext('2d');
+    
+//     // 绘制水印文本
+//     ctx.font = '30px Arial';
+//     ctx.fillStyle = 'rgba(0,0,0,0.2)';
+//     ctx.textAlign = 'center';
+//     ctx.fillText(binding.value, canvas.width/2, canvas.height/2);
+    
+//     // 将canvas中的内容绘制到图片上
+//     ctx.drawImage(el, 0, 0);
+    
+//     // 替换原始图片
+//     el.src = canvas.toDataURL('image/jpeg');
+//   }
+// });

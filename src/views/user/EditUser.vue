@@ -33,6 +33,20 @@
     />
     <van-cell is-link title="性别" @click="show = true" />
     <span class="gd">{{ userInfo.gender == 0 ? "女" : "男" }}</span>
+    <van-cell is-link title="上传打赏码" @click="goewm" />
+    <van-image
+      v-if="userInfo.ewm"
+      width="150px"
+      height="150px"
+      @click="avatar"
+      :src="`${baseurl}/${userInfo.ewm}`"
+      style="left: 50%; transform: translateX(-50%); margin-top: 30px"
+    ></van-image>
+    <div v-if="!userInfo.ewm" style="font-size: 14px">
+      可添加客服微信：wendaxie666<br />
+      公众号：问答蟹
+      <br />10元解锁自定义头像和打赏码。服务器维护开销，谢谢！
+    </div>
     <van-action-sheet
       v-model="show"
       :actions="actions"
@@ -117,6 +131,9 @@
         </li>
       </ul>
       <div class="txbt">
+        <van-button class="txbtct" @click="goupload" type="default" block round
+          >上传(仅赞助者)</van-button
+        >
         <van-button
           class="txbtct"
           type="info"
@@ -131,6 +148,66 @@
         >
       </div>
     </van-dialog>
+    <van-dialog
+      v-model="upload"
+      title="上传头像"
+      :showCancelButton="dialogbt"
+      :showConfirmButton="dialogbt"
+    >
+      <van-uploader
+        v-model="uploader"
+        multiple
+        :max-count="1"
+        :max-size="1024 * 1024 * 30"
+        :after-read="afterRead"
+        :before-read="beforeRead"
+        style="margin-left: 40%; margin-top: 10px"
+      />
+      <div class="txbt" style="margin-top: 10px">
+        <van-button
+          class="txbtct"
+          type="info"
+          block
+          size="normal"
+          round
+          @click="subup"
+          >提交</van-button
+        >
+        <van-button class="txbtct" type="default" @click="closeup" block round
+          >取消</van-button
+        >
+      </div>
+    </van-dialog>
+    <van-dialog
+      v-model="uploadewm"
+      title="上传打赏码"
+      :showCancelButton="dialogbt"
+      :showConfirmButton="dialogbt"
+    >
+      <van-uploader
+        v-model="uploaderewm"
+        multiple
+        :max-count="1"
+        :max-size="1024 * 1024 * 30"
+        :after-read="afterRead"
+        :before-read="beforeRead"
+        style="margin-left: 40%; margin-top: 10px"
+      />
+      <div class="txbt" style="margin-top: 10px">
+        <van-button
+          class="txbtct"
+          type="info"
+          block
+          size="normal"
+          round
+          @click="upewm"
+          >提交</van-button
+        >
+        <van-button class="txbtct" type="default" block round @click="closewm"
+          >取消</van-button
+        >
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -140,11 +217,15 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      uploader: [],
+      uploaderewm: [],
       baseurl: this.$store.state.sourceUrl,
       txactive: -1, //选中头像的index
       txselect: "", //选中头像名称
       dialogbt: false, //确认取消按钮显示
       toux: false, //头像弹窗
+      upload: false, //上传弹窗
+      uploadewm: false, //二维码弹窗
       mingz: false, //名字弹窗
       jianj: false, //简介弹窗
       mzmsg: "", //名字提示
@@ -156,6 +237,125 @@ export default {
     };
   },
   methods: {
+    beforeRead(file) {
+      let regex = /(.jpg|.jpeg|.png|.gif)$/;
+      if (!regex.test(file.type)) {
+        this.$toast({
+          message: "格式不支持",
+        });
+        return false;
+      } else {
+        return true;
+      }
+    },
+    afterRead(file) {
+      file = file.file;
+      this.compressImg(file, 0.2);
+    },
+    goewm() {
+      this.uploadewm = true;
+    },
+    closewm() {
+      this.uploadewm = false;
+    },
+    goupload() {
+      this.toux = false;
+      this.upload = true;
+    },
+    upewm() {
+      let formData = new FormData();
+      if (!this.uploaderewm[0]) {
+        this.$toast({
+          message: "请选择图片",
+        });
+        this.close();
+        return;
+      }
+      formData.append("file", this.uploaderewm[0].file);
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
+      request({
+        method: "post",
+        url: "/user/ewm",
+        data: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          // res.data.token;
+          Toast.clear();
+          if (res.data.code === 2000) {
+            this.uploadewm = false;
+            this.$toast({
+              message: "上传成功",
+            });
+          } else if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    subup() {
+      let formData = new FormData();
+      if (!this.uploader[0]) {
+        this.$toast({
+          message: "请选择图片",
+        });
+        this.close();
+        return;
+      }
+      formData.append("file", this.uploader[0].file);
+      this.$toast.loading({
+        duration: 0,
+        message: "加载中...",
+        forbidClick: true,
+      });
+      request({
+        method: "post",
+        url: "/user/avatarvip",
+        data: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          token: localStorage.token,
+        },
+      }).then(
+        (res) => {
+          // res.data.token;
+          Toast.clear();
+          if (res.data.code === 2000) {
+            this.$toast({
+              message: "上传成功",
+            });
+            this.userInfo.avatar = res.data.data;
+            this.upload = false;
+          } else if (res.data.code === 9000) {
+            this.$pop.open();
+          } else {
+            this.$toast({
+              message: res.data.msg,
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    closeup() {
+      this.upload = false;
+    },
     close() {
       this.mingz = false;
       this.toux = false;
@@ -368,6 +568,129 @@ export default {
           console.log(err);
         }
       );
+    },
+    compressImg(file, quality) {
+      var qualitys = 0.52;
+      // console.log(parseInt((file.size / 1024).toFixed(2)) + "111");
+      // console.log(parseInt((file.size / 1024).toFixed(2)));
+      if (parseInt((file.size / 1024).toFixed(2)) < 1024) {
+        qualitys = 0.85;
+      }
+      if (5 * 1024 < parseInt((file.size / 1024).toFixed(2))) {
+        qualitys = 0.92;
+      }
+      if (quality) {
+        qualitys = quality;
+      }
+      if (file[0]) {
+        return Promise.all(
+          Array.from(file).map((e) => this.compressImg(e, qualitys))
+        ); // 如果是 file 数组返回 Promise 数组
+      } else {
+        return new Promise((resolve) => {
+          // console.log(file);
+          if ((file.size / 1024).toFixed(2) < 300) {
+            resolve({
+              file: file,
+            });
+          } else {
+            const reader = new FileReader(); // 创建 FileReader
+            reader.onload = ({ target: { result: src } }) => {
+              const image = new Image(); // 创建 img 元素
+              image.onload = async () => {
+                const canvas = document.createElement("canvas"); // 创建 canvas 元素
+                const context = canvas.getContext("2d");
+                var targetWidth = image.width;
+                var targetHeight = image.height;
+                var originWidth = image.width;
+                var originHeight = image.height;
+                if (
+                  1 * 1024 <= parseInt((file.size / 1024).toFixed(2)) &&
+                  parseInt((file.size / 1024).toFixed(2)) <= 10 * 1024
+                ) {
+                  var maxWidth = 1600;
+                  var maxHeight = 1600;
+                  targetWidth = originWidth;
+                  targetHeight = originHeight;
+                  // 图片尺寸超过的限制
+                  if (originWidth > maxWidth || originHeight > maxHeight) {
+                    if (originWidth / originHeight > maxWidth / maxHeight) {
+                      // 更宽，按照宽度限定尺寸
+                      targetWidth = maxWidth;
+                      targetHeight = Math.round(
+                        maxWidth * (originHeight / originWidth)
+                      );
+                    } else {
+                      targetHeight = maxHeight;
+                      targetWidth = Math.round(
+                        maxHeight * (originWidth / originHeight)
+                      );
+                    }
+                  }
+                }
+                if (
+                  10 * 1024 <= parseInt((file.size / 1024).toFixed(2)) &&
+                  parseInt((file.size / 1024).toFixed(2)) <= 20 * 1024
+                ) {
+                  maxWidth = 1400;
+                  maxHeight = 1400;
+                  targetWidth = originWidth;
+                  targetHeight = originHeight;
+                  // 图片尺寸超过的限制
+                  if (originWidth > maxWidth || originHeight > maxHeight) {
+                    if (originWidth / originHeight > maxWidth / maxHeight) {
+                      // 更宽，按照宽度限定尺寸
+                      targetWidth = maxWidth;
+                      targetHeight = Math.round(
+                        maxWidth * (originHeight / originWidth)
+                      );
+                    } else {
+                      targetHeight = maxHeight;
+                      targetWidth = Math.round(
+                        maxHeight * (originWidth / originHeight)
+                      );
+                    }
+                  }
+                }
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                context.clearRect(0, 0, targetWidth, targetHeight);
+                context.drawImage(image, 0, 0, targetWidth, targetHeight); // 绘制 canvas
+                const canvasURL = canvas.toDataURL("image/jpeg", qualitys);
+                const buffer = atob(canvasURL.split(",")[1]);
+                let length = buffer.length;
+                const bufferArray = new Uint8Array(new ArrayBuffer(length));
+                while (length--) {
+                  bufferArray[length] = buffer.charCodeAt(length);
+                }
+                const miniFile = new File([bufferArray], file.name, {
+                  type: file.type,
+                });
+                // console.log({
+                //   file: miniFile,
+                //   origin: file,
+                //   beforeSrc: src,
+                //   afterSrc: canvasURL,
+                //   beforeKB: Number((file.size / 1024).toFixed(2)),
+                //   afterKB: Number((miniFile.size / 1024).toFixed(2)),
+                //   qualitys: qualitys,
+                // });
+                resolve({
+                  file: miniFile,
+                  origin: file,
+                  beforeSrc: src,
+                  afterSrc: canvasURL,
+                  beforeKB: Number((file.size / 1024).toFixed(2)),
+                  afterKB: Number((miniFile.size / 1024).toFixed(2)),
+                });
+                this.uploader.at(-1).file = miniFile;
+              };
+              image.src = src;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
     },
   },
   mounted() {

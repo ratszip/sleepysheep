@@ -5,7 +5,7 @@
     :on-infinite="infinite"
     ref="myscroller2"
   >
-    <waterfall class="contentsug2" :data="mylist2">
+    <waterfall class="contentsug2" gutterWidth="6" :data="mylist2">
       <div
         class="box2"
         ref="box2"
@@ -74,6 +74,11 @@ export default {
       lastTime: null,
       baseurl: this.$store.state.sourceUrl,
     };
+  },
+  computed: {
+    itemWidth() {
+      return 160 * 0.5 * (document.documentElement.clientWidth / 375);
+    },
   },
   methods: {
     infinite(done) {
@@ -243,6 +248,8 @@ export default {
 <style lang="less">
 .contentsug2 {
   box-sizing: border-box;
+  margin-left: 6px;
+  margin-right: 6px;
   padding-bottom: 70px;
 }
 .pull-to-refresh-layer {
@@ -250,15 +257,18 @@ export default {
   margin-top: 10px !important;
 }
 .box2 {
-  // width: 50%;
-  width: 380px !important;
+  // width: 380px !important;
   margin-top: 6px;
+  margin-bottom: 10px;
+  border-radius: 10px;
   background-color: white;
 }
 .image2 {
   width: 100%;
-  max-height: 480px;
+  max-height: 460px;
   min-height: 200px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   overflow: hidden;
   object-fit: cover;
 }
@@ -288,7 +298,6 @@ export default {
   font-size: 26px;
   line-height: 50px;
   justify-content: space-between;
-
   .uinfo2 {
     vertical-align: baseline;
     .tx {
@@ -308,7 +317,8 @@ export default {
     }
     .tinfo2 {
       vertical-align: top;
-      padding-right: 20px;
+      margin-right: 40px;
+      // padding-right: 40px;
     }
   }
 }

@@ -14,11 +14,12 @@
       <van-field
         class="email"
         left-icon="contact"
-        placeholder="Email"
+        placeholder="Email/Phone"
         v-model="email"
-        :rules="[{ pattern, message: '输入正确的邮箱格式' }]"
         required
+        :rules="[{ required: true, message: '不能为空' }]"
       />
+      <!-- :rules="[{ pattern, message: '输入正确的邮箱格式' }]" -->
       <div class="space"></div>
       <van-field
         class="pwd"
@@ -39,7 +40,7 @@
           icon-size="15px"
           >请勾选 <a href="#">用户协议</a>
         </van-checkbox>
-        <a href="#">忘记密码?</a>
+        <a href="/register">忘记密码?</a>
       </div>
       <van-button class="login" type="info" block round native-type="submit"
         >登录</van-button
@@ -63,8 +64,8 @@ export default {
       checked: true,
       show: false,
       tx: false,
-      email: "a@t.test",
-      password: "ABC12356",
+      email: "", //a@t.test
+      password: "", //ABC12356
       passwd: "",
       pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/,
     };

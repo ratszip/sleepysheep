@@ -9,7 +9,7 @@
     <van-tab title="关注">
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号:wendaxie666"
       />
       <div ref="ct" class="cont">
         <homefol></homefol>
@@ -18,7 +18,7 @@
     <van-tab title="推荐">
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号：wendaxie666"
       />
       <div ref="ct" class="cont">
         <homesug></homesug>

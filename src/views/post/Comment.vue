@@ -1,7 +1,35 @@
 <template>
   <div class="comment" v-if="pcomments">
+    <div class="total">www.wendaxie.com</div>
     <div class="total">下方为评论</div>
-    <div class="colist">
+    <div
+      v-if="pcomments.comments == null && pcomments.logined"
+      style="font-size: 18px; margin-top: 100px; margin-left: 40%"
+    >
+      暂无评论~
+    </div>
+    <div
+      v-if="!pcomments.logined"
+      style="font-size: 18px; margin-top: 100px; margin-left: 40%"
+    >
+      <a href="javascript:void(0)" @click="getpop">登录</a>后查看评论~
+    </div>
+    <div class="colist" v-if="pcomments.comments != null">
+      <van-dialog v-model="showewm" v-if="curitdia" title="微信/支付宝打赏码">
+        <img
+          v-if="curitdia.ewm"
+          style="
+            width: 300px;
+            height: 300px;
+            margin-left: 50%;
+            transform: translateX(-50%);
+          "
+          :src="`${baseurl}/${curitdia.ewm}`"
+        />
+        <div v-if="!curitdia.ewm" style="text-align: center">
+          对方未提供打赏码
+        </div>
+      </van-dialog>
       <div
         class="citem"
         v-for="(item, index) in pcomments.comments"
@@ -21,7 +49,7 @@
             <span class="cuname" @click="goUserInfo(item.fromUid)">
               {{ item.nickName }}
             </span>
-            <span @click="dashang">答谢</span>
+            <span @click="dashang(item)">答谢</span>
 
             <div class="zan">
               <van-icon
@@ -92,6 +120,7 @@
               展示更多
             </div>
           </div>
+
           <van-divider />
         </div>
       </div>
@@ -206,6 +235,7 @@ export default {
   },
   data() {
     return {
+      showewm: false,
       actions: [{ name: "删除" }, { name: "举报" }],
       baseurl: this.$store.state.sourceUrl,
       infoHeight: null,
@@ -213,6 +243,7 @@ export default {
       show: false,
       btshow: true,
       onputshow: false,
+      curitdia: null,
       curCommentIndex: null,
       pubcoment: "", //需要发表的评论
       pubreply: "", //需要发布的reply
@@ -236,12 +267,23 @@ export default {
       },
       deep: true,
     },
+    // logined: {
+    //   handler(item1, item2) {
+    //     if (item1 == 1) {
+    //       this.loginin = 1;
+    //     } else if (item1 == 0) {
+    //       this.loginin = 1;
+    //     }
+    //   },
+    //   deep: true,
+    // },
   },
   methods: {
-    dashang() {
-      this.$toast({
-        message: "功能待推出",
-      });
+    dashang(item) {
+      this.curitdia = item;
+      this.showewm = true;
+      console.log(this.curitdia);
+      console.log(item);
     },
     loadMore() {
       this.getMoreComments();
@@ -265,6 +307,7 @@ export default {
               rindex,
               1
             );
+            console.log(this.logined);
             // console.log(
             //   this.pcomments.comments[this.curCommentIndex].replyList
             // );
@@ -303,6 +346,9 @@ export default {
         }
       );
     },
+    getpop() {
+      this.$pop.open();
+    },
     getMoreComments() {
       request({
         method: "post",
@@ -319,10 +365,9 @@ export default {
       }).then(
         (res) => {
           if (res.data.code === 9000) {
-            this.$toast({
-              message: "请先登录",
-            });
+            this.$pop.open();
           }
+
           if (res.data.data === undefined) {
             this.$toast({
               message: "没有更多了",
@@ -734,6 +779,7 @@ export default {
     font-size: 26px;
     line-height: 36px;
     word-wrap: break-word;
+    white-space: pre-wrap;
     margin: 8px;
   }
   .ctime {

@@ -11,9 +11,10 @@
       :height="rqh"
       :data="topics"
       :loadDistance="150"
+      gutterWidth="4"
     >
       <!-- <div class="sugad">banner</div> -->
-      <div class="box" ref="box" v-for="(item, index) in topics" :key="index">
+      <div class="boxm" ref="box" v-for="(item, index) in topics" :key="index">
         <img
           @click="t_click(item.id)"
           class="image"
@@ -83,6 +84,11 @@ export default {
       baseurl: this.$store.state.sourceUrl,
     };
   },
+  // computed: {
+  //   // itemWidth() {
+  //   //   return 160 * 0.5 * (document.documentElement.clientWidth / 375);
+  //   // },
+  // },
   mounted() {
     this.$refs.myscroller.finishInfinite(true);
     this.getData();
@@ -256,6 +262,8 @@ export default {
 <style lang="less">
 .contentsug {
   box-sizing: border-box;
+  margin-left: 6px;
+  margin-right: 6px;
   padding-bottom: 70px;
 }
 .sugad {
@@ -266,16 +274,19 @@ export default {
 // .space {
 //   height: 200px;
 // }
-.box {
-  // float: left;
-  // position: absolute;
+.boxm {
+  // width: 100%;
   margin-top: 6px;
+  margin-bottom: 10px;
+  border-radius: 10px;
   background-color: white;
 }
 .image {
   width: 100%;
-  max-height: 480px;
+  max-height: 460px;
   min-height: 200px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   overflow: hidden;
   object-fit: cover;
 }
@@ -298,7 +309,7 @@ export default {
 }
 .infos {
   display: flex;
-  width: 96%;
+  width: 94%;
   height: 50px;
   margin-left: 10px;
   margin-right: 10px;
@@ -313,6 +324,7 @@ export default {
   }
   .uinfos {
     vertical-align: middle;
+    margin-top: 6px;
     .tx {
       width: 36px;
       height: 36px;

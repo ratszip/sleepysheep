@@ -52,7 +52,7 @@ export default {
         (res) => {
           if (res.data.code === 2000) {
             localStorage.setItem("tokem", res.data.data);
-            this.$router.push("wendaxie1&manage2&admin3&home");
+            this.$router.push("/admin/home");
           } else if (res.data.code === 9000) {
             this.$pop.open();
           } else {

@@ -10,7 +10,7 @@
       </template>
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号:wendaxie666"
       />
       <div ref="aa" class="test" v-if="this.$store.state.userInfoH">
         <mytopic></mytopic>
@@ -26,7 +26,7 @@
       </template>
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号:wendaxie666"
       />
       <div ref="aa" class="test">
         <myComment></myComment>
@@ -42,7 +42,7 @@
       </template>
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号:wendaxie666"
       />
       <div ref="aa" class="test">
         <coltopic></coltopic>
@@ -58,7 +58,7 @@
       </template>
       <van-notice-bar
         left-icon="volume-o"
-        text="帖子发布后需要审核，请耐心等待~"
+        text="帖子发布后需要审核。微信号:wendaxie666"
       />
       <div ref="aa" class="test">
         <myLike></myLike>

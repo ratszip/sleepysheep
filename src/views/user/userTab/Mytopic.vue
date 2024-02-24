@@ -6,7 +6,7 @@
     ref="myscroller"
     class="contopic"
   >
-    <waterfall class="contentsug" :data="mylist">
+    <waterfall gutterWidth="6" class="contentsug" :data="mylist">
       <!-- <div class="sugad">广告位</div> -->
       <div class="box" ref="box" v-for="(item, index) in mylist" :key="index">
         <img
@@ -268,7 +268,7 @@ export default {
 }
 .box {
   // width: 50%;
-  width: 382px !important;
+  // width: 382px !important;
   margin-top: 6px;
   background-color: white;
 }
