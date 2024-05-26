@@ -77,7 +77,9 @@ import { Toast } from "vant";
 export default {
   data() {
     return {
+      page:0,
       isloading: true,
+      lastTopics:[],
       rqh: null,
       topics: [],
       lastTime: null,
@@ -102,6 +104,7 @@ export default {
         method: "post",
         url: "/index/sug",
         data: {
+          page:this.page,
           size: 10,
           token: localStorage.token,
           createTime: this.lastTime,
@@ -112,6 +115,11 @@ export default {
       }).then(
         (res) => {
           this.$refs.myscroller.finishInfinite(true);
+        
+          this.cursize=res.data.data.length;
+          if(this.cursize===10){
+            this.page=this.page+1;
+          }
           if (res.data.code === 6000) {
             this.$toast({
               message: "访问过于频繁，稍后再试",
@@ -124,10 +132,16 @@ export default {
             });
             return;
           }
-          this.topics.push(...res.data.data);
-          // console.log(this.topics);
+          let arrlinshi=this.topics.slice(-20);
+          arrlinshi.push(...res.data.data);
+          let strings = arrlinshi.map((item) => JSON.stringify(item));
+          let removeDupList = [...new Set(strings)]; 
+          let result = removeDupList.map((item) => JSON.parse(item));
+          //console.log(this.topics);
+          this.topics=result;
           let lastEle = this.topics.slice(-1);
           this.lastTime = lastEle[0].createTime;
+
         },
         (err) => {
           console.log(err);
@@ -136,6 +150,7 @@ export default {
     },
     onRefresh() {
       this.lastTime = null;
+      this.page=0;
       this.getData();
     },
     gouser(id) {
@@ -227,11 +242,12 @@ export default {
         message: "加载中...",
         forbidClick: true,
       });
+      
       request({
         method: "post",
         url: "/index/sug",
 
-        data: { size: 10, token: localStorage.token },
+        data: { page: this.page,size: 10, token: localStorage.token },
         headers: {
           "content-type": "multipart/form-data",
         },
@@ -239,6 +255,11 @@ export default {
         .then(
           (res) => {
             this.topics = res.data.data;
+            //console.log("baba")
+            if(this.topics.length===10){
+              //console.log("aaaaa")
+              this.page=1;
+            }
             let lastEle = this.topics.slice(-1);
             this.lastTime = lastEle[0].createTime;
             this.$refs.myscroller.finishPullToRefresh();
