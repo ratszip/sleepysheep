@@ -240,6 +240,7 @@ export default {
       baseurl: this.$store.state.sourceUrl,
       infoHeight: null,
       replyTo: "",
+      page:1,
       show: false,
       btshow: true,
       onputshow: false,
@@ -356,6 +357,7 @@ export default {
         data: {
           token: localStorage.token,
           topicId: this.pcomments.topicId,
+          page:this.page,
           size: 10,
           createTime: this.lastTime,
         },
@@ -364,6 +366,10 @@ export default {
         },
       }).then(
         (res) => {
+          let cursize = res.data.data.length
+          if(cursize===10){
+            this.page=this.page+1;
+          }
           if (res.data.code === 9000) {
             this.$pop.open();
           }
@@ -375,7 +381,13 @@ export default {
             this.nomore = true;
             return;
           }
-          this.pcomments.comments.push(...res.data.data);
+          let arrlinshi=this.pcomments.comments.slice(-20);
+          // this.pcomments.comments.push(...res.data.data);
+          arrlinshi.push(...res.data.data);
+          let strings = arrlinshi.map((item) => JSON.stringify(item));
+          let removeDupList = [...new Set(strings)]; 
+          let result = removeDupList.map((item) => JSON.parse(item));
+          this.pcomments.comments=result;
           let lastEle = this.pcomments.comments.slice(-1);
           this.lastTime = lastEle[0].createTime;
         },

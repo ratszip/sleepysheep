@@ -81,6 +81,7 @@ export default {
         data: {
           token: localStorage.token,
           topicId: this.topicId,
+          page:0,
           size: 10,
         },
         headers: {
