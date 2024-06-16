@@ -32,7 +32,7 @@
       @click="introClick"
     />
     <van-cell is-link title="性别" @click="show = true" />
-    <span class="gd">{{ userInfo.gender == 0 ? "女" : "男" }}</span>
+    <span class="gd">{{ userInfo.gender == "w" ? "女" : "男" }}</span>
     <van-cell is-link title="上传打赏码" @click="goewm" />
     <van-image
       v-if="userInfo.ewm"
@@ -498,9 +498,9 @@ export default {
       this.show = false;
       var gender;
       if (item.name == "男") {
-        gender = 1;
+        gender = "m";
       } else if (item.name == "女") {
-        gender = 0;
+        gender = "w";
       }
       request({
         method: "post",

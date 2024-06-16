@@ -57,22 +57,22 @@ export default {
     },
     //初始化数据
     initData(resData) {
-      this.nvData.nickName = resData.nickName;
-      this.nvData.userId = resData.userId;
-      this.nvData.guestId = resData.guestId;
+      this.nvData.nickName = resData.topicVo.nickName;
+      this.nvData.userId = resData.topicVo.userId;
+      this.nvData.guestId = resData.topicVo.guestId;
       this.nvData.fans = resData.fans;
-      this.nvData.avatar = resData.avatar;
+      this.nvData.avatar = resData.topicVo.avatar;
       this.nvData.topicId = this.topicId;
 
-      this.contentData.like = resData.like;
-      this.contentData.title = resData.title;
+      this.contentData.like = resData.topicVo.like;
+      this.contentData.title = resData.topicVo.title;
       this.contentData.topicId = this.topicId;
-      this.contentData.content = resData.content;
-      this.contentData.userId = resData.userId;
-      this.contentData.isSolved = resData.isSolved;
+      this.contentData.content = resData.topicVo.content;
+      this.contentData.userId = resData.topicVo.userId;
+      this.contentData.isSolved = resData.topicVo.isSolved;
       this.contentData.guestId = resData.guestId;
-      this.contentData.images = resData.images;
-      this.contentData.createTime = resData.createTime;
+      this.contentData.images = resData.topicVo.images;
+      this.contentData.createTime = resData.topicVo.createTime;
     },
     getComments() {
       request({
