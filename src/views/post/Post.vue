@@ -281,7 +281,11 @@ export default {
             // Toast.clear();
           } else if (res.data.code === 9000) {
             this.$pop.open();
-          } else {
+          } else if (res.data.status === 500) {
+            this.$toast({
+              message: res.error,
+            });
+          }  else {
             this.$toast({
               message: res.data.msg,
             });

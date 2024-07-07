@@ -57,22 +57,22 @@ export default {
     },
     //初始化数据
     initData(resData) {
-      this.nvData.nickName = resData.topicVo.nickName;
-      this.nvData.userId = resData.topicVo.userId;
-      this.nvData.guestId = resData.topicVo.guestId;
+      this.nvData.nickName = resData.topicVO.nickName;
+      this.nvData.userId = resData.topicVO.userId;
+      this.nvData.guestId = resData.topicVO.guestId;
       this.nvData.fans = resData.fans;
-      this.nvData.avatar = resData.topicVo.avatar;
+      this.nvData.avatar = resData.topicVO.avatar;
       this.nvData.topicId = this.topicId;
 
-      this.contentData.like = resData.topicVo.like;
-      this.contentData.title = resData.topicVo.title;
+      this.contentData.like = resData.topicVO.like;
+      this.contentData.title = resData.topicVO.title;
       this.contentData.topicId = this.topicId;
-      this.contentData.content = resData.topicVo.content;
-      this.contentData.userId = resData.topicVo.userId;
-      this.contentData.isSolved = resData.topicVo.isSolved;
+      this.contentData.content = resData.topicVO.content;
+      this.contentData.userId = resData.topicVO.userId;
+      this.contentData.isSolved = resData.topicVO.isSolved;
       this.contentData.guestId = resData.guestId;
-      this.contentData.images = resData.topicVo.images;
-      this.contentData.createTime = resData.topicVo.createTime;
+      this.contentData.images = resData.topicVO.images;
+      this.contentData.createTime = resData.topicVO.createTime;
     },
     getComments() {
       request({
@@ -127,6 +127,8 @@ export default {
             }
             this.getComments();
             // this.comments.comments = getComments;
+            // console.log(res.data.data.topicVO);
+            // console.log(res.data.code);
             this.initData(res.data.data);
             if (res.data.code === 9000) {
               this.$toast({
